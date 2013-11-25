@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    @author Hien Hoang
+    @version Nov 7, 2013
+-->
+
+<Othello>
+    <!-- playFirstId is the id of the player playing first -->
+    <Players playFirstId = "1"> 
+        <Player id = "1" name ="HienHoang" color = "White" isComputer = "false"/>
+        <Player id = "2" name ="Computer" color = "Black" isComputer = "false"/>
+    </Players>
+    <Board width = "8" height = "8"/>
+    <Engines>
+        <Engine name = "Random" depth = "1" selected = "true" />
+    </Engines>
+    <UserInterfaces>
+        <Configuration>
+            <UI name = "Console" selected = "true" />
+            <UI name = "Graphic" />
+        </Configuration>
+        <Control>
+            <UI name = "Console" />
+            <UI name = "Graphic" selected = "true" />
+        </Control>
+    </UserInterfaces>
+</Othello>

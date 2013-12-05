@@ -7,21 +7,33 @@
 <Othello>
     <!-- playFirstId is the id of the player playing first -->
     <Players playFirstId = "1"> 
-        <Player id = "1" name ="HienHoang" color = "White" isComputer = "false"/>
-        <Player id = "2" name ="Computer" color = "Black" isComputer = "false"/>
+        <Player id = "1" name = "HienHoang" color = "White" isComputer = "false"/>
+        <Player id = "2" name = "Computer" color = "Black" isComputer = "true"/>
     </Players>
+    
+    <Playing>
+        <Type name = "online" selected = "true" />
+        <Type name = "offline"/>
+    </Playing>
+    
     <Board width = "8" height = "8"/>
+    
     <Engines>
         <Engine name = "Random" depth = "1" selected = "true" />
     </Engines>
+    
     <UserInterfaces>
         <Configuration>
             <UI name = "Console" selected = "true" />
             <UI name = "Graphic" />
         </Configuration>
         <Control>
-            <UI name = "Console" />
-            <UI name = "Graphic" selected = "true" />
+            <UI name = "Console" selected = "true"/>
+            <UI name = "Graphic"/>
         </Control>
     </UserInterfaces>
+    
+    <Servers>
+        <Server address = "localhost" port = "1234" selected = "true" />
+    </Servers>
 </Othello>

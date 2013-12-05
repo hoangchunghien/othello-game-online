@@ -107,27 +107,18 @@ public class GameState {
     }
     
     public JSONObject serializeJson() {
+        
         JSONObject obj = new JSONObject();
-//        System.out.println("Init new object");
         JSONObject jsBoard = board.serializeJson();
-//        System.out.println("Init board");
         JSONObject jsCurrentPlayer = currentPlayer.serializeJson();
-//        System.out.println("Init currentPlayer");
         JSONObject jsGameBegin = new JSONObject("{'gameBegin':" + this.gameBegin + "}");
-//        System.out.println("Init turnBegin");
         JSONObject jsTurnBegin = new JSONObject("{'turnBegin':" + this.turnBegin + "}");
-//        System.out.println("Init game message");
-//        JSONObject jsGameMessage = new JSONObject("{'gameMessage':" + (!message.equals("")?message:"...") + "}");
-//        System.out.println("Init players");
         JSONObject jsPlayer1 = this.players[0].serializeJson();
         JSONObject jsPlayer2 = this.players[1].serializeJson();
-//        System.out.println("Putting board");
         obj.put(jsBoard.names().getString(0), jsBoard.get(jsBoard.names().getString(0)));
-//        System.out.println("Putting current player");
         obj.put("currentPlayer", jsCurrentPlayer);
         obj.put(jsGameBegin.names().getString(0), jsGameBegin.get(jsGameBegin.names().getString(0)));
         obj.put(jsTurnBegin.names().getString(0), jsTurnBegin.get(jsTurnBegin.names().getString(0)));
-//        obj.put(jsGameMessage.names().getString(0), jsGameMessage.get(jsGameMessage.names().getString(0)));
         obj.put("player1", jsPlayer1);
         obj.put("player2", jsPlayer2);
         
@@ -135,6 +126,7 @@ public class GameState {
     }
     
     public void deserializeJson(JSONObject jObj){
+        
         this.board.deserializeJson(jObj);
         this.gameBegin = jObj.getLong("gameBegin");
         this.turnBegin = jObj.getLong("turnBegin");

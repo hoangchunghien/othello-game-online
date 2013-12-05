@@ -1,6 +1,6 @@
 package othello.command;
 
-import othello.game.GameMonitor;
+import org.json.JSONObject;
 
 /**
  *
@@ -8,18 +8,33 @@ import othello.game.GameMonitor;
  * @version Nov 7, 2013
  */
 public class Redo implements ICommand {
-
-    GameMonitor monitor;
     
-    public Redo(GameMonitor monitor) {
+    public final static String NAME = "redo";
+
+    IRedoExec redoExecutor;
+    
+    public Redo(IRedoExec redoExecutor) {
         
-        this.monitor = monitor;
+        this.redoExecutor = redoExecutor;
     }
     
     @Override
     public void execute() {
         
-        monitor.redoGame();
+        redoExecutor.makeRedo();
+    }
+
+    @Override
+    public JSONObject serializeJSON() {
+        JSONObject jObj = new JSONObject();
+        jObj.put("command", NAME);
+        
+        return jObj;
+    }
+
+    @Override
+    public void deserializeJSON(JSONObject jObj) {
+        
     }
     
 }

@@ -1,28 +1,40 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package othello.command;
 
-import othello.game.GameMonitor;
+import org.json.JSONObject;
 
 /**
  *
- * @author Hien
+ * @author Hien Hoang
+ * @version Dec 4, 2013
  */
 public class Undo implements ICommand {
-
-    GameMonitor monitor;
     
-    public Undo(GameMonitor monitor) {
+    public final static String NAME = "undo";
+
+    IUndoExec undoExecutor;
+    
+    public Undo(IUndoExec undoExecutor) {
         
-        this.monitor = monitor;
+        this.undoExecutor = undoExecutor;
     }
     
     @Override
     public void execute() {
         
-        monitor.undoGame();
+        undoExecutor.makeUndo();
+    }
+
+    @Override
+    public JSONObject serializeJSON() {
+        JSONObject jObj = new JSONObject();
+        jObj.put("command", NAME);
+        
+        return jObj;
+    }
+
+    @Override
+    public void deserializeJSON(JSONObject jObj) {
+        
     }
     
 }

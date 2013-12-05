@@ -4,6 +4,8 @@
  */
 package othello.common;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author Hien
@@ -46,6 +48,19 @@ public class Position {
     
     public Position neighbor(Neighbor n){
         return new Position(x + n.x, y + n.y);
+    }
+    
+    public JSONObject serializeJSON() {
+        
+        String result = "{'x':" + x + ",'y':" + y + "}";
+        JSONObject jObj = new JSONObject(result);
+        return jObj;
+    }
+    
+    public void deserializeJSON(JSONObject jObj) {
+        
+        this.x = jObj.getInt("x");
+        this.y = jObj.getInt("y");
     }
     
     @Override

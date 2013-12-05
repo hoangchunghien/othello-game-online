@@ -6,6 +6,9 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
+import othello.command.IMoveExec;
+import othello.command.IRedoExec;
+import othello.command.IUndoExec;
 import othello.common.Board;
 import othello.common.Piece;
 import othello.configuration.Configuration;
@@ -18,7 +21,7 @@ import othello.ui.control.IControl;
  * @author Hien Hoang
  * @version Nov 7, 2013
  */
-public class GameMonitor {
+public class GameMonitor implements IMoveExec, IUndoExec, IRedoExec {
     
     private GameState state; // The current game state
     private int turn;
@@ -100,16 +103,16 @@ public class GameMonitor {
         recordStates.put(p, state.clone());
     }
      
+    @Override
     public void makeMove(Position p) {
-        
         this.redoState.removeAllElements();
-        
+
         Piece currentPiece = state.getCurrentPlayer().getPiece();
         Board currentBoard = state.getBoard();
         othello.ui.control.IControl controlUI = UIFactory.getControlUI();
-        
+
         if (!state.getBoard().isValidMove(currentPiece, p)) {
-            
+
             controlUI.notifyMessage("INVALID MOVE!!! TRY OTHER.");
             controlUI.renderGameState(state);
             controlUI.allowMakeMove();
@@ -119,55 +122,55 @@ public class GameMonitor {
             //
             // Make move
             //
-            
+
             // Later add a record
             addRecord(p, state);
-            
+
             // First make move
             currentBoard.placePiece(currentPiece, p);
-            
+
             // Then change turn and calculate score
             turn = 1 - turn;
             state.setCurrentPlayer(state.getPlayers()[turn]);
             state.calculateScore();        
-            
+
             // After made a move, check the board again for gameover or next player 
             // has any valid move ...
             if (currentBoard.hasAnyValidMove(state.getCurrentPlayer().getPiece())) {
-                
+
                 controlUI.renderGameState(state);
                 // If Next player isn't computer, then allow ui to get move from user,
                 // otherwise let engine generate a move;
                 if (!state.getPlayers()[turn].isComputerPlayer()) {
-                    
+
                     controlUI.allowMakeMove();
                 }
                 else {
-                    
+
                     // Notify user computer is making a move
                     controlUI.notifyMessage("Computer thinking...");
-                    
+
                     // Let allow engine generate a move
                     //EngineFactory.getEngine().allowGenerateMove(state);  
                     //engine.start();
-                    
+
                 }
-                
+
             }
             else if (currentBoard.isGameOver()) {
-                
+
                 controlUI.renderGameState(state);
                 controlUI.notifyMessage("No more move. Game over!");
             }
             else { 
                 //Next player has no valid move change turn again if next player
                 //has any valid move. Otherwise, terminate the game
-                
+
                 turn = 1 - turn;
                 state.setCurrentPlayer(state.getPlayers()[turn]);
-                
+
                 if (state.getBoard().hasAnyValidMove(state.getCurrentPlayer().getPiece())) {
-                  
+
                     controlUI.renderGameState(state);
                     controlUI.notifyMessage(state.getPlayers()[1-turn].getName() + " has no valid move. Passed!");
 
@@ -179,45 +182,45 @@ public class GameMonitor {
 
                         controlUI.allowMakeMove();
                     }
-                
+
                 }
                 else {
-                    
+
                     controlUI.renderGameState(state);
                     controlUI.notifyMessage("No more move, game over!");
                 }
-                
+
             }
-            
+
         }
         
     }
     
-    public void undoGame() {
-        
+
+    @Override
+    public void makeUndo() {
         IControl controlUI = UIFactory.getControlUI();
-        
+
         if (!undoState.isEmpty()) {
-            
+
             // Turn the undo to the last user move if play with computer
             do {
                 this.redoState.push(this.state.clone());   // Copy this state to redo
                 this.state = (GameState) this.undoState.pop();  // Set this state to undo state
                 this.turn = (this.state.getCurrentPlayer() == this.state.getPlayers()[0])?0:1;
             } while (!undoState.isEmpty() && this.state.getCurrentPlayer().isComputerPlayer());
-            
+
             controlUI.notifyMessage("Undo OK");
         }
         else {
-            
+
             controlUI.notifyMessage("Can't Undo");
         }
         this.start();
-        
     }
-    
-    public void redoGame() {
-        
+
+    @Override
+    public void makeRedo() {
         IControl controlUI = UIFactory.getControlUI();
         
         if (!redoState.isEmpty()) {
@@ -235,7 +238,6 @@ public class GameMonitor {
             controlUI.notifyMessage("Can't Redo");
         }
         this.start();
-        
     }
     
 }

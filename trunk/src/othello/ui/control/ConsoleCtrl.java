@@ -9,7 +9,7 @@ import othello.common.Player;
 import othello.game.GameState;
 /**
  *
- * @author Hien HC
+ * @author Hien Hoang
  * @version Nov 7, 2013
  * 
  */
@@ -41,21 +41,6 @@ public class ConsoleCtrl implements IControl {
         command.execute();
     }
 
-//    private void makeMove() {
-//        int x = nextInt("x: ");
-//        int y = nextInt("y: ");
-//
-//        Position p = new Position(x, y);
-//        
-//        GameMonitor.getInstance().makeMove(p);
-//    }
-//    
-//    private int nextInt(String s) {
-//        do {
-//            System.out.print(s);
-//        } while (!scanner.hasNextInt() && null != scanner.next());
-//        return scanner.nextInt();
-//    }
 
     @Override
     public void show() {

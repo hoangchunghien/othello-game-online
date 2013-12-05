@@ -20,17 +20,44 @@ public class Configuration {
     
     @XmlElement(name = "Players", required = true)
     public PlayersCfg players;
+    
+    @XmlElement(name = "Playing", required = true)
+    public PlayingCfg playing;
+    
     @XmlElement(name = "Board", required = true)
     public BoardCfg board;
+    
     @XmlElement(name = "Engines", required = true)
     public EnginesCfg engines;
+    
     @XmlElement(name = "UserInterfaces", required = true)
     public UserInterfacesCfg userInterfaces;
+    
+    @XmlElement(name = "Servers", required = true)
+    public ServersCfg servers;
     
     public EngineCfg getSelectedEngine() {
         for (EngineCfg e : engines.engines) {
             if (e.selected) {
                 return e;
+            }
+        }
+        return null;
+    }
+    
+    public ServerCfg getSelectedServer() {
+        for (ServerCfg s : servers.servers) {
+            if (s.selected) {
+                return s;
+            }
+        }
+        return null;
+    }
+    
+    public TypeCfg getPlayingType() {
+        for (TypeCfg t : playing.types) {
+            if (t.selected) {
+                return t;
             }
         }
         return null;

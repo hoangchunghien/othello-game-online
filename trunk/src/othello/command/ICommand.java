@@ -1,5 +1,7 @@
 package othello.command;
 
+import org.json.JSONObject;
+
 /**
  *
  * @author Hien Hoang
@@ -7,4 +9,6 @@ package othello.command;
  */
 public interface ICommand {
     public void execute();
+    public JSONObject serializeJSON();
+    public void deserializeJSON(JSONObject jObj);
 }

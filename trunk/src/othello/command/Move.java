@@ -1,6 +1,6 @@
 package othello.command;
 
-import othello.game.GameMonitor;
+import org.json.JSONObject;
 import othello.common.Position;
 /**
  *
@@ -9,7 +9,9 @@ import othello.common.Position;
  */
 public class Move implements ICommand {
 
-    GameMonitor monitor;
+    public final static String NAME = "move";
+    
+    IMoveExec moveExecutor;
     Position position;
 
     public Position getPosition() {
@@ -20,23 +22,39 @@ public class Move implements ICommand {
         this.position = position;
     }
        
-    public Move(GameMonitor monitor) {
+    public Move(IMoveExec moveExecutor) {
         
-        this.monitor = monitor;
+        this.moveExecutor = moveExecutor;
         
     }
     
-    public Move(GameMonitor monitor, Position position) {
+    public Move(IMoveExec moveExecutor, Position position) {
         
-        this.monitor = monitor;
+        this.moveExecutor = moveExecutor;
         this.position = position;
     }
     
     @Override
     public void execute() {
         
-        monitor.makeMove(position);
+        moveExecutor.makeMove(position);
         
+    }
+
+    @Override
+    public JSONObject serializeJSON() {
+        
+        JSONObject jObj = new JSONObject();
+        jObj.put("command", NAME);
+        jObj.put("position", position.serializeJSON());
+        
+        return jObj;
+    }
+
+    @Override
+    public void deserializeJSON(JSONObject jObj) {
+        
+        this.position.deserializeJSON(jObj.getJSONObject("position"));
     }
     
 }

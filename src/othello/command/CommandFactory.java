@@ -87,7 +87,10 @@ public class CommandFactory {
             }
             case List.NAME:
             {
-                
+                if (element.length >= 2 && Configuration.getInstance().getPlayingType()
+                            .name.equalsIgnoreCase("online")) {
+                    return new List(Client.getInstance(), element[1]);
+                }
             }
             case Quit.NAME:
             {

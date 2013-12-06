@@ -9,6 +9,7 @@ import java.util.Stack;
 import othello.command.IMoveExec;
 import othello.command.IRedoExec;
 import othello.command.IUndoExec;
+import othello.command.response.IMoveResExec;
 import othello.common.Board;
 import othello.common.Piece;
 import othello.configuration.Configuration;
@@ -21,7 +22,7 @@ import othello.ui.control.IControl;
  * @author Hien Hoang
  * @version Nov 7, 2013
  */
-public class GameMonitor implements IMoveExec, IUndoExec, IRedoExec {
+public class GameMonitor implements IMoveExec, IUndoExec, IRedoExec, IMoveResExec {
     
     private GameState state; // The current game state
     private int turn;
@@ -238,6 +239,11 @@ public class GameMonitor implements IMoveExec, IUndoExec, IRedoExec {
             controlUI.notifyMessage("Can't Redo");
         }
         this.start();
+    }
+
+    @Override
+    public void makeMoving(Position p) {
+        this.makeMove(p);
     }
     
 }

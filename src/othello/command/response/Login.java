@@ -41,7 +41,7 @@ public class Login implements IResponse {
             loginResponseExecutor.makeLogin();
         } else {
             // Notify to user the failure, wrong username or wrong password
-            // ... Notify code here
+            loginResponseExecutor.notifyFailure(message);
         }
     }
 
@@ -49,9 +49,11 @@ public class Login implements IResponse {
     @Override
     public JSONObject serializeJSON() {
         
-        String result = "{'command':" + NAME + ",'status':" + status + 
-                ",'message':" + message + "}";
-        JSONObject jObj = new JSONObject(result);
+        JSONObject jObj = new JSONObject();
+        jObj.put("command", NAME);
+        jObj.put("status", status);
+        jObj.put("message", message);
+        jObj.put("cmdType", "response");
         return jObj;
     }
 

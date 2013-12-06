@@ -19,7 +19,11 @@ public class Move implements IResponse {
     Position position;
     String message;
     
-    public Move(String status, String message, Position position) {
+    IMoveResExec moveResponseExecutor;
+    
+    public Move(IMoveResExec executor, String status, String message, Position position) {
+        
+        this.moveResponseExecutor = executor;
         this.status = status;
         this.message = message;
         this.position = position;
@@ -29,9 +33,7 @@ public class Move implements IResponse {
     public void execute() {
         
         if (status.equalsIgnoreCase(ACCEPTED)) {
-            othello.command.Move moveCmd = new othello.command.Move(
-                    GameMonitor.getInstance(), position);
-            moveCmd.execute();
+            moveResponseExecutor.makeMoving(position);
         } 
         else {
             // Notify to user unvalid move
@@ -45,6 +47,7 @@ public class Move implements IResponse {
     public JSONObject serializeJSON() {
         
         JSONObject jObj = new JSONObject();
+        jObj.put("cmdType", "response");
         jObj.put("command", NAME);
         jObj.put("status", status);
         jObj.put("message", message);

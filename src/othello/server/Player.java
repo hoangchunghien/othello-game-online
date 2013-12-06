@@ -187,17 +187,17 @@ public class Player extends Thread implements IExec, IJoinExec, IDrawExec, IList
 
     @Override
     public void listLocations() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        getLocation().listLocations(connection);
     }
 
     @Override
     public void ListPlayers() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        getLocation().listPlayers(connection);
     }
 
     @Override
     public void doLogin(String username, String password) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     @Override

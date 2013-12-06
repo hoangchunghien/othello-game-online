@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
 import org.json.JSONObject;
 import othello.command.IJoinExec;
 import othello.command.IListExec;
@@ -23,6 +22,7 @@ import othello.command.IUndoExec;
 import othello.command.List;
 import othello.command.response.IResponse;
 import othello.command.Join;
+import othello.command.Login;
 import othello.command.response.ResponseFactory;
 import othello.common.Position;
 
@@ -94,35 +94,16 @@ public class Client implements IMoveExec, ILoginExec, IUndoExec, IRedoExec,
     
     private void listenResponseFromServer() {
         
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            JSONObject response;
-            
-            @Override
-            public void run() {
-                System.out.println("Client listening...");
-                while (true) {
-                    try {
-                        System.out.print("Reading..");
-                        response = new JSONObject(reader.readLine());
-                        System.out.print("Response: " + response);
-                        IResponse responseCmd = ResponseFactory.getResponse(response);
-                        responseCmd.execute();
-                    } catch (IOException ex) {
-                        
-                        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        });
+        Listener listener = new Listener(reader);
+        listener.start();
     }
     
     @Override
     public void doLogin(String username, String password) {
         
-        String command = "login " + username + " " + password;
-        System.out.println("Invoking command: " + command);
-        writer.println(command);   
+        Login login = new Login(null, username, password);
+        System.out.println("Invoking command: " + login.serializeJSON());
+        writer.println(login.serializeJSON());   
     }
     
     @Override
@@ -166,17 +147,60 @@ public class Client implements IMoveExec, ILoginExec, IUndoExec, IRedoExec,
     @Override
     public void listLocations() {
         
-        String command = List.NAME + " " + List.LOCATION;
-        System.out.println("Invoking command: " + command);
-        writer.println(command);
+        List list = new List(null, List.LOCATION);
+        System.out.println("Sending command: " + list.serializeJSON());
+        writer.println(list.serializeJSON());
     }
 
     @Override
     public void ListPlayers() {
         
-        String command = List.NAME + " " + List.PLAYER;
-        System.out.println("Invoking command: " + command);
-        writer.println(command);
+        List list = new List(null, List.PLAYER);
+        System.out.println("Sending command: " + list.serializeJSON());
+        writer.println(list.serializeJSON());
     }
     
+}
+
+class Listener extends Thread {
+    
+    private BufferedReader reader;
+    public Listener(BufferedReader reader) {
+        this.reader = reader;
+    }
+    
+    @Override
+    public void run() {
+        JSONObject response;
+        System.out.println("Client listening...");
+        while (true) {
+            try {
+                System.out.println("Reading..");
+                response = new JSONObject(reader.readLine());
+                System.out.println("Response: " + response);
+                if (response.getString("cmdType").equalsIgnoreCase("response")) {
+                    IResponse responseCmd = ResponseFactory.getResponse(response);
+                    ResponseExecuting exe = new ResponseExecuting(responseCmd);
+                    exe.start();
+                }
+            } catch (IOException ex) {
+
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+}
+
+class ResponseExecuting extends Thread {
+    
+    private IResponse response;
+    
+    public ResponseExecuting(IResponse response) {
+        this.response = response;
+    }
+    
+    @Override
+    public void run() {
+        this.response.execute();
+    }
 }

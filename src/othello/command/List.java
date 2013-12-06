@@ -10,8 +10,8 @@ import org.json.JSONObject;
 public class List implements ICommand {
     
     public final static String NAME = "list";
-    public final static String LOCATION = "location";
-    public final static String PLAYER = "player";
+    public final static String LOCATION = "locations";
+    public final static String PLAYER = "players";
 
     private IListExec listExecutor;
     private String opt;

@@ -48,6 +48,7 @@ public class Join implements IResponse {
     public JSONObject serializeJSON() {
         
         JSONObject jObj = new JSONObject();
+        jObj.put("cmdType", "response");
         jObj.put("command", NAME);
         jObj.put("status", status);
         jObj.put("locationId", locationId);

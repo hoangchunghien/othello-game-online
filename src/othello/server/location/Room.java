@@ -1,8 +1,17 @@
 package othello.server.location;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.JSONObject;
+import othello.auth.LoggedInPlayersManager;
+import othello.auth.LoginManager;
+import othello.command.response.ListPlayers;
+import othello.models.Player;
 
 /**
  *
@@ -70,11 +79,38 @@ public class Room implements ILocation {
     }
 
     @Override
-    public void listLocations() {
+    public void listLocations(Socket connectionSoc) {
     }
 
     @Override
-    public void listPlayers() {
+    public void listPlayers(Socket connectionSoc) {
+        java.util.List<Player> players = new ArrayList<>();
+        for (Socket soc : connections) {
+            Player player = new Player();
+            if (LoginManager.getInstance().isLoggedIn(soc)) {
+                player = LoggedInPlayersManager.getInstance().getPlayer(soc);
+            }
+            else {
+                player.setType(Player.TYPE_GUEST);
+                player.setScore(0);
+                player.setUsername("guest");
+            }
+            players.add(player);
+        }
+        ListPlayers listPlayersResponse = new ListPlayers(null, 
+                ListPlayers.ACCEPTED, "OK", players);
+        sendTo(connectionSoc, listPlayersResponse.serializeJSON());
+        
+    }
+    
+    private void sendTo(Socket soc, JSONObject jObj){
+        try {
+            
+            PrintWriter writer = new PrintWriter(soc.getOutputStream(), true);
+            writer.println(jObj);
+        } catch (IOException ex) {
+            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override

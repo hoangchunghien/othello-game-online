@@ -28,8 +28,8 @@
             <UI name = "Graphic" />
         </Configuration>
         <Control>
-            <UI name = "Console" selected = "true"/>
-            <UI name = "Graphic"/>
+            <UI name = "Console"/>
+            <UI name = "Graphic" selected = "true"/>
         </Control>
     </UserInterfaces>
     

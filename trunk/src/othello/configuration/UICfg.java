@@ -12,8 +12,12 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UI")
 public class UICfg {
+    public final static String UI_GRAPHIC = "graphic";
+    public final static String UI_CONSOLE = "console";
+    
     @XmlAttribute(name = "name")
     public String name;
+    
     @XmlAttribute(name = "selected")
     public boolean selected;
 }

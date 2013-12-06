@@ -7,4 +7,5 @@ package othello.command.response;
 public interface ILoginResExec {
     
     public void makeLogin();
+    public void notifyFailure(String msg);
 }

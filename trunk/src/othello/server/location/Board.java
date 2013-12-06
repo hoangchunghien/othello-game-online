@@ -11,6 +11,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.JSONObject;
 import othello.command.response.Join;
 import othello.common.Piece;
 import othello.common.Position;
@@ -74,54 +75,52 @@ public class Board implements ILocation, IBoard {
     }
 
     @Override
-    public void listLocations() {
+    public void listLocations(Socket connectionSoc) {
     }
 
     @Override
-    public void listPlayers() {
+    public void listPlayers(Socket connectionSoc) {
     }
 
     @Override
     public void joinPlayer(Socket connectionSoc) {
         boolean joined = false;
-        PrintWriter writer;
-        try {
-            writer = new PrintWriter(
-                    new OutputStreamWriter(connectionSoc.getOutputStream(), "UTF-8"));
-        
-            for (Piece p : supportedPiece) {
-                if (pieceSelected.get(p) == null || 
-                        pieceSelected.get(p) == Boolean.FALSE) {
 
-                    joined = true;
-                    registerPiece(connectionSoc, p);
-                    this.connections.add(connectionSoc);
-                    this.playerConnections.add(connectionSoc);
-                    break;
-                }
+        for (Piece p : supportedPiece) {
+            if (pieceSelected.get(p) == null || 
+                    pieceSelected.get(p) == Boolean.FALSE) {
+
+                joined = true;
+                registerPiece(connectionSoc, p);
+                this.connections.add(connectionSoc);
+                this.playerConnections.add(connectionSoc);
+                break;
             }
-            
-            String msg;
-            if (!joined) {
-                msg = "Can't join!!!";
-                
-            }
-            else {
-                msg = "Joined";
-            }
-            
-            othello.command.response.Join joinRes = 
-                    new Join(null, joined?Join.ACCEPTED:Join.REJECTED, msg, id);
-            writer.println(joinRes.serializeJSON());
-            
-        } catch (UnsupportedEncodingException ex) {
-            
-            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            
-            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
+        String msg;
+        if (!joined) {
+            msg = "Can't join!!!";
+
+        }
+        else {
+            msg = "Joined";
+        }
+
+        othello.command.response.Join joinRes = 
+                new Join(null, joined?Join.ACCEPTED:Join.REJECTED, msg, id);
+
+        sendTo(connectionSoc, joinRes.serializeJSON());
+    }
+    
+    private void sendTo(Socket soc, JSONObject jObj){
+        try {
+            
+            PrintWriter writer = new PrintWriter(soc.getOutputStream(), true);
+            writer.println(jObj);
+        } catch (IOException ex) {
+            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     private void registerPiece(Socket connectionSoc, Piece p) {

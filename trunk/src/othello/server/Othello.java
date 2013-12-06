@@ -51,6 +51,7 @@ public class Othello {
                 System.out.println("Player accepted");
                 Player player = new Player(connection);
                 player.setLocation(station);
+                player.getLocation().join(connection);
                 player.start();
             }
             catch (IOException ie) {

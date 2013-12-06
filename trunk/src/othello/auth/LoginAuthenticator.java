@@ -1,13 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package othello.auth;
+
+import java.net.Socket;
 
 /**
  *
- * @author Hien
+ * @author Hien Hoang
  */
 public class LoginAuthenticator {
     
+    public boolean doLogin(Socket connection, String username, String password) {
+        
+        return true;
+    }
 }

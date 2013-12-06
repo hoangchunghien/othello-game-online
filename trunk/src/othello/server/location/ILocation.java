@@ -44,13 +44,13 @@ public interface ILocation {
     /**
      * Must have to list (show) the location that player can join in
      */
-    public void listLocations();
+    public void listLocations(Socket connectionSoc);
     
     /**
      * Must have to list (show) all the player in this location that, player
      * can invite to play.
      */
-    public void listPlayers();
+    public void listPlayers(Socket connectionSoc);
     
     /*
      * Return true, if this is the board too

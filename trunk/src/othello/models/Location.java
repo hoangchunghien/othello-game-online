@@ -28,4 +28,9 @@ public class Location {
         this.name = jObj.getString("name");
         this.numUsers = jObj.getInt("numUsers");
     }
+    
+    @Override
+    public String toString() {
+        return name;
+    }
 }

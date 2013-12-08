@@ -1,6 +1,7 @@
 package othello.command.response;
 
 import org.json.JSONObject;
+import othello.command.GetBoards;
 import othello.common.Position;
 import othello.ui.control.graphic.PlayerListPanel;
 
@@ -46,6 +47,21 @@ public class ResponseFactory {
                 listPlayerCmd.deserializeJSON(jObj);
                 return listPlayerCmd;
                 
+            case ListRooms.NAME:
+                ListRooms listRoomsCmd = new ListRooms(ResponseExecutorManager.getListRoomsResponseExecutor(),
+                            null, null);
+                listRoomsCmd.deserializeJSON(jObj);
+                return listRoomsCmd;
+                
+            case GetBoardsRes.NAME:
+                GetBoardsRes getBoardsRes = new GetBoardsRes(ResponseExecutorManager.getBoardsResponseExecutor(),
+                            null);
+                getBoardsRes.deserializeJSON(jObj);
+                return getBoardsRes;
+            case ChatRes.NAME:
+                ChatRes chatRes = new ChatRes(ResponseExecutorManager.getChatResponseExecutor(), null, null);
+                chatRes.deserializeJSON(jObj);
+                return chatRes;
             default:
                 return null;
         }

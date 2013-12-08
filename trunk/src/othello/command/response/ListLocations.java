@@ -72,7 +72,7 @@ public class ListLocations implements IResponse {
 
     @Override
     public void execute() {
-        
+        listLocationsResExec.loadLocations(locations);
     }
     
     

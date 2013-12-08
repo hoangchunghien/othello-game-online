@@ -52,21 +52,23 @@ public class PlayerListPanel extends JPanel implements
 
     @Override
     public void addPlayer(Player player) {
+        
         playersModel.addElement(player);
     }
 
     @Override
     public void removePlayer(Player player) {
+        
          playersModel.removeElement(player);
     }
 
     @Override
     public void loadPlayersList(java.util.List<Player> playersList) {
         playersModel.clear();
-        // System.out.println("Loading player list...");
+
         for (Player player : playersList) {
+            
             playersModel.addElement(player);
-            // System.out.println(player.getUsername());
         }
     }
 }

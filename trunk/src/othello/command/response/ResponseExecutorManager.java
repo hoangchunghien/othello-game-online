@@ -7,8 +7,11 @@ package othello.command.response;
 import othello.configuration.Configuration;
 import othello.configuration.UICfg;
 import othello.game.GameMonitor;
+import othello.ui.control.graphic.ChatPanel;
 import othello.ui.control.graphic.LoginFrame;
 import othello.ui.control.graphic.PlayerListPanel;
+import othello.ui.control.graphic.RoomListPanel;
+import othello.ui.control.graphic.TableListPanel;
 
 /**
  *
@@ -48,4 +51,30 @@ public class ResponseExecutorManager {
         
         return null;
     }
+    
+    public static IGetBoardsResExec getBoardsResponseExecutor() {
+        
+        if (config.getSelectedControlUI().name.equalsIgnoreCase(UICfg.UI_GRAPHIC)) {
+            System.out.println("Get boards executor found");
+            return TableListPanel.getInstance();
+        }
+        return null;
+    }
+    
+    public static IListRoomsResExec getListRoomsResponseExecutor() {
+        if (config.getSelectedControlUI().name.equalsIgnoreCase(UICfg.UI_GRAPHIC)) {
+            return RoomListPanel.getInstance();
+        }
+        System.out.println("Executor not found...");
+        return null;
+    }
+    
+    public static IChatResExec getChatResponseExecutor() {
+        if (config.getSelectedControlUI().name.equalsIgnoreCase(UICfg.UI_GRAPHIC)) {
+            return ChatPanel.getInstance();
+        }
+        System.out.println("Executor not found...");
+        return null;
+    }
+    
 }

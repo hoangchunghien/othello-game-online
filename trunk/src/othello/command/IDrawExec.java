@@ -8,4 +8,5 @@ package othello.command;
 public interface IDrawExec {
     
     public void dealDraw();
+    public void rejectDraw();
 }

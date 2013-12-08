@@ -96,9 +96,22 @@ public class CommandFactory {
             {
                 
             }
+            case Chat.NAME:
+                if (element.length >= 2 && Configuration.getInstance().getPlayingType()
+                            .name.equalsIgnoreCase("online")) {
+                    return new Chat(Client.getInstance(), element[1]);
+                }
             default:
                 return null;
         }
+    }
+    
+    public static ICommand getCmdGetBoards(String roomId) {
+        if (Configuration.getInstance().getPlayingType()
+                            .name.equalsIgnoreCase("online")) {
+            return new GetBoards(Client.getInstance(), roomId);
+        }
+        return null;
     }
     
     public static ICommand getServerCommand(IExec executor, JSONObject jObj) {
@@ -120,7 +133,7 @@ public class CommandFactory {
                 login.deserializeJSON(jObj);
                 return login;
             case Draw.NAME:
-                Draw draw = new Draw((IDrawExec)executor);
+                Draw draw = new Draw((IDrawExec)executor, null);
                 draw.deserializeJSON(jObj);
                 return draw;
             case Undo.NAME:
@@ -139,6 +152,14 @@ public class CommandFactory {
                 Quit quit = new Quit((IQuitExec)executor);
                 quit.deserializeJSON(jObj);
                 return quit;
+            case GetBoards.NAME:
+                GetBoards getBoards = new GetBoards((IGetBoardsExec)executor, null);
+                getBoards.deserializeJSON(jObj);
+                return getBoards;
+            case Chat.NAME:
+                Chat chat = new Chat((IChatCmdExec)executor, null);
+                chat.deserializeJSON(jObj);
+                return chat;
             default:
                 return null;
         }

@@ -1,10 +1,15 @@
 package com.anores.game.persistence.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "profile")
 public class Profile extends BaseEntityAudit {
 
+	
 	private String firstName;
 	private String lastName;
 	private String email;

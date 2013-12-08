@@ -1,9 +1,20 @@
 package com.anores.game.persistence.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "meta_game_history")
 public class MetaGameHistory {
 	
+	@Column(name = "key")
 	private String key;
+	
+	@Column(name = "value")
 	private String value;
+	
+	@Column(name = "description")
 	private String description;
 	
 	public MetaGameHistory() {

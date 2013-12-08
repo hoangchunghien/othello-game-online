@@ -1,26 +1,35 @@
 package com.anores.game.persistence.domain;
 
+import java.io.Serializable;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
+@Table(name  = "role")
 public class Role extends BaseEntityAudit {
-	private String Name;
-	private String Description;
+	
+	@Column(name = "name")
+	private String name;
+	
+	@Column(name = "description")
+	private String description;
 	
 	public Role() {
 		
 	}
 	
 	public String getName() {
-		return Name;
+		return name;
 	}
 	public void setName(String name) {
-		Name = name;
+		this.name = name;
 	}
 	public String getDescription() {
-		return Description;
+		return description;
 	}
 	public void setDescription(String description) {
-		Description = description;
+		this.description = description;
 	}
 }

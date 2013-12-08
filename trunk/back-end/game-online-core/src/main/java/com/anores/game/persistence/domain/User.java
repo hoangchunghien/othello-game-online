@@ -1,11 +1,20 @@
 package com.anores.game.persistence.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+import javax.validation.Constraint;
 
 @Entity
+@Table(name = "user")
 public class User extends BaseEntityAudit {
 	
 	@Column(name = "username", length = 60)
@@ -25,6 +34,10 @@ public class User extends BaseEntityAudit {
 	
 	@Column(name = "activation_key", length = 60)
 	private String activationKey;
+	
+	private Profile profile;
+	
+	private Role role;
 
 	public String getUsername() {
 		return username;
@@ -72,5 +85,23 @@ public class User extends BaseEntityAudit {
 
 	public void setActivationKey(String activationKey) {
 		this.activationKey = activationKey;
+	}
+
+	@OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+	public Profile getProfile() {
+		return profile;
+	}
+
+	public void setProfile(Profile profile) {
+		this.profile = profile;
+	}
+
+	@OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
 	}
 }

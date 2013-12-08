@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 import othello.common.Piece;
 import othello.common.Position;
 /**

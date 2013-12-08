@@ -8,5 +8,6 @@ package othello.command;
 public interface IListExec {
     
     public void listLocations();
-    public void ListPlayers();
+    public void listPlayers();
+    public void listRooms();
 }

@@ -5,13 +5,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
 import othello.command.CommandFactory;
+import othello.command.IChatCmdExec;
 import othello.command.ICommand;
 import othello.command.IDrawExec;
 import othello.command.IExec;
+import othello.command.IGetBoardsExec;
 import othello.command.IJoinExec;
 import othello.command.IListExec;
 import othello.command.ILoginExec;
@@ -21,11 +25,16 @@ import othello.command.IRedoExec;
 import othello.command.IResignExec;
 import othello.command.IUndoExec;
 import othello.command.Join;
+import othello.command.response.ChatRes;
+import othello.command.response.GetBoardsRes;
+import othello.command.response.ListRooms;
 import othello.server.location.IBoard;
 import othello.server.location.ILocation;
 import othello.server.location.Station;
 import othello.common.Piece;
 import othello.common.Position;
+import othello.models.Board;
+import othello.models.Location;
 
 /**
  *
@@ -37,7 +46,7 @@ import othello.common.Position;
  * . Board,...
  */
 public class Player extends Thread implements IExec, IJoinExec, IDrawExec, IListExec, 
-       ILoginExec, IMoveExec, IQuitExec, IRedoExec, IResignExec, IUndoExec {
+       ILoginExec, IMoveExec, IQuitExec, IRedoExec, IResignExec, IUndoExec, IGetBoardsExec, IChatCmdExec {
     
     private Socket connection;
     private BufferedReader reader;
@@ -191,7 +200,7 @@ public class Player extends Thread implements IExec, IJoinExec, IDrawExec, IList
     }
 
     @Override
-    public void ListPlayers() {
+    public void listPlayers() {
         getLocation().listPlayers(connection);
     }
 
@@ -223,6 +232,52 @@ public class Player extends Thread implements IExec, IJoinExec, IDrawExec, IList
     @Override
     public void makeUndo() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void rejectDraw() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void listRooms() {
+        List<Location> rooms = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            Location room = new Location();
+            room.id = "" + i;
+            room.name = "Room " + i;
+            room.numUsers = i;
+            rooms.add(room);
+        }
+        ListRooms listRoomsRes = new ListRooms(null, ListRooms.ACCEPTED , rooms);
+        getWriter().println(listRoomsRes.serializeJSON());
+    }
+
+    @Override
+    public void getBoards(String roomId) {
+        List<Board> boards = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            Board board = new Board("board " + i);
+            othello.models.Player p1 = new othello.models.Player();
+            p1.setUsername("user" + i);
+            p1.setType(1);
+            p1.setScore(i+100);
+            othello.models.Player p2 = new othello.models.Player();
+            p2.setUsername("opp" + i);
+            p2.setType(2);
+            p2.setScore(i + 200);
+            board.setPlayer(Piece.BLACK, p1);
+            board.setPlayer(Piece.WHITE, p2);
+            boards.add(board);
+        }
+        GetBoardsRes boardsRes = new GetBoardsRes(null, boards);
+        getWriter().println(boardsRes.serializeJSON());
+    }
+
+    @Override
+    public void chat(String msg) {
+        ChatRes chatRes = new ChatRes(null, ChatRes.ACCEPTED, msg);
+        getWriter().println(chatRes.serializeJSON());
     }
     
 }

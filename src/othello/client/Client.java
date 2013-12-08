@@ -11,6 +11,10 @@ import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
+import othello.command.Chat;
+import othello.command.GetBoards;
+import othello.command.IChatCmdExec;
+import othello.command.IGetBoardsExec;
 import othello.command.IJoinExec;
 import othello.command.IListExec;
 import othello.command.ILoginExec;
@@ -28,13 +32,14 @@ import othello.common.Position;
 
 import othello.configuration.Configuration;
 
+
 /**
  *
  * @author Hien Hoang
  * @version Dec 2, 2013
  */
 public class Client implements IMoveExec, ILoginExec, IUndoExec, IRedoExec,
-        IResignExec, IQuitExec, IJoinExec, IListExec {
+        IResignExec, IQuitExec, IJoinExec, IListExec, IGetBoardsExec, IChatCmdExec {
     
     private String serverAddress;
     private int serverPort;
@@ -153,15 +158,37 @@ public class Client implements IMoveExec, ILoginExec, IUndoExec, IRedoExec,
     }
 
     @Override
-    public void ListPlayers() {
+    public void listPlayers() {
         
         List list = new List(null, List.PLAYER);
         System.out.println("Sending command: " + list.serializeJSON());
         writer.println(list.serializeJSON());
     }
+
+    @Override
+    public void listRooms() {
+        
+        List list = new List(null, List.ROOM);
+        System.out.println("Sending command: " + list.serializeJSON());
+        writer.println(list.serializeJSON());
+    }
+
+
+    @Override
+    public void getBoards(String roomId) {
+        GetBoards getBoards = new GetBoards(null, roomId);
+        System.out.println("Sending command: " + getBoards.serializeJSON());
+        writer.println(getBoards.serializeJSON());
+    }
+
+    @Override
+    public void chat(String msg) {
+        Chat chat = new Chat(this, msg);
+        System.out.println("Sending command: " + chat.serializeJSON());
+        writer.println(chat.serializeJSON());
+    }
     
 }
-
 class Listener extends Thread {
     
     private BufferedReader reader;
@@ -177,11 +204,18 @@ class Listener extends Thread {
             try {
                 System.out.println("Reading..");
                 response = new JSONObject(reader.readLine());
-                System.out.println("Response: " + response);
+                System.out.println("Received: " + response);
                 if (response.getString("cmdType").equalsIgnoreCase("response")) {
+                    System.out.println("Finding executor...");
                     IResponse responseCmd = ResponseFactory.getResponse(response);
-                    ResponseExecuting exe = new ResponseExecuting(responseCmd);
-                    exe.start();
+                    if (responseCmd == null) {
+                        System.out.println("Executor not found...");
+                    }
+                    else {
+                        System.out.println("Found executor");
+                        ResponseExecuting exe = new ResponseExecuting(responseCmd);
+                        exe.start();
+                    }
                 }
             } catch (IOException ex) {
 
@@ -201,6 +235,7 @@ class ResponseExecuting extends Thread {
     
     @Override
     public void run() {
+        System.out.println("Executing response...");
         this.response.execute();
     }
 }

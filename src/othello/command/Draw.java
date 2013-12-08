@@ -9,17 +9,26 @@ import org.json.JSONObject;
 public class Draw implements ICommand {
     
     public static final String NAME = "draw";
+    public static final String ACCEPTED = "accepted";
+    public static final String REJECTED = "rejected";
 
     private IDrawExec drawExecutor;
+    private String status;
     
-    public Draw(IDrawExec drawExecutor) {
+    public Draw(IDrawExec drawExecutor, String status) {
         
         this.drawExecutor = drawExecutor;
+        this.status = status;
     }
     
     @Override
     public void execute() {
-        drawExecutor.dealDraw();
+        if (status.equalsIgnoreCase(ACCEPTED)) {
+            drawExecutor.dealDraw();
+        }
+        else {
+            drawExecutor.rejectDraw();
+        }
     }
     
     @Override
@@ -27,13 +36,14 @@ public class Draw implements ICommand {
         
         JSONObject jObj = new JSONObject();
         jObj.put("command", NAME);
+        jObj.put("status", status);
         
         return jObj;
     }
     
     @Override
     public void deserializeJSON(JSONObject jObj) {
-        
+        this.status = jObj.getString("status");
     }
     
 }

@@ -12,6 +12,7 @@ public class List implements ICommand {
     public final static String NAME = "list";
     public final static String LOCATION = "locations";
     public final static String PLAYER = "players";
+    public final static String ROOM = "rooms";
 
     private IListExec listExecutor;
     private String opt;
@@ -31,8 +32,13 @@ public class List implements ICommand {
         
         if (opt.equalsIgnoreCase(PLAYER)) {
             
-            listExecutor.ListPlayers();
+            listExecutor.listPlayers();
         }
+        
+        if (opt.equalsIgnoreCase(ROOM)) {
+            listExecutor.listRooms();
+        }
+        
     }
 
     @Override

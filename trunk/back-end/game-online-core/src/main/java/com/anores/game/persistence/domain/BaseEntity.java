@@ -13,6 +13,11 @@ import javax.persistence.Version;
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5569140558352457618L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Basic(optional = false)

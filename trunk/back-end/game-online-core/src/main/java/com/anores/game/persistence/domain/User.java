@@ -1,22 +1,23 @@
 package com.anores.game.persistence.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import javax.validation.Constraint;
 
 @Entity
 @Table(name = "user")
 public class User extends BaseEntityAudit {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2516349381580464214L;
+
 	@Column(name = "username", length = 60)
 	private String username;
 

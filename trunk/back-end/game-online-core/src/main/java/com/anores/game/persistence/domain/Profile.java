@@ -1,7 +1,6 @@
 package com.anores.game.persistence.domain;
 
-import java.io.Serializable;
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -9,11 +8,24 @@ import javax.persistence.Table;
 @Table(name = "profile")
 public class Profile extends BaseEntityAudit {
 
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -933848607383374789L;
+
+	@Column(name = "firstname")
 	private String firstName;
+	
+	@Column(name = "lastname")
 	private String lastName;
+	
+	@Column(name = "email")
 	private String email;
+	
+	@Column(name = "address")
 	private String address;
+	
+	@Column(name = "phone")
 	private String phone;
 
 	public Profile() {

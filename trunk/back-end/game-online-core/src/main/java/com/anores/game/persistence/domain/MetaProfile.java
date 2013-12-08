@@ -8,6 +8,11 @@ import javax.persistence.Table;
 @Table(name = "meta_profile")
 public class MetaProfile extends BaseEntityAudit {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4361100797625418233L;
+
 	@Column(name = "key")
 	private String key;
 	
@@ -44,5 +49,4 @@ public class MetaProfile extends BaseEntityAudit {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
 }

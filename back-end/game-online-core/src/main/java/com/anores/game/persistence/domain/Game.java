@@ -6,6 +6,11 @@ import javax.persistence.Entity;
 @Entity
 public class Game extends BaseEntityAudit {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5298875949632600752L;
+
 	@Column(name = "name")
 	private String Name;
 	

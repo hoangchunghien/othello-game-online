@@ -5,8 +5,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.anores.game.persistence.HibernateUtil;
-import com.anores.game.persistence.domain.Profile;
-import com.anores.game.persistence.domain.Role;
 import com.anores.game.persistence.domain.User;
 
 public class StartPoint {

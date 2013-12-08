@@ -6,8 +6,13 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "meta_game_history")
-public class MetaGameHistory {
+public class MetaGameHistory extends BaseEntityAudit {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -165782267442157534L;
+
 	@Column(name = "key")
 	private String key;
 	

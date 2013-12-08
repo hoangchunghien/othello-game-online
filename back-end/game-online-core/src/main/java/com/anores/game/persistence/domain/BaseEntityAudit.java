@@ -13,6 +13,11 @@ import javax.validation.constraints.Size;
 @MappedSuperclass
 public abstract class BaseEntityAudit extends BaseEntity {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5876922499469434942L;
+
 	@Column(name = "created_at")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;

@@ -5,7 +5,7 @@ import othello.command.CommandFactory;
 import othello.command.ICommand;
 import othello.common.Board;
 import othello.common.Piece;
-import othello.common.Player;
+import othello.common.AbstractPlayer;
 import othello.game.GameState;
 /**
  *
@@ -20,8 +20,8 @@ public class ConsoleCtrl implements IControl {
     @Override
     public void renderGameState(GameState state) {
         
-        Player p1 = state.getPlayers()[0];
-        Player p2 = state.getPlayers()[1];
+        AbstractPlayer p1 = state.getPlayers()[0];
+        AbstractPlayer p2 = state.getPlayers()[1];
         System.out.println("/////////| OTHELLO GAME |///////////");
         System.out.println(p1.getName() + ": score[" + p1.getScore() + "] piece[" + p1.getPiece().toString() + "]" );
         System.out.println(p2.getName() + ": score[" + p2.getScore() + "] piece[" + p2.getPiece().toString() + "]" );

@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import othello.command.ICommand;
 import othello.command.CommandFactory;
-import othello.command.List;
+import othello.command.ListCmd;
 import othello.command.notify.IPlayerDisjoinNtfExec;
 import othello.command.notify.IPlayerJoinNtfExec;
 import othello.command.response.IListPlayersResExec;
@@ -36,7 +36,7 @@ public class PlayerListPanel extends JPanel implements
     
     public PlayerListPanel() {
         initialize();
-        ICommand cmd = CommandFactory.getCommand(List.NAME + " " + List.PLAYER);
+        ICommand cmd = CommandFactory.getCommand(ListCmd.NAME + " " + ListCmd.PLAYER);
         cmd.execute();
         this.setVisible(true);
         

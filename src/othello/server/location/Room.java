@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import org.json.JSONObject;
 import othello.auth.LoggedInPlayersManager;
 import othello.auth.LoginManager;
-import othello.command.response.ListPlayers;
+import othello.command.response.ListPlayersRes;
 import othello.models.Player;
 
 /**
@@ -97,8 +97,8 @@ public class Room implements ILocation {
             }
             players.add(player);
         }
-        ListPlayers listPlayersResponse = new ListPlayers(null, 
-                ListPlayers.ACCEPTED, "OK", players);
+        ListPlayersRes listPlayersResponse = new ListPlayersRes(null, 
+                ListPlayersRes.ACCEPTED, "OK", players);
         sendTo(connectionSoc, listPlayersResponse.serializeJSON());
         
     }

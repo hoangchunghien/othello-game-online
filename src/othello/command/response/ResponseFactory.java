@@ -1,7 +1,7 @@
 package othello.command.response;
 
 import org.json.JSONObject;
-import othello.command.GetBoards;
+import othello.command.GetBoardsCmd;
 import othello.common.Position;
 import othello.ui.control.graphic.PlayerListPanel;
 
@@ -15,40 +15,40 @@ public class ResponseFactory {
     public static IResponse getResponse(JSONObject jObj) {
         
         switch (jObj.getString("command")) {
-            case Join.NAME :
-                Join joinCmd = new Join(null, null, null, null);
+            case JoinRes.NAME :
+                JoinRes joinCmd = new JoinRes(null, null, null, null);
                 joinCmd.deserializeJSON(jObj);
                 return joinCmd;
                 
-            case Login.NAME:
-                Login loginCmd = 
-                        new Login(ResponseExecutorManager.getLoginResponseExecutor(), 
+            case LoginRes.NAME:
+                LoginRes loginCmd = 
+                        new LoginRes(ResponseExecutorManager.getLoginResponseExecutor(), 
                             null, null);
                 loginCmd.deserializeJSON(jObj);
                 return loginCmd;
                 
-            case Move.NAME:
-                Move moveCmd = 
-                        new Move(ResponseExecutorManager.getMoveResponseExecutor(),
+            case MoveRes.NAME:
+                MoveRes moveCmd = 
+                        new MoveRes(ResponseExecutorManager.getMoveResponseExecutor(),
                             null, null, Position.UNDEFINED);
                 moveCmd.deserializeJSON(jObj);
                 return moveCmd;
                 
-            case ListLocations.NAME:
-                ListLocations listCmd = 
-                        new ListLocations(ResponseExecutorManager.getListLocationsResponseExecutor(),
+            case ListLocationsRes.NAME:
+                ListLocationsRes listCmd = 
+                        new ListLocationsRes(ResponseExecutorManager.getListLocationsResponseExecutor(),
                             null, null, null);
                 listCmd.deserializeJSON(jObj);
                 return listCmd;
                 
-            case ListPlayers.NAME:
-                ListPlayers listPlayerCmd = new ListPlayers(
+            case ListPlayersRes.NAME:
+                ListPlayersRes listPlayerCmd = new ListPlayersRes(
                         PlayerListPanel.getInstance(), null, null);
                 listPlayerCmd.deserializeJSON(jObj);
                 return listPlayerCmd;
                 
-            case ListRooms.NAME:
-                ListRooms listRoomsCmd = new ListRooms(ResponseExecutorManager.getListRoomsResponseExecutor(),
+            case ListRoomsRes.NAME:
+                ListRoomsRes listRoomsCmd = new ListRoomsRes(ResponseExecutorManager.getListRoomsResponseExecutor(),
                             null, null);
                 listRoomsCmd.deserializeJSON(jObj);
                 return listRoomsCmd;

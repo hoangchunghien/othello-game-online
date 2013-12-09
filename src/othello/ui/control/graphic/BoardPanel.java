@@ -10,23 +10,40 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Timer;
 import javax.swing.JPanel;
+import othello.command.IGetMoveCmdExec;
+import othello.command.response.GetMoveRes;
+import othello.command.response.IResponse;
+import othello.command.response.ResponseExecutorManager;
+import othello.common.AbstractPlayer;
 import othello.common.Board;
 import othello.common.Position;
 import othello.configuration.Configuration;
-import othello.game.GameMonitor;
+
 /**
  *
  * @author Hien Hoang
  * @version Nov 10, 2013
  */
-public class BoardPanel extends JPanel implements MouseListener, ActionListener {
+public class BoardPanel extends JPanel implements MouseListener, ActionListener, IGetMoveCmdExec {
     
     private Configuration cfg = Configuration.getInstance();
+    private AbstractPlayer getMoveCaller;
+    private boolean allowGetMove = false;
+    
     private PiecePanel pieces[][] = new PiecePanel[cfg.board.height][cfg.board.width];
     private Board board;
     Timer timer;
     int pixWidth;
     int pixHeight;
+    
+    private static BoardPanel singletonObject;
+    
+    public static BoardPanel getInstance() {
+        if (singletonObject == null) {
+            singletonObject = new BoardPanel();
+        }
+        return singletonObject;
+    }
     
     public BoardPanel() {
         
@@ -72,17 +89,9 @@ public class BoardPanel extends JPanel implements MouseListener, ActionListener 
     public void renderBoard(Board board) throws InterruptedException {
         
         List<PiecePanel> changedPieces = getChangedPieces(board);
-//        this.timer = new Timer(50, this);
-//        for (PiecePanel item : changedPieces) {
-//            item.timer.start();
-//        }
-        //timer.start();
-        
-        // System.out.println("number of change: " + changedPieces.size());
         for (PiecePanel item : changedPieces) {
             
             item.changePieceTo(board.getPiece(item.getPositionX(), item.getPositionY()));
-            // System.out.println(item);
         }
         this.board = board.clone();
     }
@@ -104,18 +113,20 @@ public class BoardPanel extends JPanel implements MouseListener, ActionListener 
         return result;
     }
     
-//    @Override
-//    public void paint(Graphics g) {
-//        
-//       
-//    }
 
     @Override
     public void mouseClicked(MouseEvent e) {
         
-        PiecePanel piece = (PiecePanel) e.getSource();
-        GameMonitor.getInstance().makeMove(new Position(piece.getPositionX(), piece.getPositionY()));
-        // System.out.println(piece.getPositionX() + " : " + piece.getPositionY());
+        if (this.allowGetMove) {
+            this.allowGetMove = false;
+            PiecePanel piece = (PiecePanel) e.getSource();
+            // GameMonitor.getInstance().makeMove(new Position(piece.getPositionX(), piece.getPositionY()));
+            GetMoveRes getMoveResponse = 
+                    new GetMoveRes(ResponseExecutorManager.getGetMoveResponseExecutor(getMoveCaller), 
+                                    new Position(piece.getPositionX(), piece.getPositionY()));
+            ResponseExecuting executing = new ResponseExecuting(getMoveResponse);
+            executing.start();
+        } 
     }
 
     @Override
@@ -143,32 +154,22 @@ public class BoardPanel extends JPanel implements MouseListener, ActionListener 
         
         System.out.println("Timer");
     }
+
+    @Override
+    public void getMoveFor(AbstractPlayer player) {
+        this.allowGetMove = true;
+        this.getMoveCaller = player;
+    }
 }
 
-//class BoardPanel_timer_actionAdapter implements java.awt.event.ActionListener
-//{
-//    BoardPanel adaptee ;
-//    List<PiecePanel> changedPieces;
-//    Board board;
-//    Timer timer;
-//    int maxTransitionCount = 28;
-//
-//    BoardPanel_timer_actionAdapter( BoardPanel adaptee, List<PiecePanel> changedPieces, Board board , Timer timer)
-//    {
-//        this.adaptee = adaptee ;
-//        this.changedPieces = changedPieces;
-//        this.board = board;
-//        this.timer = timer;
-//    }
-//
-//    @Override
-//    public void actionPerformed( ActionEvent e )
-//    {
-//        for (PiecePanel item : changedPieces) {
-//            item.transitionPieceTo(board.getPiece(item.getX(), item.getY()), maxTransitionCount);
-//        }
-//        maxTransitionCount--;
-//        if (maxTransitionCount >= 0)
-//            timer.stop();
-//    }
-//}
+class ResponseExecuting extends Thread {
+    private IResponse response;
+    public ResponseExecuting(IResponse response) {
+        this.response = response;
+    }
+    @Override
+    public void run() {
+        this.response.execute();
+    }
+}
+

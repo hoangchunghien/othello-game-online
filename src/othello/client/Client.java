@@ -11,23 +11,24 @@ import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
-import othello.command.Chat;
-import othello.command.GetBoards;
+import othello.command.ChatCmd;
+import othello.command.GetBoardsCmd;
 import othello.command.IChatCmdExec;
-import othello.command.IGetBoardsExec;
-import othello.command.IJoinExec;
-import othello.command.IListExec;
-import othello.command.ILoginExec;
-import othello.command.IMoveExec;
-import othello.command.IQuitExec;
-import othello.command.IRedoExec;
-import othello.command.IResignExec;
-import othello.command.IUndoExec;
-import othello.command.List;
+import othello.command.IGetBoardsCmdExec;
+import othello.command.IJoinCmdExec;
+import othello.command.IListCmdExec;
+import othello.command.ILoginCmdExec;
+import othello.command.IMoveCmdExec;
+import othello.command.IQuitCmdExec;
+import othello.command.IRedoCmdExec;
+import othello.command.IResignCmdExec;
+import othello.command.IUndoCmdExec;
+import othello.command.ListCmd;
 import othello.command.response.IResponse;
-import othello.command.Join;
-import othello.command.Login;
+import othello.command.JoinCmd;
+import othello.command.LoginCmd;
 import othello.command.response.ResponseFactory;
+import othello.common.AbstractPlayer;
 import othello.common.Position;
 
 import othello.configuration.Configuration;
@@ -38,8 +39,8 @@ import othello.configuration.Configuration;
  * @author Hien Hoang
  * @version Dec 2, 2013
  */
-public class Client implements IMoveExec, ILoginExec, IUndoExec, IRedoExec,
-        IResignExec, IQuitExec, IJoinExec, IListExec, IGetBoardsExec, IChatCmdExec {
+public class Client implements IMoveCmdExec, ILoginCmdExec, IUndoCmdExec, IRedoCmdExec,
+        IResignCmdExec, IQuitCmdExec, IJoinCmdExec, IListCmdExec, IGetBoardsCmdExec, IChatCmdExec {
     
     private String serverAddress;
     private int serverPort;
@@ -55,7 +56,6 @@ public class Client implements IMoveExec, ILoginExec, IUndoExec, IRedoExec,
     
     // User profile, the information about the user like username, 
     // full name, level, type, etc...
-    private Profile profile;
     
     
     static Client singletonObject;
@@ -75,7 +75,6 @@ public class Client implements IMoveExec, ILoginExec, IUndoExec, IRedoExec,
             loginCertificate = null;
             serverAddress = Configuration.getInstance().getSelectedServer().address;
             serverPort = Configuration.getInstance().getSelectedServer().port;
-            profile = new Profile();
             socket = new Socket(serverAddress, serverPort);
             output = socket.getOutputStream();
             input = socket.getInputStream();
@@ -106,17 +105,9 @@ public class Client implements IMoveExec, ILoginExec, IUndoExec, IRedoExec,
     @Override
     public void doLogin(String username, String password) {
         
-        Login login = new Login(null, username, password);
+        LoginCmd login = new LoginCmd(null, username, password);
         System.out.println("Invoking command: " + login.serializeJSON());
         writer.println(login.serializeJSON());   
-    }
-    
-    @Override
-    public void makeMove(Position position){
-        
-        String command = "move " + position.getX() + " " + position.getY();
-        System.out.println("Invoking command: " + command);
-        writer.println(command);
     }
 
     @Override
@@ -144,7 +135,7 @@ public class Client implements IMoveExec, ILoginExec, IUndoExec, IRedoExec,
     @Override
     public void join(String locationId) {
         
-        Join join = new Join(null, locationId);   
+        JoinCmd join = new JoinCmd(null, locationId);   
         System.out.println("Sending command: " + join.serializeJSON());
         writer.println(join.serializeJSON());
     }
@@ -152,7 +143,7 @@ public class Client implements IMoveExec, ILoginExec, IUndoExec, IRedoExec,
     @Override
     public void listLocations() {
         
-        List list = new List(null, List.LOCATION);
+        ListCmd list = new ListCmd(null, ListCmd.LOCATION);
         System.out.println("Sending command: " + list.serializeJSON());
         writer.println(list.serializeJSON());
     }
@@ -160,7 +151,7 @@ public class Client implements IMoveExec, ILoginExec, IUndoExec, IRedoExec,
     @Override
     public void listPlayers() {
         
-        List list = new List(null, List.PLAYER);
+        ListCmd list = new ListCmd(null, ListCmd.PLAYER);
         System.out.println("Sending command: " + list.serializeJSON());
         writer.println(list.serializeJSON());
     }
@@ -168,7 +159,7 @@ public class Client implements IMoveExec, ILoginExec, IUndoExec, IRedoExec,
     @Override
     public void listRooms() {
         
-        List list = new List(null, List.ROOM);
+        ListCmd list = new ListCmd(null, ListCmd.ROOM);
         System.out.println("Sending command: " + list.serializeJSON());
         writer.println(list.serializeJSON());
     }
@@ -176,16 +167,21 @@ public class Client implements IMoveExec, ILoginExec, IUndoExec, IRedoExec,
 
     @Override
     public void getBoards(String roomId) {
-        GetBoards getBoards = new GetBoards(null, roomId);
+        GetBoardsCmd getBoards = new GetBoardsCmd(null, roomId);
         System.out.println("Sending command: " + getBoards.serializeJSON());
         writer.println(getBoards.serializeJSON());
     }
 
     @Override
     public void chat(String msg) {
-        Chat chat = new Chat(this, msg);
+        ChatCmd chat = new ChatCmd(this, msg);
         System.out.println("Sending command: " + chat.serializeJSON());
         writer.println(chat.serializeJSON());
+    }
+
+    @Override
+    public void makeMove(Position position, AbstractPlayer caller) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

@@ -6,14 +6,21 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
-import othello.command.IMoveExec;
-import othello.command.IRedoExec;
-import othello.command.IUndoExec;
+import othello.command.IMoveCmdExec;
+import othello.command.IRedoCmdExec;
+import othello.command.IUndoCmdExec;
+import othello.command.notify.GameOverNtf;
+import othello.command.notify.IGameOverNtfExec;
+import othello.command.notify.IPassNtfExec;
+import othello.command.notify.IStateChangedNtfExec;
+import othello.command.notify.PassNtf;
+import othello.command.notify.StateChangedNtf;
 import othello.command.response.IMoveResExec;
+import othello.command.response.MoveRes;
+import othello.common.AbstractPlayer;
 import othello.common.Board;
 import othello.common.Piece;
 import othello.configuration.Configuration;
-import othello.engine.EngineFactory;
 import othello.ui.UIFactory;
 import othello.ui.control.IControl;
 
@@ -22,21 +29,10 @@ import othello.ui.control.IControl;
  * @author Hien Hoang
  * @version Nov 7, 2013
  */
-public class GameMonitor implements IMoveExec, IUndoExec, IRedoExec, IMoveResExec {
+public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
     
     private GameState state; // The current game state
     private int turn;
-    
-    private Thread engine;
-    
-    static GameMonitor singletonObject;   
-    
-    public static GameMonitor getInstance() {
-        if (singletonObject == null) {
-            singletonObject = new GameMonitor();
-        }
-        return singletonObject;
-    }
       
     // Store the game record
     List<Position> gameRecords;
@@ -52,18 +48,11 @@ public class GameMonitor implements IMoveExec, IUndoExec, IRedoExec, IMoveResExe
         undoState = new Stack();
         redoState = new Stack();
         recordStates = new Hashtable<>();
-        engine = new Thread(EngineFactory.getEngine());
-        UIFactory.getControlUI().show();
     }
     
     public GameState getGameStateCopy() {
         
         return this.state.clone();
-    }
-    
-    public boolean isComputerTurn() {
-        
-        return state.getPlayers()[turn].isComputerPlayer();
     }
     
     public boolean isGameOver() {
@@ -73,27 +62,16 @@ public class GameMonitor implements IMoveExec, IUndoExec, IRedoExec, IMoveResExe
     
     public void start() {
         
+        System.out.println("Loading UI Control...");
         IControl ControlUI = UIFactory.getControlUI();
         ControlUI.renderGameState(state);
         
-        // Start the engine
-        engine.start();
-        // Allow user or computer to play
-        if (state.getCurrentPlayer().isComputerPlayer()) {
-            
-            ControlUI.notifyMessage("Computer thinking...");
-            //EngineFactory.getEngine().allowGenerateMove(state);
-            //engine.start();
-        }
-        else {
-            
-            ControlUI.notifyMessage("Your turn");
-            ControlUI.allowMakeMove();
-        }
+        System.out.println("Allowing make move...");
+        state.getCurrentPlayer().fireMoveTurn(state);
     }
     
     public void restart() {
-        singletonObject = new GameMonitor();
+        
         this.start();
     }
        
@@ -105,26 +83,23 @@ public class GameMonitor implements IMoveExec, IUndoExec, IRedoExec, IMoveResExe
     }
      
     @Override
-    public void makeMove(Position p) {
+    public void makeMove(Position p, AbstractPlayer caller) {
         this.redoState.removeAllElements();
 
         Piece currentPiece = state.getCurrentPlayer().getPiece();
         Board currentBoard = state.getBoard();
-        othello.ui.control.IControl controlUI = UIFactory.getControlUI();
 
         if (!state.getBoard().isValidMove(currentPiece, p)) {
 
-            controlUI.notifyMessage("INVALID MOVE!!! TRY OTHER.");
-            controlUI.renderGameState(state);
-            controlUI.allowMakeMove();
+            MoveRes moveResponse = new MoveRes((IMoveResExec)caller, 
+                    MoveRes.REJECTED, "INVALID MOVE!!! TRY OTHER.", p);
+            moveResponse.execute();
+            
+            // Let player re get move
+            state.getCurrentPlayer().fireMoveTurn(state);
         }
         else {
 
-            //
-            // Make move
-            //
-
-            // Later add a record
             addRecord(p, state);
 
             // First make move
@@ -134,34 +109,30 @@ public class GameMonitor implements IMoveExec, IUndoExec, IRedoExec, IMoveResExe
             turn = 1 - turn;
             state.setCurrentPlayer(state.getPlayers()[turn]);
             state.calculateScore();        
-
+            
+            MoveRes moveResponse = new MoveRes((IMoveResExec)caller, MoveRes.ACCEPTED, "OK", p);
+            moveResponse.execute();
+            
+            // Notify state changed to all player
+            for (int i = 0; i < 2; i++) {
+                StateChangedNtf stateChangedNotify =
+                        new StateChangedNtf((IStateChangedNtfExec)state.getPlayers()[i], state);
+                stateChangedNotify.execute();
+            }
             // After made a move, check the board again for gameover or next player 
             // has any valid move ...
             if (currentBoard.hasAnyValidMove(state.getCurrentPlayer().getPiece())) {
 
-                controlUI.renderGameState(state);
-                // If Next player isn't computer, then allow ui to get move from user,
-                // otherwise let engine generate a move;
-                if (!state.getPlayers()[turn].isComputerPlayer()) {
-
-                    controlUI.allowMakeMove();
-                }
-                else {
-
-                    // Notify user computer is making a move
-                    controlUI.notifyMessage("Computer thinking...");
-
-                    // Let allow engine generate a move
-                    //EngineFactory.getEngine().allowGenerateMove(state);  
-                    //engine.start();
-
-                }
-
+                state.getCurrentPlayer().fireMoveTurn(state);
             }
             else if (currentBoard.isGameOver()) {
 
-                controlUI.renderGameState(state);
-                controlUI.notifyMessage("No more move. Game over!");
+                // Notify game over to all players
+                for (int i = 0; i < 2; i++) {
+                    GameOverNtf gameOverNotify = 
+                            new GameOverNtf((IGameOverNtfExec)state.getPlayers()[i]);
+                    gameOverNotify.execute();
+                 }
             }
             else { 
                 //Next player has no valid move change turn again if next player
@@ -172,23 +143,22 @@ public class GameMonitor implements IMoveExec, IUndoExec, IRedoExec, IMoveResExe
 
                 if (state.getBoard().hasAnyValidMove(state.getCurrentPlayer().getPiece())) {
 
-                    controlUI.renderGameState(state);
-                    controlUI.notifyMessage(state.getPlayers()[1-turn].getName() + " has no valid move. Passed!");
+                    // Notify to the player that pass the current turn
+                    PassNtf passNotify = new PassNtf((IPassNtfExec)state.getPlayers()[1-turn]);
+                    passNotify.execute();
 
-                    if (state.getCurrentPlayer().isComputerPlayer()) {
-
-                        //EngineFactory.getEngine().allowGenerateMove(state);
-                    } 
-                    else {
-
-                        controlUI.allowMakeMove();
-                    }
+                    // Tell the current player to make move
+                    state.getCurrentPlayer().fireMoveTurn(state);
 
                 }
                 else {
 
-                    controlUI.renderGameState(state);
-                    controlUI.notifyMessage("No more move, game over!");
+                    // Notify game over to all players
+                    for (int i = 0; i < 2; i++) {
+                        GameOverNtf gameOverNotify = 
+                                new GameOverNtf((IGameOverNtfExec)state.getPlayers()[i]);
+                        gameOverNotify.execute();
+                     }
                 }
 
             }
@@ -205,11 +175,11 @@ public class GameMonitor implements IMoveExec, IUndoExec, IRedoExec, IMoveResExe
         if (!undoState.isEmpty()) {
 
             // Turn the undo to the last user move if play with computer
-            do {
-                this.redoState.push(this.state.clone());   // Copy this state to redo
-                this.state = (GameState) this.undoState.pop();  // Set this state to undo state
-                this.turn = (this.state.getCurrentPlayer() == this.state.getPlayers()[0])?0:1;
-            } while (!undoState.isEmpty() && this.state.getCurrentPlayer().isComputerPlayer());
+//            do {
+//                this.redoState.push(this.state.clone());   // Copy this state to redo
+//                this.state = (GameState) this.undoState.pop();  // Set this state to undo state
+//                this.turn = (this.state.getCurrentPlayer() == this.state.getPlayers()[0])?0:1;
+//            } while (!undoState.isEmpty() && this.state.getCurrentPlayer().isComputerPlayer());
 
             controlUI.notifyMessage("Undo OK");
         }
@@ -226,11 +196,11 @@ public class GameMonitor implements IMoveExec, IUndoExec, IRedoExec, IMoveResExe
         
         if (!redoState.isEmpty()) {
             
-            do {
-                this.undoState.push(this.state.clone());  // Make a copy of this state and store at undo
-                this.state = (GameState) redoState.pop();  // Set this state to redo
-                this.turn = (this.state.getCurrentPlayer() == this.state.getPlayers()[0])?0:1;
-            } while (this.state.getCurrentPlayer().isComputerPlayer() && !redoState.isEmpty());
+//            do {
+//                this.undoState.push(this.state.clone());  // Make a copy of this state and store at undo
+//                this.state = (GameState) redoState.pop();  // Set this state to redo
+//                this.turn = (this.state.getCurrentPlayer() == this.state.getPlayers()[0])?0:1;
+//            } while (this.state.getCurrentPlayer().isComputerPlayer() && !redoState.isEmpty());
             
             controlUI.notifyMessage("Redo OK");
         }
@@ -241,9 +211,5 @@ public class GameMonitor implements IMoveExec, IUndoExec, IRedoExec, IMoveResExe
         this.start();
     }
 
-    @Override
-    public void makeMoving(Position p) {
-        this.makeMove(p);
-    }
     
 }

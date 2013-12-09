@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
-import othello.command.response.Join;
+import othello.command.response.JoinRes;
 import othello.common.Piece;
 import othello.common.Position;
 
@@ -107,8 +107,8 @@ public class Board implements ILocation, IBoard {
             msg = "Joined";
         }
 
-        othello.command.response.Join joinRes = 
-                new Join(null, joined?Join.ACCEPTED:Join.REJECTED, msg, id);
+        othello.command.response.JoinRes joinRes = 
+                new JoinRes(null, joined?JoinRes.ACCEPTED:JoinRes.REJECTED, msg, id);
 
         sendTo(connectionSoc, joinRes.serializeJSON());
     }

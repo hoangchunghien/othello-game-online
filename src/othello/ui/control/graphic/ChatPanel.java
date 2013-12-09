@@ -3,6 +3,8 @@ package othello.ui.control.graphic;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.BorderFactory;
@@ -13,9 +15,9 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import othello.command.Chat;
-import othello.command.CommandFactory;
-import othello.command.ICommand;
+import othello.command.ChatCmd;
+import othello.command.ClientCommandExecutorManager;
+import othello.command.IChatCmdExec;
 import othello.command.notify.IChatNtfExec;
 import othello.command.response.IChatResExec;
 
@@ -70,6 +72,7 @@ public class ChatPanel extends JPanel implements IChatResExec, IChatNtfExec {
         messageEnterPanel.add(txtMessage);
         
         btnSend = new JButton("Send");
+        btnSend.addActionListener(new BtnSendActionListener());
         btnSend.setPreferredSize(new Dimension(70, 50));
         messageEnterPanel.add(btnSend);
         
@@ -90,6 +93,20 @@ public class ChatPanel extends JPanel implements IChatResExec, IChatNtfExec {
         messageModel.addElement(username + ": " + message);
     }
     
+    private void executeChatCommand() {
+        if (txtMessage.getText().equals("")) {
+            return;
+        }
+        
+        IChatCmdExec chatCmdExec = ClientCommandExecutorManager.getChatCommandExecutor();
+        if (chatCmdExec != null) {
+            ChatCmd chatCommand = new ChatCmd(chatCmdExec, txtMessage.getText());
+            chatCommand.execute();
+        }
+        
+        txtMessage.setText("");
+    }
+    
     private class ChatKeyListener implements KeyListener {
 
         @Override
@@ -99,15 +116,22 @@ public class ChatPanel extends JPanel implements IChatResExec, IChatNtfExec {
         @Override
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                ICommand cmd = CommandFactory.getCommand(Chat.NAME + " " + 
-                        txtMessage.getText());
-                cmd.execute();
-                txtMessage.setText("");
+                
+                executeChatCommand();  
             }
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
+        }
+        
+    }
+    
+    private class BtnSendActionListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            executeChatCommand();
         }
         
     }

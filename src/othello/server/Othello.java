@@ -52,7 +52,7 @@ public class Othello {
                 Player player = new Player(connection);
                 player.setLocation(station);
                 player.getLocation().join(connection);
-                player.start();
+                player.startListenFromClient();
             }
             catch (IOException ie) {
                 ie.printStackTrace();

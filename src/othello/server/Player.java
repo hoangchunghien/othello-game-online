@@ -15,26 +15,29 @@ import othello.command.IChatCmdExec;
 import othello.command.ICommand;
 import othello.command.IDrawExec;
 import othello.command.IExec;
-import othello.command.IGetBoardsExec;
-import othello.command.IJoinExec;
-import othello.command.IListExec;
-import othello.command.ILoginExec;
-import othello.command.IMoveExec;
-import othello.command.IQuitExec;
-import othello.command.IRedoExec;
-import othello.command.IResignExec;
-import othello.command.IUndoExec;
-import othello.command.Join;
+import othello.command.IGetBoardsCmdExec;
+import othello.command.IJoinCmdExec;
+import othello.command.IListCmdExec;
+import othello.command.ILoginCmdExec;
+import othello.command.IMoveCmdExec;
+import othello.command.IQuitCmdExec;
+import othello.command.IRedoCmdExec;
+import othello.command.IResignCmdExec;
+import othello.command.IUndoCmdExec;
+import othello.command.JoinCmd;
 import othello.command.response.ChatRes;
 import othello.command.response.GetBoardsRes;
-import othello.command.response.ListRooms;
+import othello.command.response.ListRoomsRes;
+import othello.common.AbstractPlayer;
 import othello.server.location.IBoard;
 import othello.server.location.ILocation;
 import othello.server.location.Station;
 import othello.common.Piece;
 import othello.common.Position;
+import othello.game.GameState;
 import othello.models.Board;
 import othello.models.Location;
+
 
 /**
  *
@@ -45,8 +48,8 @@ import othello.models.Location;
  * . it also communicate with other object in the server like Station, Room, 
  * . Board,...
  */
-public class Player extends Thread implements IExec, IJoinExec, IDrawExec, IListExec, 
-       ILoginExec, IMoveExec, IQuitExec, IRedoExec, IResignExec, IUndoExec, IGetBoardsExec, IChatCmdExec {
+public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDrawExec, IListCmdExec, 
+       ILoginCmdExec, IMoveCmdExec, IQuitCmdExec, IRedoCmdExec, IResignCmdExec, IUndoCmdExec, IGetBoardsCmdExec, IChatCmdExec {
     
     private Socket connection;
     private BufferedReader reader;
@@ -112,7 +115,7 @@ public class Player extends Thread implements IExec, IJoinExec, IDrawExec, IList
     private IBoard board;
     
     public Player(Socket connection) {
-        
+        super(Piece.UNDEFINED);
         this.connection = connection;
         
         // By default, join to the station first
@@ -124,7 +127,7 @@ public class Player extends Thread implements IExec, IJoinExec, IDrawExec, IList
     }
     
     public Player(Socket connection, ILocation location) {
-        
+        super(Piece.UNDEFINED);
         this.connection = connection;
         this.location = location;
         if (this.location.isBoard()) {
@@ -147,23 +150,10 @@ public class Player extends Thread implements IExec, IJoinExec, IDrawExec, IList
     }
     
     
-    @Override
-    public void run() {
-        try {
-            while (true) {
-                System.out.println("waiting command...");
-                JSONObject command = new JSONObject(reader.readLine());
-                System.out.println("Received command: " + command);
-                ICommand cmd = CommandFactory.getServerCommand(this, command);
-                if (cmd != null) {
-                    
-                    cmd.execute();
-                }
-            }
-        } catch (IOException ex) {
-                
-            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void startListenFromClient() {
+        
+        Listener listener = new Listener(reader, this);
+        listener.start();
     }
 
     @Override
@@ -177,15 +167,15 @@ public class Player extends Thread implements IExec, IJoinExec, IDrawExec, IList
                 setBoard((IBoard)_location);
             }
             String msg = "Joined";
-            othello.command.response.Join joinRes = 
-                    new othello.command.response.Join(null, Join.ACCEPTED, msg, locationId);
+            othello.command.response.JoinRes joinRes = 
+                    new othello.command.response.JoinRes(null, JoinCmd.ACCEPTED, msg, locationId);
             getWriter().println(joinRes.serializeJSON());
         }
         else {
             
             String msg = "Can't Join";
-            othello.command.response.Join joinRes = 
-                    new othello.command.response.Join(null, Join.REJECTED, msg, locationId);
+            othello.command.response.JoinRes joinRes = 
+                    new othello.command.response.JoinRes(null, JoinCmd.REJECTED, msg, locationId);
             getWriter().println(joinRes.serializeJSON());
         }
     }
@@ -210,7 +200,7 @@ public class Player extends Thread implements IExec, IJoinExec, IDrawExec, IList
     }
 
     @Override
-    public void makeMove(Position position) {
+    public void makeMove(Position position, AbstractPlayer caller) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -249,7 +239,7 @@ public class Player extends Thread implements IExec, IJoinExec, IDrawExec, IList
             room.numUsers = i;
             rooms.add(room);
         }
-        ListRooms listRoomsRes = new ListRooms(null, ListRooms.ACCEPTED , rooms);
+        ListRoomsRes listRoomsRes = new ListRoomsRes(null, ListRoomsRes.ACCEPTED , rooms);
         getWriter().println(listRoomsRes.serializeJSON());
     }
 
@@ -279,5 +269,49 @@ public class Player extends Thread implements IExec, IJoinExec, IDrawExec, IList
         ChatRes chatRes = new ChatRes(null, ChatRes.ACCEPTED, msg);
         getWriter().println(chatRes.serializeJSON());
     }
+
+    @Override
+    public AbstractPlayer clone() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void fireMoveTurn(GameState currentStateClone) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void makeMoving(Position p) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
+}
+class Listener extends Thread {
+    
+    private BufferedReader reader;
+    private Player player;
+    
+    public Listener(BufferedReader reader, Player player) {
+        this.reader = reader;
+        this.player = player;
+    }
+    
+    @Override
+    public void run() {
+        try {
+            while (true) {
+                System.out.println("waiting command...");
+                JSONObject command = new JSONObject(reader.readLine());
+                System.out.println("Received command: " + command);
+                ICommand cmd = CommandFactory.getServerCommand(player, command);
+                if (cmd != null) {
+                    
+                    cmd.execute();
+                }
+            }
+        } catch (IOException ex) {
+                
+            Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Type")
 public class TypeCfg {
+    public static String TYPE_ONLINE = "online";
+    public static String TYPE_OFFLINE = "offline";
     
     @XmlAttribute(name = "name")
     public String name;

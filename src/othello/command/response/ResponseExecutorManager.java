@@ -4,9 +4,10 @@
  */
 package othello.command.response;
 
+import othello.client.ClientGameMonitor;
+import othello.common.AbstractPlayer;
 import othello.configuration.Configuration;
 import othello.configuration.UICfg;
-import othello.game.GameMonitor;
 import othello.ui.control.graphic.ChatPanel;
 import othello.ui.control.graphic.LoginFrame;
 import othello.ui.control.graphic.PlayerListPanel;
@@ -44,7 +45,7 @@ public class ResponseExecutorManager {
     
     public static IMoveResExec getMoveResponseExecutor() {
         
-        return GameMonitor.getInstance();
+        return null;
     }
     
     public static IListLocationsResExec getListLocationsResponseExecutor() {
@@ -75,6 +76,11 @@ public class ResponseExecutorManager {
         }
         System.out.println("Executor not found...");
         return null;
+    }
+    
+    public static IGetMoveResExec getGetMoveResponseExecutor(AbstractPlayer caller) {
+        
+        return (IGetMoveResExec)caller;
     }
     
 }

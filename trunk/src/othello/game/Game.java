@@ -4,6 +4,9 @@
  */
 package othello.game;
 
+import othello.client.ClientGameMonitor;
+import othello.ui.UIFactory;
+
 /**
  *
  * @author Hien Hoang
@@ -16,12 +19,16 @@ public class Game {
 
     public Game() {
 
-        monitor = GameMonitor.getInstance();
+        monitor = ClientGameMonitor.getInstance();
     }
 
     public void play() {
 
+        System.out.println("Starting the game...");
         monitor.start();
+        
+        System.out.println("Showing the UI...");
+        UIFactory.getControlUI().show();
     }
     
 }

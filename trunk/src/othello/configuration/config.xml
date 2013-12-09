@@ -12,8 +12,8 @@
     </Players>
     
     <Playing>
-        <Type name = "online" selected = "true" />
-        <Type name = "offline"/>
+        <Type name = "online"/>
+        <Type name = "offline" selected = "true" />
     </Playing>
     
     <Board width = "8" height = "8"/>

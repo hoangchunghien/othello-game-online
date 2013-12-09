@@ -14,7 +14,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import othello.command.CommandFactory;
 import othello.command.ICommand;
-import othello.command.Login;
+import othello.command.LoginCmd;
 import othello.command.response.ILoginResExec;
 
 /**
@@ -134,7 +134,7 @@ public class LoginFrame extends JFrame implements ILoginResExec, ActionListener 
         JButton button = (JButton)e.getSource();
         if (button.getName().equalsIgnoreCase("btnlogin")) {
             
-            ICommand cmd = CommandFactory.getCommand(Login.NAME + " " + 
+            ICommand cmd = CommandFactory.getCommand(LoginCmd.NAME + " " + 
                     txtUsername.getText() + " " + new String(txtPassword.getPassword()));
             cmd.execute();
         }

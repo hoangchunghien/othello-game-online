@@ -8,8 +8,9 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import othello.client.ClientGameMonitor;
 import othello.configuration.Configuration;
-import othello.game.GameMonitor;
+import othello.configuration.TypeCfg;
 import othello.game.GameState;
 import othello.ui.control.graphic.*;
 /**
@@ -21,20 +22,25 @@ public class GraphicCtrl implements IControl {
 
     JFrame controlFrame = new JFrame();
     JPanel bPanel = new JPanel();
-    BoardPanel boardPanel = new BoardPanel();
+    BoardPanel boardPanel = BoardPanel.getInstance();
     Configuration cfg = Configuration.getInstance();
-    PlayerListPanel plPanel = PlayerListPanel.getInstance();
     
-//    PlayerListPanel playerListPanel = new PlayerListPanel();
-    // For animation
-//    private boolean isOnAnimation = false;
+    // Online components
+    PlayerListPanel plPanel;
+    
     
     public GraphicCtrl() {
         
+        // If playing type is online, let contruct the object for online play
+        if (cfg.getPlayingType().name.equalsIgnoreCase(TypeCfg.TYPE_ONLINE)) {
+            
+            plPanel = PlayerListPanel.getInstance();
+        }
         initialize();
     }
     
     private void initialize() {
+        
         controlFrame.setLayout(new GridBagLayout());
         controlFrame.setSize(800, 600);
         controlFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -52,26 +58,23 @@ public class GraphicCtrl implements IControl {
         bPanel.add(boardPanel);
         controlFrame.add(bPanel,c);
         
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.ipady = 300;
-        c.ipadx = 200;
-        c.gridx = 1;
-        c.gridy = 3;
-        c.gridheight = 1;
-        controlFrame.add(plPanel,c);
-        
+        // Loading online component
+        if (cfg.getPlayingType().name.equalsIgnoreCase(TypeCfg.TYPE_ONLINE)) {
+            
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.ipady = 300;
+            c.ipadx = 200;
+            c.gridx = 1;
+            c.gridy = 3;
+            c.gridheight = 1;
+            controlFrame.add(plPanel,c);
+        }
     }
     
     @Override
     public void renderGameState(GameState gameState) {
-        
-        //System.out.print("Render board");
         try {
-            // boardPanel.repaint();
-            Thread.holdsLock(GameMonitor.getInstance());          
             boardPanel.renderBoard(gameState.getBoard());
-            // Thread.sleep(10000);
-            // boardPanel.repaint();
         } catch (InterruptedException ex) {
             Logger.getLogger(GraphicCtrl.class.getName()).log(Level.SEVERE, null, ex);
         }

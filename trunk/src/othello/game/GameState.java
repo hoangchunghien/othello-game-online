@@ -2,9 +2,11 @@ package othello.game;
 
 import org.json.JSONObject;
 import java.util.Date;
+import othello.client.ComputerPlayer;
+import othello.client.HumanPlayer;
 import othello.common.Board;
 import othello.common.Piece;
-import othello.common.Player;
+import othello.common.AbstractPlayer;
 import othello.configuration.Configuration;
 /**
  *
@@ -14,8 +16,8 @@ import othello.configuration.Configuration;
  */
 public class GameState {
     private Board board;
-    private Player currentPlayer;
-    private Player players[];
+    private AbstractPlayer currentPlayer;
+    private AbstractPlayer players[];
     private long gameBegin;
     private long turnBegin;
     private boolean terminated;
@@ -24,13 +26,31 @@ public class GameState {
     
     public GameState() {
         board = new Board(config.board.width, config.board.height);
-        players = new Player[2];
-        players[0] = new Player(config.players.players.get(0).getPiece());
-        players[0].setComputerPlayer(config.players.players.get(0).isComputer());
+        players = new AbstractPlayer[2];
+        
+        // Initialze for first player
+        if (config.players.players.get(0).isComputer()) {
+            
+            players[0] = new ComputerPlayer(config.players.players.get(0).getPiece());    
+        } 
+        else {
+            
+            players[0] = new HumanPlayer(config.players.players.get(0).getPiece());    
+        }
         players[0].setName(config.players.players.get(0).getName());
-        players[1] = new Player(config.players.players.get(1).getPiece());
-        players[1].setComputerPlayer(config.players.players.get(1).isComputer());
-        players[1].setName(config.players.players.get(1).getName());
+        
+        // Initialze for second player
+        if (config.players.players.get(1).isComputer()) {
+            
+            players[1] = new ComputerPlayer(config.players.players.get(1).getPiece());
+        } 
+        else {
+            
+            players[1] = new HumanPlayer(config.players.players.get(1).getPiece());
+        }
+        
+        players[1].setName(config.players.players.get(1).getName());       
+        
         currentPlayer = players[config.players.getFirstPlayerIndex()];
         terminated = false;
         turnBegin = 0;
@@ -62,15 +82,15 @@ public class GameState {
         gameBegin = new Date().getTime();
     }
     
-    public Player[] getPlayers() {
+    public AbstractPlayer[] getPlayers() {
         return this.players;
     }
     
-    public Player getCurrentPlayer() {
+    public AbstractPlayer getCurrentPlayer() {
         return this.currentPlayer;
     }
     
-    public void setCurrentPlayer(Player current) {
+    public void setCurrentPlayer(AbstractPlayer current) {
         this.currentPlayer = current;
     }
     
@@ -131,11 +151,25 @@ public class GameState {
         this.gameBegin = jObj.getLong("gameBegin");
         this.turnBegin = jObj.getLong("turnBegin");
         this.currentPlayer.deserializeJson(jObj.getJSONObject("currentPlayer"));
-        this.players = new Player[2];
-        this.players[0] = new Player(Piece.EMPTY);
+        this.players = new AbstractPlayer[2];
+        
+        if (jObj.getJSONObject("player1").getString("type").equalsIgnoreCase(HumanPlayer.TYPE)) {
+            this.players[0] = new HumanPlayer(Piece.EMPTY);
+        }
+        else {
+            this.players[0] = new ComputerPlayer(Piece.EMPTY);
+        }
         this.players[0].deserializeJson(jObj.getJSONObject("player1"));
-        this.players[1] = new Player(Piece.EMPTY);
+        
+        if (jObj.getJSONObject("player2").getString("type").equalsIgnoreCase(HumanPlayer.TYPE)) {
+            this.players[1] = new HumanPlayer(Piece.EMPTY);
+        }
+        else {
+            this.players[1] = new ComputerPlayer(Piece.EMPTY);
+        }
         this.players[1].deserializeJson(jObj.getJSONObject("player2"));
+        
+        
         if (this.currentPlayer.getName().equals(this.players[0].getName()))
             this.currentPlayer = this.players[0];
         else
@@ -145,9 +179,9 @@ public class GameState {
     
     public void calculateScore() {
         
-        Player p1 = this.getPlayers()[0];
+        AbstractPlayer p1 = this.getPlayers()[0];
         p1.setScore(this.getBoard().getPiecesCount(p1.getPiece()));
-        Player p2 = this.getPlayers()[1];
+        AbstractPlayer p2 = this.getPlayers()[1];
         p2.setScore(this.getBoard().getPiecesCount(p2.getPiece()));
     }
 }

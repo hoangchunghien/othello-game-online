@@ -2,6 +2,7 @@ package othello.command;
 
 import org.json.JSONObject;
 import othello.client.Client;
+import othello.client.ClientGameMonitor;
 import othello.common.Position;
 import othello.configuration.Configuration;
 import othello.game.GameMonitor;
@@ -16,90 +17,90 @@ public class CommandFactory {
     public static ICommand getCommand(String str) {
         String element[] = str.split(" ");
         switch (element[0].toLowerCase()) {
-            case Move.NAME:
+            case MoveCmd.NAME:
             {
                 if (element.length >= 3) {
-                    IMoveExec moveExecutor;
+                    IMoveCmdExec moveExecutor;
                     if (Configuration.getInstance().getPlayingType()
                             .name.equalsIgnoreCase("offline")) {
-                        moveExecutor = GameMonitor.getInstance();
+                        moveExecutor = ClientGameMonitor.getInstance();
                     }
                     else {
                         moveExecutor = Client.getInstance();
                     }
                     Position p = new Position(Integer.parseInt(element[1]),
                             Integer.parseInt(element[2]));
-                    return new Move(moveExecutor, p);
+//                    return new MoveCmd(moveExecutor, p);
                 }
                 else 
                     return null;
             }
-            case Undo.NAME: 
+            case UndoCmd.NAME: 
             {
-                IUndoExec undoExecutor;
+                IUndoCmdExec undoExecutor;
                 if (Configuration.getInstance().getPlayingType()
                             .name.equalsIgnoreCase("offline")) {
-                        undoExecutor = GameMonitor.getInstance();
+                        undoExecutor = ClientGameMonitor.getInstance();
                 }
                 else {
                     undoExecutor = Client.getInstance();
                 }
-                return new Undo(undoExecutor);
+                return new UndoCmd(undoExecutor);
                 
             }
-            case Redo.NAME:
+            case RedoCmd.NAME:
             {
-                IRedoExec redoExecutor;
+                IRedoCmdExec redoExecutor;
                 if (Configuration.getInstance().getPlayingType()
                             .name.equalsIgnoreCase("offline")) {
-                    redoExecutor = GameMonitor.getInstance();
+                    redoExecutor = ClientGameMonitor.getInstance();
                 }
                 else {
                     redoExecutor = Client.getInstance();
                 }
-                return new Redo(redoExecutor);
+                return new RedoCmd(redoExecutor);
             }
-            case Login.NAME:
+            case LoginCmd.NAME:
             {
                 if (element.length >= 3 && Configuration.getInstance().getPlayingType()
                             .name.equalsIgnoreCase("online")) {
-                    return new Login(Client.getInstance(), element[1], element[2]);
+                    return new LoginCmd(Client.getInstance(), element[1], element[2]);
                 }
                 else {
                     return null;
                 }
             
             }
-            case Join.NAME:
+            case JoinCmd.NAME:
             {
                 if (element.length >= 2 && Configuration.getInstance().getPlayingType()
                             .name.equalsIgnoreCase("online")) {
-                    return new Join(Client.getInstance(), element[1]);
+                    return new JoinCmd(Client.getInstance(), element[1]);
                 }
             }
-            case Draw.NAME:
+            case DrawCmd.NAME:
             {
                 
             }
-            case Resign.NAME:
+            case ResignCmd.NAME:
             {
                 
             }
-            case List.NAME:
+            case ListCmd.NAME:
             {
                 if (element.length >= 2 && Configuration.getInstance().getPlayingType()
                             .name.equalsIgnoreCase("online")) {
-                    return new List(Client.getInstance(), element[1]);
+                    return new ListCmd(Client.getInstance(), element[1]);
                 }
             }
-            case Quit.NAME:
+            case QuitCmd.NAME:
             {
                 
             }
-            case Chat.NAME:
+            case ChatCmd.NAME:
                 if (element.length >= 2 && Configuration.getInstance().getPlayingType()
                             .name.equalsIgnoreCase("online")) {
-                    return new Chat(Client.getInstance(), element[1]);
+                    return new ChatCmd(Client.getInstance(), element[1]);
                 }
             default:
                 return null;
@@ -109,55 +110,55 @@ public class CommandFactory {
     public static ICommand getCmdGetBoards(String roomId) {
         if (Configuration.getInstance().getPlayingType()
                             .name.equalsIgnoreCase("online")) {
-            return new GetBoards(Client.getInstance(), roomId);
+            return new GetBoardsCmd(Client.getInstance(), roomId);
         }
         return null;
     }
     
     public static ICommand getServerCommand(IExec executor, JSONObject jObj) {
         switch(jObj.getString("command")) {
-            case Join.NAME:
-                Join join = new Join((IJoinExec)executor, null);
+            case JoinCmd.NAME:
+                JoinCmd join = new JoinCmd((IJoinCmdExec)executor, null);
                 join.deserializeJSON(jObj);
                 return join;
-            case Move.NAME:
-                Move move = new Move((IMoveExec)executor, Position.UNDEFINED);
+            case MoveCmd.NAME:
+                MoveCmd move = new MoveCmd((IMoveCmdExec)executor, null, Position.UNDEFINED);
                 move.deserializeJSON(jObj);
                 return move;
-            case List.NAME:
-                List list = new List((IListExec)executor, null);
+            case ListCmd.NAME:
+                ListCmd list = new ListCmd((IListCmdExec)executor, null);
                 list.deserializeJSON(jObj);
                 return list;
-            case Login.NAME:
-                Login login = new Login((ILoginExec)executor, null, null);
+            case LoginCmd.NAME:
+                LoginCmd login = new LoginCmd((ILoginCmdExec)executor, null, null);
                 login.deserializeJSON(jObj);
                 return login;
-            case Draw.NAME:
-                Draw draw = new Draw((IDrawExec)executor, null);
+            case DrawCmd.NAME:
+                DrawCmd draw = new DrawCmd((IDrawExec)executor, null);
                 draw.deserializeJSON(jObj);
                 return draw;
-            case Undo.NAME:
-                Undo undo = new Undo((IUndoExec)executor);
+            case UndoCmd.NAME:
+                UndoCmd undo = new UndoCmd((IUndoCmdExec)executor);
                 undo.deserializeJSON(jObj);
                 return undo;
-            case Redo.NAME:
-                Redo redo = new Redo((IRedoExec)executor);
+            case RedoCmd.NAME:
+                RedoCmd redo = new RedoCmd((IRedoCmdExec)executor);
                 redo.deserializeJSON(jObj);
                 return redo;
-            case Resign.NAME:
-                Resign resign = new Resign((IResignExec)executor);
+            case ResignCmd.NAME:
+                ResignCmd resign = new ResignCmd((IResignCmdExec)executor);
                 resign.deserializeJSON(jObj);
                 return resign;
-            case Quit.NAME:
-                Quit quit = new Quit((IQuitExec)executor);
+            case QuitCmd.NAME:
+                QuitCmd quit = new QuitCmd((IQuitCmdExec)executor);
                 quit.deserializeJSON(jObj);
                 return quit;
-            case GetBoards.NAME:
-                GetBoards getBoards = new GetBoards((IGetBoardsExec)executor, null);
+            case GetBoardsCmd.NAME:
+                GetBoardsCmd getBoards = new GetBoardsCmd((IGetBoardsCmdExec)executor, null);
                 getBoards.deserializeJSON(jObj);
                 return getBoards;
-            case Chat.NAME:
-                Chat chat = new Chat((IChatCmdExec)executor, null);
+            case ChatCmd.NAME:
+                ChatCmd chat = new ChatCmd((IChatCmdExec)executor, null);
                 chat.deserializeJSON(jObj);
                 return chat;
             default:

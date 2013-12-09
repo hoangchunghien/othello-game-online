@@ -10,9 +10,9 @@ import othello.configuration.Configuration;
  */
 public class EngineFactory {
     
-    private static AEngine singletonObject;
+    private static AbstractEngine singletonObject;
     
-    public static AEngine getEngine() {
+    public static AbstractEngine getEngine() {
         
         if (singletonObject == null) {
             switch (Configuration.getInstance().getSelectedEngine().name.toLowerCase()) {

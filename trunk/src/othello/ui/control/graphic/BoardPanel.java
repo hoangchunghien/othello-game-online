@@ -29,6 +29,7 @@ public class BoardPanel extends JPanel implements MouseListener, ActionListener,
     private Configuration cfg = Configuration.getInstance();
     private AbstractPlayer getMoveCaller;
     private boolean allowGetMove = false;
+    private static Object lock = new Object();
     
     private PiecePanel pieces[][] = new PiecePanel[cfg.board.height][cfg.board.width];
     private Board board;
@@ -39,10 +40,13 @@ public class BoardPanel extends JPanel implements MouseListener, ActionListener,
     private static BoardPanel singletonObject;
     
     public static BoardPanel getInstance() {
-        if (singletonObject == null) {
-            singletonObject = new BoardPanel();
+        synchronized(lock) {
+            if (singletonObject == null) {
+                singletonObject = new BoardPanel();
+            }
+
+            return singletonObject;
         }
-        return singletonObject;
     }
     
     public BoardPanel() {
@@ -59,7 +63,6 @@ public class BoardPanel extends JPanel implements MouseListener, ActionListener,
     public BoardPanel(LayoutManager layout) {
         
         super(layout);
-        // this.timer = new Timer(50, this);
         initialize();
     }
     
@@ -71,7 +74,6 @@ public class BoardPanel extends JPanel implements MouseListener, ActionListener,
         board = new Board(width, height);
         pixWidth = board.getWidth() * PiecePanel.PIC_SPACE;
         pixHeight = board.getHeight() * PiecePanel.PIC_SPACE;
-//        renderBoard(board);
         for (int i = 0; i < height; i++) {
             
             for (int j = 0; j < width; j++) {
@@ -105,7 +107,6 @@ public class BoardPanel extends JPanel implements MouseListener, ActionListener,
                 
                 if (board.getPiece(j, i) != this.board.getPiece(j, i)) {
                     
-                    // System.out.println(board.getPiece(j, i).toString() + " " + this.board.getPiece(j, i).toString());
                     result.add(pieces[i][j]);
                 }
             }
@@ -116,11 +117,9 @@ public class BoardPanel extends JPanel implements MouseListener, ActionListener,
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        
         if (this.allowGetMove) {
             this.allowGetMove = false;
             PiecePanel piece = (PiecePanel) e.getSource();
-            // GameMonitor.getInstance().makeMove(new Position(piece.getPositionX(), piece.getPositionY()));
             GetMoveRes getMoveResponse = 
                     new GetMoveRes(ResponseExecutorManager.getGetMoveResponseExecutor(getMoveCaller), 
                                     new Position(piece.getPositionX(), piece.getPositionY()));

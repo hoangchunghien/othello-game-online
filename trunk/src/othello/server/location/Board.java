@@ -1,9 +1,7 @@
 package othello.server.location;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -12,9 +10,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
-import othello.command.response.JoinRes;
+import othello.command.response.IJoinPlayerResExec;
+import othello.common.AbstractPlayer;
 import othello.common.Piece;
 import othello.common.Position;
+import othello.game.GameMonitor;
 
 /**
  *
@@ -31,9 +31,11 @@ public class Board implements ILocation, IBoard {
     private Dictionary<Socket, Piece> playerPiece;
     private Dictionary<Piece, Boolean> pieceSelected;
     private List<Piece> supportedPiece;
+    private GameMonitor gameMonitor;
     
     public Board() {
         
+        this.gameMonitor = new GameMonitor();
         this.connections = new ArrayList<Socket>();
         this.playerConnections = new ArrayList<Socket>();
         this.viewerConnections = new ArrayList<Socket>();
@@ -83,34 +85,31 @@ public class Board implements ILocation, IBoard {
     }
 
     @Override
-    public void joinPlayer(Socket connectionSoc) {
-        boolean joined = false;
-
-        for (Piece p : supportedPiece) {
-            if (pieceSelected.get(p) == null || 
-                    pieceSelected.get(p) == Boolean.FALSE) {
-
-                joined = true;
-                registerPiece(connectionSoc, p);
-                this.connections.add(connectionSoc);
-                this.playerConnections.add(connectionSoc);
-                break;
-            }
-        }
-
+    public void joinPlayer(AbstractPlayer player) {
+        
         String msg;
-        if (!joined) {
-            msg = "Can't join!!!";
+        IJoinPlayerResExec joinPlayerResExec = (IJoinPlayerResExec)player;
+        if (gameMonitor.getState().getPlayers()[0] == null) {
 
+            player.setPiece(Piece.BLACK);
+            gameMonitor.addPlayer(player);
+            gameMonitor.getState().setCurrentPlayer(player);
+            msg = "Joined";
+            joinPlayerResExec.joinAccepted(player);
+        } 
+        else if (gameMonitor.getState().getPlayers()[1] == null) {
+
+            player.setPiece(Piece.WHITE);
+            gameMonitor.addPlayer(player);
+            msg = "Joined";
+            joinPlayerResExec.joinAccepted(player);
         }
         else {
-            msg = "Joined";
+            msg = "Can't join, table full!!!";
+            
+            joinPlayerResExec.joinRejected(msg);
         }
 
-        othello.command.response.JoinRes joinRes = 
-                new JoinRes(null, joined?JoinRes.ACCEPTED:JoinRes.REJECTED, msg, id);
-
-        sendTo(connectionSoc, joinRes.serializeJSON());
     }
     
     private void sendTo(Socket soc, JSONObject jObj){
@@ -136,9 +135,8 @@ public class Board implements ILocation, IBoard {
     }
 
     @Override
-    public void disjoinPlayer(Socket connectionSoc) {
-        this.connections.remove(connectionSoc);
-        this.playerConnections.remove(connectionSoc);
+    public void disjoinPlayer(AbstractPlayer player) {
+        
     }
 
     @Override
@@ -169,13 +167,19 @@ public class Board implements ILocation, IBoard {
     }
 
     @Override
-    public void makeMove(Socket connectionSoc, Position position) {
+    public void makeMove(othello.common.AbstractPlayer player, Position position) {
         
+        this.gameMonitor.makeMove(position, player);
     }
 
     @Override
     public ILocation getLocationById(String id) {
         return null;
+    }
+
+    @Override
+    public void setReady(AbstractPlayer player) {
+        gameMonitor.setReady(player);
     }
     
 }

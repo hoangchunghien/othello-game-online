@@ -27,22 +27,22 @@ public class Othello {
                 Configuration.getInstance().port.number);
         System.out.println("Othello server running");
         Station station = new Station();
-        List<Room> rooms = new ArrayList<Room>();
-        station.setRooms(rooms);
-        for (int i = 0; i < 10; i++) {
-            Room room = new Room();
-            room.setName("room " + i);
-            room.setId("room" + i);
-            List<Board> boards = new ArrayList<Board>();
-            room.setBoards(boards);
-            for (int j = 0; j < 10; j++) {
+//        List<Room> rooms = new ArrayList<Room>();
+//        station.setRooms(rooms);
+//        for (int i = 0; i < 10; i++) {
+//            Room room = new Room();
+//            room.setName("room " + i);
+//            room.setId("room" + i);
+//            List<Board> boards = new ArrayList<Board>();
+//            room.setBoards(boards);
+//            for (int j = 0; j < 10; j++) {
                 Board board = new Board();
-                board.setId("board" + i + j);
-                board.setName("Board " + i + j);
-                boards.add(board);
-            }
-            rooms.add(room);
-        }
+                board.setId("board" +1);
+                board.setName("Board " + 1);
+//                boards.add(board);
+//            }
+//            rooms.add(room);
+//        }
         
         while (true) {
             
@@ -50,7 +50,7 @@ public class Othello {
                 Socket connection = listener.accept();
                 System.out.println("Player accepted");
                 Player player = new Player(connection);
-                player.setLocation(station);
+                player.setLocation(board);
                 player.getLocation().join(connection);
                 player.startListenFromClient();
             }

@@ -22,12 +22,16 @@ public class GameOverNtf implements INotification {
 
     @Override
     public JSONObject serializeJSON() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        JSONObject json = new JSONObject();
+        json.put("cmdType", "notify");
+        json.put("command", NAME);
+        return json;
     }
 
     @Override
     public void deserializeJSON(JSONObject json) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
     
 }

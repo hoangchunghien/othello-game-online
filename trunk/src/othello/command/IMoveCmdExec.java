@@ -4,7 +4,6 @@
  */
 package othello.command;
 
-import othello.common.AbstractPlayer;
 import othello.common.Position;
 
 /**
@@ -13,5 +12,5 @@ import othello.common.Position;
  */
 public interface IMoveCmdExec {
     
-    public void makeMove(Position position, AbstractPlayer caller);
+    public void makeMove(Position position, othello.common.AbstractPlayer caller);
 }

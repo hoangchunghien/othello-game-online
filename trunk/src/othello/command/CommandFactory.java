@@ -1,11 +1,11 @@
 package othello.command;
 
 import org.json.JSONObject;
-import othello.client.Client;
+import othello.client.OnlineGameMonitor;
 import othello.client.ClientGameMonitor;
+import othello.common.AbstractPlayer;
 import othello.common.Position;
 import othello.configuration.Configuration;
-import othello.game.GameMonitor;
 
 /**
  *
@@ -26,7 +26,7 @@ public class CommandFactory {
                         moveExecutor = ClientGameMonitor.getInstance();
                     }
                     else {
-                        moveExecutor = Client.getInstance();
+                        moveExecutor = OnlineGameMonitor.getInstance();
                     }
                     Position p = new Position(Integer.parseInt(element[1]),
                             Integer.parseInt(element[2]));
@@ -43,7 +43,7 @@ public class CommandFactory {
                         undoExecutor = ClientGameMonitor.getInstance();
                 }
                 else {
-                    undoExecutor = Client.getInstance();
+                    undoExecutor = OnlineGameMonitor.getInstance();
                 }
                 return new UndoCmd(undoExecutor);
                 
@@ -56,7 +56,7 @@ public class CommandFactory {
                     redoExecutor = ClientGameMonitor.getInstance();
                 }
                 else {
-                    redoExecutor = Client.getInstance();
+                    redoExecutor = OnlineGameMonitor.getInstance();
                 }
                 return new RedoCmd(redoExecutor);
             }
@@ -64,7 +64,7 @@ public class CommandFactory {
             {
                 if (element.length >= 3 && Configuration.getInstance().getPlayingType()
                             .name.equalsIgnoreCase("online")) {
-                    return new LoginCmd(Client.getInstance(), element[1], element[2]);
+                    return new LoginCmd(OnlineGameMonitor.getInstance(), element[1], element[2]);
                 }
                 else {
                     return null;
@@ -75,7 +75,7 @@ public class CommandFactory {
             {
                 if (element.length >= 2 && Configuration.getInstance().getPlayingType()
                             .name.equalsIgnoreCase("online")) {
-                    return new JoinCmd(Client.getInstance(), element[1]);
+                    return new JoinCmd(OnlineGameMonitor.getInstance(), element[1]);
                 }
             }
             case DrawCmd.NAME:
@@ -90,7 +90,7 @@ public class CommandFactory {
             {
                 if (element.length >= 2 && Configuration.getInstance().getPlayingType()
                             .name.equalsIgnoreCase("online")) {
-                    return new ListCmd(Client.getInstance(), element[1]);
+                    return new ListCmd(OnlineGameMonitor.getInstance(), element[1]);
                 }
             }
             case QuitCmd.NAME:
@@ -100,7 +100,7 @@ public class CommandFactory {
             case ChatCmd.NAME:
                 if (element.length >= 2 && Configuration.getInstance().getPlayingType()
                             .name.equalsIgnoreCase("online")) {
-                    return new ChatCmd(Client.getInstance(), element[1]);
+                    return new ChatCmd(OnlineGameMonitor.getInstance(), element[1]);
                 }
             default:
                 return null;
@@ -110,7 +110,7 @@ public class CommandFactory {
     public static ICommand getCmdGetBoards(String roomId) {
         if (Configuration.getInstance().getPlayingType()
                             .name.equalsIgnoreCase("online")) {
-            return new GetBoardsCmd(Client.getInstance(), roomId);
+            return new GetBoardsCmd(OnlineGameMonitor.getInstance(), roomId);
         }
         return null;
     }
@@ -161,6 +161,10 @@ public class CommandFactory {
                 ChatCmd chat = new ChatCmd((IChatCmdExec)executor, null);
                 chat.deserializeJSON(jObj);
                 return chat;
+            case JoinPlayerCmd.NAME:
+                JoinPlayerCmd joinPlayer = new JoinPlayerCmd((IJoinPlayerCmdExec)executor, (AbstractPlayer)executor);
+                joinPlayer.deserializeJSON(jObj);
+                return joinPlayer;
             default:
                 return null;
         }

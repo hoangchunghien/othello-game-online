@@ -8,5 +8,5 @@ import othello.common.Position;
  */
 public interface IMoveNtfExec {
     
-    public void makeMoving(Position p);
+    public void notifyMoving(Position p);
 }

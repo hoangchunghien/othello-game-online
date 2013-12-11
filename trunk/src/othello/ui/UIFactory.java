@@ -3,7 +3,7 @@ package othello.ui;
 import othello.configuration.Configuration;
 import othello.ui.configuration.ConsoleCfg;
 import othello.ui.configuration.IConfiguration;
-import othello.ui.control.IControl;
+import othello.ui.control.AbstractControlUI;
 import othello.ui.control.ConsoleCtrl;
 import othello.ui.control.GraphicCtrl;
 /**
@@ -13,10 +13,10 @@ import othello.ui.control.GraphicCtrl;
  */
 public class UIFactory {
     
-    static IControl singletonControlUI;
+    static AbstractControlUI singletonControlUI;
     static IConfiguration singletonConfigrationUI;
     
-    public static IControl getControlUI() {
+    public static AbstractControlUI getControlUI() {
         
         if (singletonControlUI == null) {
             switch (Configuration.getInstance().getSelectedControlUI().name.toLowerCase()) {

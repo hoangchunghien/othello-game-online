@@ -5,15 +5,19 @@
 package othello.common;
 
 import org.json.JSONObject;
+import othello.command.notify.IGameOverNtfExec;
+import othello.command.notify.IPassNtfExec;
 import othello.command.response.IGetMoveResExec;
-import othello.game.GameState;
+import othello.command.response.IMoveResExec;
+import othello.game.GameStateChangedListener;
 /**
  *
  * @author Hien Hoang
  * @since Oct 22, 2013
  * @version Dec 8, 2013
  */
-public abstract class AbstractPlayer implements IGetMoveResExec {
+public abstract class AbstractPlayer implements IGetMoveResExec, IMoveResExec,
+        GameStateChangedListener, IPassNtfExec, IGameOverNtfExec {
     
     
     Piece piece;
@@ -79,7 +83,7 @@ public abstract class AbstractPlayer implements IGetMoveResExec {
     @Override
     public abstract AbstractPlayer clone();
     
-    public abstract void fireMoveTurn(GameState currentStateClone);
+    public abstract void fireMoveTurn();
     
     @Override
     public String toString() {

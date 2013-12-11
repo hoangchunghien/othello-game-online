@@ -21,7 +21,7 @@ public class MoveNtf implements INotification {
     
     @Override
     public void execute() {
-        moveNtfExec.makeMoving(position);
+        moveNtfExec.notifyMoving(position);
     }
 
     @Override

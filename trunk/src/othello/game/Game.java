@@ -5,6 +5,9 @@
 package othello.game;
 
 import othello.client.ClientGameMonitor;
+import othello.client.OnlineGameMonitor;
+import othello.configuration.Configuration;
+import othello.configuration.TypeCfg;
 import othello.ui.UIFactory;
 
 /**
@@ -16,19 +19,26 @@ import othello.ui.UIFactory;
 public class Game {
 
     GameMonitor monitor;
+    OnlineGameMonitor onlineMonitor;
+    Configuration cfg = Configuration.getInstance();
 
     public Game() {
-
-        monitor = ClientGameMonitor.getInstance();
+        
+        if (cfg.getPlayingType().name.equalsIgnoreCase(TypeCfg.TYPE_ONLINE)) {
+            onlineMonitor = OnlineGameMonitor.getInstance();
+        } 
+        else {
+            monitor = ClientGameMonitor.getInstance();
+        }
     }
 
     public void play() {
 
         System.out.println("Starting the game...");
-        monitor.start();
+        if (cfg.getPlayingType().name.equalsIgnoreCase(TypeCfg.TYPE_OFFLINE)) {
+            monitor.start();
+        }
         
-        System.out.println("Showing the UI...");
-        UIFactory.getControlUI().show();
     }
     
 }

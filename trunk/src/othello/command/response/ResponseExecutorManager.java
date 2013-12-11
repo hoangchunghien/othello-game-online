@@ -4,9 +4,11 @@
  */
 package othello.command.response;
 
-import othello.client.ClientGameMonitor;
+import othello.Test;
+import othello.client.OnlineGameMonitor;
 import othello.common.AbstractPlayer;
 import othello.configuration.Configuration;
+import othello.configuration.TypeCfg;
 import othello.configuration.UICfg;
 import othello.ui.control.graphic.ChatPanel;
 import othello.ui.control.graphic.LoginFrame;
@@ -45,6 +47,9 @@ public class ResponseExecutorManager {
     
     public static IMoveResExec getMoveResponseExecutor() {
         
+        if (config.getPlayingType().name.equalsIgnoreCase(TypeCfg.TYPE_ONLINE)) {
+            return OnlineGameMonitor.getInstance();
+        }
         return null;
     }
     
@@ -81,6 +86,10 @@ public class ResponseExecutorManager {
     public static IGetMoveResExec getGetMoveResponseExecutor(AbstractPlayer caller) {
         
         return (IGetMoveResExec)caller;
+    }
+    
+    public static IJoinPlayerResExec getJoinPlayerResponseExecutor() {
+        return OnlineGameMonitor.getInstance();
     }
     
 }

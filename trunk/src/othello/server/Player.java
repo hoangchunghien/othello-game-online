@@ -17,6 +17,7 @@ import othello.command.IDrawExec;
 import othello.command.IExec;
 import othello.command.IGetBoardsCmdExec;
 import othello.command.IJoinCmdExec;
+import othello.command.IJoinPlayerCmdExec;
 import othello.command.IListCmdExec;
 import othello.command.ILoginCmdExec;
 import othello.command.IMoveCmdExec;
@@ -25,9 +26,17 @@ import othello.command.IRedoCmdExec;
 import othello.command.IResignCmdExec;
 import othello.command.IUndoCmdExec;
 import othello.command.JoinCmd;
+import othello.command.notify.GameOverNtf;
+import othello.command.notify.GameStateNtf;
+import othello.command.notify.IGameOverNtfExec;
+import othello.command.notify.MoveTurnNtf;
+import othello.command.notify.PassNtf;
 import othello.command.response.ChatRes;
 import othello.command.response.GetBoardsRes;
+import othello.command.response.IJoinPlayerResExec;
+import othello.command.response.JoinPlayerRes;
 import othello.command.response.ListRoomsRes;
+import othello.command.response.MoveRes;
 import othello.common.AbstractPlayer;
 import othello.server.location.IBoard;
 import othello.server.location.ILocation;
@@ -49,15 +58,13 @@ import othello.models.Location;
  * . Board,...
  */
 public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDrawExec, IListCmdExec, 
-       ILoginCmdExec, IMoveCmdExec, IQuitCmdExec, IRedoCmdExec, IResignCmdExec, IUndoCmdExec, IGetBoardsCmdExec, IChatCmdExec {
+       ILoginCmdExec, IMoveCmdExec, IQuitCmdExec, IRedoCmdExec, IResignCmdExec, IUndoCmdExec, IGetBoardsCmdExec, 
+       IChatCmdExec, IJoinPlayerResExec, IJoinPlayerCmdExec {
     
     private Socket connection;
     private BufferedReader reader;
     private PrintWriter writer;
     private ILocation location;
-    private Piece piece;
-    private int score = 0;
-    private String playerName = "undefined";
     
     public Socket getConnection() {
         return connection;
@@ -70,32 +77,7 @@ public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDraw
     public void setWriter(PrintWriter writer) {
         this.writer = writer;
     }
-    
-    public void setPlayerName(String name) {
-        
-        this.playerName = name;
-    }
-    
-    public String getPlayerName() {
-     
-        return this.playerName;
-    }
-
-    public Piece getPiece() {
-        return piece;
-    }
-
-    public void setPiece(Piece piece) {
-        this.piece = piece;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
+   
    
     public ILocation getLocation() {
         return location;
@@ -200,8 +182,12 @@ public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDraw
     }
 
     @Override
-    public void makeMove(Position position, AbstractPlayer caller) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void makeMove(Position position, othello.common.AbstractPlayer caller) {
+        
+        if (location.isBoard()) {
+            IBoard board = (IBoard)location;
+            board.makeMove(this, position);
+        }
     }
 
     @Override
@@ -272,17 +258,79 @@ public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDraw
 
     @Override
     public AbstractPlayer clone() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        AbstractPlayer dup = new Player(this.connection);
+        dup.setName(this.getName());
+        dup.setPiece(this.getPiece());
+        dup.setScore(this.getScore());
+        return dup;
     }
 
     @Override
-    public void fireMoveTurn(GameState currentStateClone) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void fireMoveTurn() {
+        MoveTurnNtf moveTurnNtf = new MoveTurnNtf(null);
+        getWriter().println(moveTurnNtf.serializeJSON());
     }
 
     @Override
     public void makeMoving(Position p) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void processMoveAccepted(Position postion) {
+        MoveRes moveRes = new MoveRes(null, MoveRes.ACCEPTED, "OK", postion);
+        getWriter().println(moveRes.serializeJSON());
+    }
+
+    @Override
+    public void processMoveRejected(String msg) {
+        MoveRes moveRes = new MoveRes(null, MoveRes.REJECTED, "Invalid move!!!", Position.UNDEFINED);
+        getWriter().println(moveRes.serializeJSON());
+    }
+
+    @Override
+    public void joinAccepted(AbstractPlayer player) {
+        // Return join player response to client
+        JoinPlayerRes joinPlayerRes = new JoinPlayerRes(null, JoinPlayerRes.ACCEPTED, "OK", player);
+        this.getWriter().println(joinPlayerRes.serializeJSON());
+        
+        if (location.isBoard()) {
+            IBoard board = (IBoard)location;
+            board.setReady(player);
+        }
+    }
+
+    @Override
+    public void joinRejected(String message) {
+        // Return join player response failure to client
+        JoinPlayerRes joinPlayerRes = new JoinPlayerRes(null, JoinPlayerRes.REJECTED, "Can't join", null);
+        this.getWriter().println(joinPlayerRes.serializeJSON());
+    }
+
+    @Override
+    public void joinPlayer(AbstractPlayer player) {
+        if (location.isBoard()) {
+            IBoard board = (IBoard)location;
+            board.joinPlayer(player);
+        }
+    }
+
+    @Override
+    public void fireStateChanged(GameState newState) {
+        GameStateNtf gameStateNotify = new GameStateNtf(null, newState);
+        getWriter().println(gameStateNotify.serializeJSON());
+    }
+
+    @Override
+    public void makePassing() {
+        PassNtf passNtf = new PassNtf(null);
+        getWriter().println(passNtf.serializeJSON());
+    }
+
+    @Override
+    public void makeOverGame() {
+        GameOverNtf gameOverNtf = new GameOverNtf(null);
+        getWriter().println(gameOverNtf.serializeJSON());
     }
     
 }

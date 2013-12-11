@@ -13,7 +13,7 @@ import othello.game.GameState;
  * @version Nov 7, 2013
  * 
  */
-public class ConsoleCtrl implements IControl {
+public class ConsoleCtrl extends AbstractControlUI {
     private Scanner scanner = new Scanner(System.in);
 //    private GameState state;
     
@@ -73,6 +73,11 @@ public class ConsoleCtrl implements IControl {
     @Override
     public void allowMakeMove() {
         this.getCommand();
+    }
+
+    @Override
+    public void fireStateChanged(GameState newState) {
+        this.renderGameState(newState);
     }
     
     

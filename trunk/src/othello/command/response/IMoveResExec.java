@@ -8,6 +8,6 @@ import othello.common.Position;
  */
 public interface IMoveResExec {
     
-    public void processMoveAccepted();
+    public void processMoveAccepted(Position postion);
     public void processMoveRejected(String msg);
 }

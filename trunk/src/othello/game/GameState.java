@@ -8,6 +8,7 @@ import othello.common.Board;
 import othello.common.Piece;
 import othello.common.AbstractPlayer;
 import othello.configuration.Configuration;
+import othello.configuration.TypeCfg;
 /**
  *
  * @author Hien Hoang
@@ -15,43 +16,18 @@ import othello.configuration.Configuration;
  * 
  */
 public class GameState {
-    private Board board;
-    private AbstractPlayer currentPlayer;
-    private AbstractPlayer players[];
-    private long gameBegin;
-    private long turnBegin;
-    private boolean terminated;
+    protected Board board;
+    protected AbstractPlayer currentPlayer;
+    protected AbstractPlayer players[];
+    protected long gameBegin;
+    protected long turnBegin;
+    protected boolean terminated;
     
-    private Configuration config = Configuration.getInstance();
+    protected Configuration config = Configuration.getInstance();
     
     public GameState() {
         board = new Board(config.board.width, config.board.height);
         players = new AbstractPlayer[2];
-        
-        // Initialze for first player
-        if (config.players.players.get(0).isComputer()) {
-            
-            players[0] = new ComputerPlayer(config.players.players.get(0).getPiece());    
-        } 
-        else {
-            
-            players[0] = new HumanPlayer(config.players.players.get(0).getPiece());    
-        }
-        players[0].setName(config.players.players.get(0).getName());
-        
-        // Initialze for second player
-        if (config.players.players.get(1).isComputer()) {
-            
-            players[1] = new ComputerPlayer(config.players.players.get(1).getPiece());
-        } 
-        else {
-            
-            players[1] = new HumanPlayer(config.players.players.get(1).getPiece());
-        }
-        
-        players[1].setName(config.players.players.get(1).getName());       
-        
-        currentPlayer = players[config.players.getFirstPlayerIndex()];
         terminated = false;
         turnBegin = 0;
     }
@@ -146,34 +122,39 @@ public class GameState {
     }
     
     public void deserializeJson(JSONObject jObj){
-        
+        this.board = new Board();
         this.board.deserializeJson(jObj);
+        
         this.gameBegin = jObj.getLong("gameBegin");
         this.turnBegin = jObj.getLong("turnBegin");
-        this.currentPlayer.deserializeJson(jObj.getJSONObject("currentPlayer"));
-        this.players = new AbstractPlayer[2];
         
-        if (jObj.getJSONObject("player1").getString("type").equalsIgnoreCase(HumanPlayer.TYPE)) {
-            this.players[0] = new HumanPlayer(Piece.EMPTY);
+        if (config.getPlayingType().name.equalsIgnoreCase(TypeCfg.TYPE_OFFLINE)) {
+            this.currentPlayer = new ComputerPlayer(Piece.EMPTY);
+            this.currentPlayer.deserializeJson(jObj.getJSONObject("currentPlayer"));
+            this.players = new AbstractPlayer[2];
+
+            if (jObj.getJSONObject("player1").getString("type").equalsIgnoreCase(HumanPlayer.TYPE)) {
+                this.players[0] = new HumanPlayer(Piece.EMPTY);
+            }
+            else {
+                this.players[0] = new ComputerPlayer(Piece.EMPTY);
+            }
+            this.players[0].deserializeJson(jObj.getJSONObject("player1"));
+
+            if (jObj.getJSONObject("player2").getString("type").equalsIgnoreCase(HumanPlayer.TYPE)) {
+                this.players[1] = new HumanPlayer(Piece.EMPTY);
+            }
+            else {
+                this.players[1] = new ComputerPlayer(Piece.EMPTY);
+            }
+            this.players[1].deserializeJson(jObj.getJSONObject("player2"));
+
+
+            if (this.currentPlayer.getName().equals(this.players[0].getName()))
+                this.currentPlayer = this.players[0];
+            else
+                this.currentPlayer = this.players[1];
         }
-        else {
-            this.players[0] = new ComputerPlayer(Piece.EMPTY);
-        }
-        this.players[0].deserializeJson(jObj.getJSONObject("player1"));
-        
-        if (jObj.getJSONObject("player2").getString("type").equalsIgnoreCase(HumanPlayer.TYPE)) {
-            this.players[1] = new HumanPlayer(Piece.EMPTY);
-        }
-        else {
-            this.players[1] = new ComputerPlayer(Piece.EMPTY);
-        }
-        this.players[1].deserializeJson(jObj.getJSONObject("player2"));
-        
-        
-        if (this.currentPlayer.getName().equals(this.players[0].getName()))
-            this.currentPlayer = this.players[0];
-        else
-            this.currentPlayer = this.players[1];
                 
     }
     

@@ -33,9 +33,11 @@ public class MoveRes implements IResponse {
     public void execute() {
         
         if (status.equalsIgnoreCase(ACCEPTED)) {
-            moveResponseExecutor.processMoveAccepted();
+            
+            moveResponseExecutor.processMoveAccepted(position);
         } 
         else {
+            
             moveResponseExecutor.processMoveRejected(message);
         }
     }

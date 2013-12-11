@@ -14,14 +14,18 @@ import othello.common.Piece;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Player")
 public class PlayerCfg {
+    public static final String TYPE_HUMAN = "human";
+    public static final String TYPE_COMPUTER = "computer";
+    public static final String TYPE_ONLINE = "online";
+    
     @XmlAttribute(name = "id")
     protected int id;
     @XmlAttribute(name = "name")
     protected String name;
     @XmlAttribute(name = "color")
     protected String color;
-    @XmlAttribute(name = "isComputer")
-    protected boolean isComputer;
+    @XmlAttribute(name = "type")
+    protected String type;
     
     public int getId() {
         return this.id;
@@ -61,11 +65,11 @@ public class PlayerCfg {
        }
     }
     
-    public boolean isComputer() {
-        return this.isComputer;
+    public String getType() {
+        return this.type;
     }
-    public void setComputer(boolean isComputer) {
-        this.isComputer = isComputer;
+    public void setType(String type) {
+        this.type = type;
     }
     
 }

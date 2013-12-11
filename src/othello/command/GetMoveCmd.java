@@ -22,7 +22,9 @@ public class GetMoveCmd implements ICommand {
     }
     @Override
     public void execute() {
-        executor.getMoveFor(caller);
+        if (caller != null) {
+            executor.getMoveFor(caller);
+        }
     }
 
     @Override

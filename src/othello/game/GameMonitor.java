@@ -12,17 +12,14 @@ import othello.command.IUndoCmdExec;
 import othello.command.notify.GameOverNtf;
 import othello.command.notify.IGameOverNtfExec;
 import othello.command.notify.IPassNtfExec;
-import othello.command.notify.IStateChangedNtfExec;
 import othello.command.notify.PassNtf;
-import othello.command.notify.StateChangedNtf;
 import othello.command.response.IMoveResExec;
 import othello.command.response.MoveRes;
 import othello.common.AbstractPlayer;
 import othello.common.Board;
 import othello.common.Piece;
-import othello.configuration.Configuration;
 import othello.ui.UIFactory;
-import othello.ui.control.IControl;
+import othello.ui.control.AbstractControlUI;
 
 /**
  *
@@ -31,9 +28,11 @@ import othello.ui.control.IControl;
  */
 public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
     
-    private GameState state; // The current game state
-    private int turn;
-      
+    protected GameState state; // The current game state
+    protected int turn;
+    protected List<GameStateChangedListener> stateChangedListeners;
+    protected Dictionary<AbstractPlayer, Boolean> isReady;
+    protected List<AbstractPlayer> viewers;
     // Store the game record
     List<Position> gameRecords;
     Stack undoState;
@@ -42,12 +41,18 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
     
     public GameMonitor() {
         
+        stateChangedListeners = new ArrayList<>();
+        isReady = new Hashtable<>();
+        viewers = new ArrayList<>();
         state = new GameState();
-        turn = Configuration.getInstance().players.getFirstPlayerIndex();
         gameRecords = new ArrayList<Position>();
         undoState = new Stack();
         redoState = new Stack();
         recordStates = new Hashtable<>();
+    }
+    
+    public GameState getState() {
+        return this.state;
     }
     
     public GameState getGameStateCopy() {
@@ -62,12 +67,48 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
     
     public void start() {
         
-        System.out.println("Loading UI Control...");
-        IControl ControlUI = UIFactory.getControlUI();
-        ControlUI.renderGameState(state);
+        if (isReady.get(state.players[0]) == Boolean.FALSE || 
+                isReady.get(state.players[1]) == Boolean.FALSE) {
+            System.out.println("Waiting other player to ready...");
+        }
+        else {
+            System.out.println("All player is ready to play, game started.");
+            notifyStateChanged();
+            state.getCurrentPlayer().fireMoveTurn();
+        }
+    }
+    
+    public void addPlayer(AbstractPlayer player) {
         
-        System.out.println("Allowing make move...");
-        state.getCurrentPlayer().fireMoveTurn(state);
+        if (state.players[0] == null) {
+            
+            state.players[0] = player;
+            System.out.println(player.getName() + " joined first player.");
+            isReady.put(player, Boolean.FALSE);
+        } 
+        else if (state.players[1] == null) {
+            
+            state.players[1] = player;
+            System.out.println(player.getName() + " joined second player.");
+            isReady.put(player, Boolean.FALSE);
+        }
+        else {
+
+            viewers.add(player);
+            System.out.println("Player list already full, joined viewer list");
+        }
+        this.addGameStateChangedListener(player);
+    }
+    
+    public void setReady(AbstractPlayer player) {
+        
+        System.out.println("Player " + player.getName() + " ready.");
+        this.isReady.put(player, Boolean.TRUE);
+        
+        if (isReady.size() >= 2 && isReady.get(state.players[0]) != Boolean.FALSE && 
+                isReady.get(state.players[1]) != Boolean.FALSE) {
+            this.start();
+        }
     }
     
     public void restart() {
@@ -83,47 +124,44 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
     }
      
     @Override
-    public void makeMove(Position p, AbstractPlayer caller) {
+    public void makeMove(Position position, AbstractPlayer caller) {
         this.redoState.removeAllElements();
 
         Piece currentPiece = state.getCurrentPlayer().getPiece();
         Board currentBoard = state.getBoard();
 
-        if (!state.getBoard().isValidMove(currentPiece, p)) {
+        if (!state.getBoard().isValidMove(currentPiece, position)) {
 
             MoveRes moveResponse = new MoveRes((IMoveResExec)caller, 
-                    MoveRes.REJECTED, "INVALID MOVE!!! TRY OTHER.", p);
+                    MoveRes.REJECTED, "INVALID MOVE!!! TRY OTHER.", position);
             moveResponse.execute();
             
             // Let player re get move
-            state.getCurrentPlayer().fireMoveTurn(state);
+            state.getCurrentPlayer().fireMoveTurn();
         }
         else {
 
-            addRecord(p, state);
+            addRecord(position, state);
 
             // First make move
-            currentBoard.placePiece(currentPiece, p);
+            currentBoard.placePiece(currentPiece, position);
 
             // Then change turn and calculate score
             turn = 1 - turn;
             state.setCurrentPlayer(state.getPlayers()[turn]);
             state.calculateScore();        
             
-            MoveRes moveResponse = new MoveRes((IMoveResExec)caller, MoveRes.ACCEPTED, "OK", p);
+            // Notify state changed
+            notifyStateChanged();
+            
+            MoveRes moveResponse = new MoveRes((IMoveResExec)caller, MoveRes.ACCEPTED, "OK", position);
             moveResponse.execute();
             
-            // Notify state changed to all player
-            for (int i = 0; i < 2; i++) {
-                StateChangedNtf stateChangedNotify =
-                        new StateChangedNtf((IStateChangedNtfExec)state.getPlayers()[i], state);
-                stateChangedNotify.execute();
-            }
             // After made a move, check the board again for gameover or next player 
             // has any valid move ...
             if (currentBoard.hasAnyValidMove(state.getCurrentPlayer().getPiece())) {
 
-                state.getCurrentPlayer().fireMoveTurn(state);
+                state.getCurrentPlayer().fireMoveTurn();
             }
             else if (currentBoard.isGameOver()) {
 
@@ -148,7 +186,7 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
                     passNotify.execute();
 
                     // Tell the current player to make move
-                    state.getCurrentPlayer().fireMoveTurn(state);
+                    state.getCurrentPlayer().fireMoveTurn();
 
                 }
                 else {
@@ -170,7 +208,7 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
 
     @Override
     public void makeUndo() {
-        IControl controlUI = UIFactory.getControlUI();
+        AbstractControlUI controlUI = UIFactory.getControlUI();
 
         if (!undoState.isEmpty()) {
 
@@ -192,7 +230,7 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
 
     @Override
     public void makeRedo() {
-        IControl controlUI = UIFactory.getControlUI();
+        AbstractControlUI controlUI = UIFactory.getControlUI();
         
         if (!redoState.isEmpty()) {
             
@@ -210,6 +248,22 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
         }
         this.start();
     }
+    
+    public void addGameStateChangedListener(GameStateChangedListener listener) {
+        
+        this.stateChangedListeners.add(listener);
+    }
+    
+    public void removeGameStateChangedListener(GameStateChangedListener listener) {
+        
+        this.stateChangedListeners.remove(listener);
+    }
 
+    private void notifyStateChanged() {
+        for (GameStateChangedListener listener : stateChangedListeners) {
+            
+            listener.fireStateChanged(state);
+        }
+    }
     
 }

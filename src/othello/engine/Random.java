@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import othello.common.Board;
 import othello.common.Piece;
 import othello.common.Position;
-import othello.game.GameMonitor;
 
 /**
  *

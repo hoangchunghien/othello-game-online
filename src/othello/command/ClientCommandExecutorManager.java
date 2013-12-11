@@ -1,6 +1,6 @@
 package othello.command;
 
-import othello.client.Client;
+import othello.client.OnlineGameMonitor;
 import othello.client.ClientGameMonitor;
 import othello.client.ComputerPlayer;
 import othello.client.HumanPlayer;
@@ -18,35 +18,35 @@ public class ClientCommandExecutorManager {
     
     public static IChatCmdExec getChatCommandExecutor() {
         if (cfg.getPlayingType().name.equalsIgnoreCase("online")) {
-            return Client.getInstance();
+            return OnlineGameMonitor.getInstance();
         }
         return null;
     }
     
     public static IGetBoardsCmdExec getGetBoardsCommandExecutor() {
         if (cfg.getPlayingType().name.equalsIgnoreCase("online")) {
-            return Client.getInstance();
+            return OnlineGameMonitor.getInstance();
         }
         return null;
     }
     
     public static IJoinCmdExec getJoinCommandExecutor() {
         if (cfg.getPlayingType().name.equalsIgnoreCase("online")) {
-            return Client.getInstance();
+            return OnlineGameMonitor.getInstance();
         }
         return null;   
     }
     
     public static ILoginCmdExec getLoginCommandExecutor() {
         if (cfg.getPlayingType().name.equalsIgnoreCase("online")) {
-            return Client.getInstance();
+            return OnlineGameMonitor.getInstance();
         }
         return null;   
     }
     
     public static IMoveCmdExec getMoveCommandExecutor() {
         if (cfg.getPlayingType().name.equalsIgnoreCase("online")) {
-            return Client.getInstance();
+            return OnlineGameMonitor.getInstance();
         }
         else {
             return ClientGameMonitor.getInstance();
@@ -55,28 +55,28 @@ public class ClientCommandExecutorManager {
     
     public static IQuitCmdExec getQuitCommandExecutor() {
         if (cfg.getPlayingType().name.equalsIgnoreCase("online")) {
-            return Client.getInstance();
+            return OnlineGameMonitor.getInstance();
         }
         return null;   
     }
     
     public static IRedoCmdExec getRedoCommandExecutor() {
         if (cfg.getPlayingType().name.equalsIgnoreCase("online")) {
-            return Client.getInstance();
+            return OnlineGameMonitor.getInstance();
         }
         return null;   
     }
     
     public static IUndoCmdExec getUndoCommandExecutor() {
         if (cfg.getPlayingType().name.equalsIgnoreCase("online")) {
-            return Client.getInstance();
+            return OnlineGameMonitor.getInstance();
         }
         return null;   
     }
     
     public static IResignCmdExec getResignCommandExecutor() {
         if (cfg.getPlayingType().name.equalsIgnoreCase("online")) {
-            return Client.getInstance();
+            return OnlineGameMonitor.getInstance();
         }
         return null;
     }

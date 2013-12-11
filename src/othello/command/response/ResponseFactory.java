@@ -62,6 +62,13 @@ public class ResponseFactory {
                 ChatRes chatRes = new ChatRes(ResponseExecutorManager.getChatResponseExecutor(), null, null);
                 chatRes.deserializeJSON(jObj);
                 return chatRes;
+                
+            case JoinPlayerRes.NAME:
+                JoinPlayerRes joinPlayerRes = new JoinPlayerRes(ResponseExecutorManager.getJoinPlayerResponseExecutor(),
+                        null, null, null);
+                joinPlayerRes.deserializeJSON(jObj);
+                return joinPlayerRes;
+                
             default:
                 return null;
         }

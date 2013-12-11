@@ -1,14 +1,10 @@
 package othello.client;
 
 import othello.command.ClientCommandExecutorManager;
-import othello.command.GetMoveCmd;
 import othello.command.IGetMoveCmdExec;
 import othello.command.MoveCmd;
 import othello.command.notify.IGameOverNtfExec;
-import othello.command.notify.IPassNtfExec;
-import othello.command.notify.IStateChangedNtfExec;
 import othello.command.response.GetMoveRes;
-import othello.command.response.IMoveResExec;
 import othello.command.response.ResponseExecutorManager;
 import othello.common.AbstractPlayer;
 import othello.common.Board;
@@ -26,13 +22,13 @@ import othello.game.GameState;
  * Description 
  * . TODO
  */
-public class ComputerPlayer extends AbstractPlayer implements IGetMoveCmdExec, IGameOverNtfExec, 
-        IPassNtfExec, IStateChangedNtfExec, IMoveResExec {
+public class ComputerPlayer extends AbstractPlayer implements IGetMoveCmdExec {
 
     public static final String TYPE = "computer";
     
     private Board currentBoardClone;
     private AbstractEngine engine;
+    private GameState currentState;
     
     public ComputerPlayer(Piece piece) {
         super(piece);
@@ -45,13 +41,12 @@ public class ComputerPlayer extends AbstractPlayer implements IGetMoveCmdExec, I
     }
     
     @Override
-    public void fireMoveTurn(GameState currentStateClone) {
+    public void fireMoveTurn() {
         
-        this.currentBoardClone = currentStateClone.getBoard();
-        GetMoveCmd getMoveCommand = 
-                new GetMoveCmd(ClientCommandExecutorManager.getGetMoveCommandExecutor(this), this);
-        getMoveCommand.execute();
-        
+//        GetMoveCmd getMoveCommand = 
+//                new GetMoveCmd(ClientCommandExecutorManager.getGetMoveCommandExecutor(this), this);
+//        getMoveCommand.execute();
+        getMoveFor(this);
     }
 
     @Override
@@ -64,7 +59,7 @@ public class ComputerPlayer extends AbstractPlayer implements IGetMoveCmdExec, I
     @Override
     public void getMoveFor(AbstractPlayer player) {
         
-        engine.setBoard(currentBoardClone);
+//        engine.setBoard(currentBoardClone);
         Position p = engine.getMove(getPiece());
         GetMoveRes getMoveResponse = new GetMoveRes(
                 ResponseExecutorManager.getGetMoveResponseExecutor(player), p);
@@ -90,12 +85,14 @@ public class ComputerPlayer extends AbstractPlayer implements IGetMoveCmdExec, I
     }
 
     @Override
-    public void fireStateChangedNotification(GameState state) {
+    public void fireStateChanged(GameState state) {
         // Process the state changed
+        this.currentBoardClone = state.getBoard();
+        this.engine.setBoard(currentBoardClone);    
     }
 
     @Override
-    public void processMoveAccepted() {
+    public void processMoveAccepted(Position position) {
         System.out.println("Computer move accepted.");
     }
 

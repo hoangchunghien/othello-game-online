@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import othello.client.ClientGameMonitor;
 import othello.configuration.Configuration;
 import othello.configuration.TypeCfg;
 import othello.game.GameState;
@@ -18,7 +17,7 @@ import othello.ui.control.graphic.*;
  * @author Hien Hoang
  * @version Nov 7, 2013
  */
-public class GraphicCtrl implements IControl {
+public class GraphicCtrl extends AbstractControlUI {
 
     JFrame controlFrame = new JFrame();
     JPanel bPanel = new JPanel();
@@ -74,8 +73,11 @@ public class GraphicCtrl implements IControl {
     @Override
     public void renderGameState(GameState gameState) {
         try {
+            
             boardPanel.renderBoard(gameState.getBoard());
-        } catch (InterruptedException ex) {
+        } 
+        catch (InterruptedException ex) {
+            
             Logger.getLogger(GraphicCtrl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -103,6 +105,14 @@ public class GraphicCtrl implements IControl {
     public void allowMakeMove() {
         
         System.out.println("allow make move ");
+    }
+
+    @Override
+    public void fireStateChanged(GameState newState) {
+        
+        if (!controlFrame.isVisible())
+            controlFrame.setVisible(true);
+        this.renderGameState(newState);
     }
 
     

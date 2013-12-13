@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
+import othello.command.AnswerRequestCmdExec;
 import othello.command.CommandFactory;
 import othello.command.IChatCmdExec;
 import othello.command.ICommand;
@@ -44,6 +45,7 @@ import othello.server.location.Station;
 import othello.common.Piece;
 import othello.common.Position;
 import othello.game.GameState;
+import othello.game.NotificationBoard;
 import othello.models.Board;
 import othello.models.Location;
 
@@ -206,7 +208,7 @@ public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDraw
     }
 
     @Override
-    public void makeUndo() {
+    public void makeUndo(AbstractPlayer caller) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -265,11 +267,6 @@ public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDraw
         return dup;
     }
 
-    @Override
-    public void fireMoveTurn() {
-        MoveTurnNtf moveTurnNtf = new MoveTurnNtf(null);
-        getWriter().println(moveTurnNtf.serializeJSON());
-    }
 
     @Override
     public void makeMoving(Position p) {
@@ -316,12 +313,6 @@ public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDraw
     }
 
     @Override
-    public void fireStateChanged(GameState newState) {
-        GameStateNtf gameStateNotify = new GameStateNtf(null, newState);
-        getWriter().println(gameStateNotify.serializeJSON());
-    }
-
-    @Override
     public void makePassing() {
         PassNtf passNtf = new PassNtf(null);
         getWriter().println(passNtf.serializeJSON());
@@ -331,6 +322,28 @@ public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDraw
     public void makeOverGame() {
         GameOverNtf gameOverNtf = new GameOverNtf(null);
         getWriter().println(gameOverNtf.serializeJSON());
+    }
+
+    @Override
+    public void answerRequest(int reqType) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void receiveChangeNotification(int category, Object detail) {
+        
+        if (category == NotificationBoard.NF_GAMESTATE_CHANGED) {
+            GameState newState = (GameState)detail;
+            GameStateNtf gameStateNotify = new GameStateNtf(null, newState);
+            getWriter().println(gameStateNotify.serializeJSON());
+        }
+        if (category == NotificationBoard.NF_MOVE_TURN) {
+            AbstractPlayer player = (AbstractPlayer)detail;
+            if (player == this) {
+                MoveTurnNtf moveTurnNtf = new MoveTurnNtf(null);
+                getWriter().println(moveTurnNtf.serializeJSON());
+            }
+        }
     }
     
 }
@@ -351,7 +364,7 @@ class Listener extends Thread {
                 System.out.println("waiting command...");
                 JSONObject command = new JSONObject(reader.readLine());
                 System.out.println("Received command: " + command);
-                ICommand cmd = CommandFactory.getServerCommand(player, command);
+                ICommand cmd = CommandFactory.getServerCommand(player, player, command);
                 if (cmd != null) {
                     
                     cmd.execute();

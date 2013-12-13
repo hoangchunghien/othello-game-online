@@ -21,7 +21,7 @@ public class GraphicCtrl extends AbstractControlUI {
 
     JFrame controlFrame = new JFrame();
     JPanel bPanel = new JPanel();
-    BoardPanel boardPanel = BoardPanel.getInstance();
+    FeatureAndBoardPanel fboardPanel = new FeatureAndBoardPanel();
     Configuration cfg = Configuration.getInstance();
     
     // Online components
@@ -41,20 +41,17 @@ public class GraphicCtrl extends AbstractControlUI {
     private void initialize() {
         
         controlFrame.setLayout(new GridBagLayout());
-        controlFrame.setSize(800, 600);
+        controlFrame.setSize(800, 700);
         controlFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         GridBagConstraints c = new GridBagConstraints();
         
-        boardPanel.setPreferredSize(new Dimension(cfg.board.height * PiecePanel.PIC_SPACE, 
-                                                  cfg.board.width * PiecePanel.PIC_SPACE));
-        boardPanel.setMinimumSize(boardPanel.getPreferredSize());
         
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 1;
         c.gridheight = 3;
-        bPanel.setMinimumSize(new Dimension(520, 520));
-        bPanel.add(boardPanel);
+        bPanel.setMinimumSize(new Dimension(520, 700));
+        bPanel.add(fboardPanel);
         controlFrame.add(bPanel,c);
         
         // Loading online component
@@ -74,7 +71,7 @@ public class GraphicCtrl extends AbstractControlUI {
     public void renderGameState(GameState gameState) {
         try {
             
-            boardPanel.renderBoard(gameState.getBoard());
+            fboardPanel.getBoardPanel().renderBoard(gameState.getBoard());
         } 
         catch (InterruptedException ex) {
             

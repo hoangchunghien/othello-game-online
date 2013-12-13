@@ -5,6 +5,7 @@
 package othello.command.response;
 
 import othello.Test;
+import othello.client.ClientGameMonitor;
 import othello.client.OnlineGameMonitor;
 import othello.common.AbstractPlayer;
 import othello.configuration.Configuration;
@@ -90,6 +91,16 @@ public class ResponseExecutorManager {
     
     public static IJoinPlayerResExec getJoinPlayerResponseExecutor() {
         return OnlineGameMonitor.getInstance();
+    }
+    
+    public static AnswerRequestResExec getAnswerRequestResponseExecutor() {
+        
+        if (config.getPlayingType().name.equalsIgnoreCase(TypeCfg.TYPE_OFFLINE)) {
+            return ClientGameMonitor.getInstance();
+        }
+        else {
+            return OnlineGameMonitor.getInstance();
+        }
     }
     
 }

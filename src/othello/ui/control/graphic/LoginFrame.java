@@ -134,9 +134,9 @@ public class LoginFrame extends JFrame implements ILoginResExec, ActionListener 
         JButton button = (JButton)e.getSource();
         if (button.getName().equalsIgnoreCase("btnlogin")) {
             
-            ICommand cmd = CommandFactory.getCommand(LoginCmd.NAME + " " + 
-                    txtUsername.getText() + " " + new String(txtPassword.getPassword()));
-            cmd.execute();
+//            ICommand cmd = CommandFactory.getCommand(LoginCmd.NAME + " " + 
+//                    txtUsername.getText() + " " + new String(txtPassword.getPassword()));
+//            cmd.execute();
         }
         
         if (button.getName().equalsIgnoreCase("btnlater")) {

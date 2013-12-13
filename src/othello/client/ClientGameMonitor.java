@@ -1,9 +1,12 @@
 package othello.client;
 
+import othello.command.UndoCmd;
 import othello.common.AbstractPlayer;
 import othello.common.Piece;
 import othello.configuration.Configuration;
 import othello.game.GameMonitor;
+import othello.game.GameState;
+import othello.game.NotificationBoard;
 
 /**
  *
@@ -52,6 +55,31 @@ public class ClientGameMonitor extends GameMonitor {
             singletonObject = new ClientGameMonitor();
         }
         return singletonObject;
+    }
+    
+    @Override
+    public void makeUndo(AbstractPlayer caller) {
+        // Alway accept
+        if (undoState.size() > 0 ) {
+            GameState undo;
+            do {
+                undo = (GameState)undoState.pop();
+                redoState.push(undo);
+            } while (undo.getCurrentPlayer() != caller && undoState.size() > 0);
+            
+            this.state = undo;
+            nb.fireChangeNotification(NotificationBoard.NF_GAMESTATE_CHANGED, state);
+            
+            if (undoState.size() <= 0) {
+                nb.fireChangeNotification(NotificationBoard.NF_UNDOABLE, Boolean.FALSE);
+            }
+            
+            if (redoState.size() > 0) {
+                nb.fireChangeNotification(NotificationBoard.NF_REDOABLE, Boolean.TRUE);
+            }
+            
+            nb.fireChangeNotification(NotificationBoard.NF_MOVE_TURN, state.getCurrentPlayer());
+        }
     }
     
 }

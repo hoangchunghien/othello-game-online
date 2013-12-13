@@ -1,6 +1,7 @@
 package othello.command;
 
 import org.json.JSONObject;
+import othello.common.AbstractPlayer;
 
 /**
  *
@@ -12,16 +13,18 @@ public class UndoCmd implements ICommand {
     public final static String NAME = "undo";
 
     IUndoCmdExec undoExecutor;
+    AbstractPlayer caller;
     
-    public UndoCmd(IUndoCmdExec undoExecutor) {
+    public UndoCmd(IUndoCmdExec undoExecutor, AbstractPlayer caller) {
         
         this.undoExecutor = undoExecutor;
+        this.caller = caller;
     }
     
     @Override
     public void execute() {
         
-        undoExecutor.makeUndo();
+        undoExecutor.makeUndo(caller);
     }
 
     @Override

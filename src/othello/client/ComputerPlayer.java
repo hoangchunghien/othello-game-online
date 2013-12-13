@@ -4,6 +4,7 @@ import othello.command.ClientCommandExecutorManager;
 import othello.command.IGetMoveCmdExec;
 import othello.command.MoveCmd;
 import othello.command.notify.IGameOverNtfExec;
+import othello.command.response.AnswerRequestRes;
 import othello.command.response.GetMoveRes;
 import othello.command.response.ResponseExecutorManager;
 import othello.common.AbstractPlayer;
@@ -13,6 +14,8 @@ import othello.common.Position;
 import othello.engine.AbstractEngine;
 import othello.engine.EngineFactory;
 import othello.game.GameState;
+import othello.game.NotificationBoard;
+
 
 /**
  *
@@ -29,6 +32,7 @@ public class ComputerPlayer extends AbstractPlayer implements IGetMoveCmdExec {
     private Board currentBoardClone;
     private AbstractEngine engine;
     private GameState currentState;
+    private ComputerThinking thinking;
     
     public ComputerPlayer(Piece piece) {
         super(piece);
@@ -40,14 +44,6 @@ public class ComputerPlayer extends AbstractPlayer implements IGetMoveCmdExec {
         this.setName(name);
     }
     
-    @Override
-    public void fireMoveTurn() {
-        
-//        GetMoveCmd getMoveCommand = 
-//                new GetMoveCmd(ClientCommandExecutorManager.getGetMoveCommandExecutor(this), this);
-//        getMoveCommand.execute();
-        getMoveFor(this);
-    }
 
     @Override
     public void makeMoving(Position p) {
@@ -59,11 +55,8 @@ public class ComputerPlayer extends AbstractPlayer implements IGetMoveCmdExec {
     @Override
     public void getMoveFor(AbstractPlayer player) {
         
-//        engine.setBoard(currentBoardClone);
-        Position p = engine.getMove(getPiece());
-        GetMoveRes getMoveResponse = new GetMoveRes(
-                ResponseExecutorManager.getGetMoveResponseExecutor(player), p);
-        getMoveResponse.execute();
+        thinking = new ComputerThinking(player, engine, getPiece());
+        thinking.start();
     }
 
     @Override
@@ -85,13 +78,6 @@ public class ComputerPlayer extends AbstractPlayer implements IGetMoveCmdExec {
     }
 
     @Override
-    public void fireStateChanged(GameState state) {
-        // Process the state changed
-        this.currentBoardClone = state.getBoard();
-        this.engine.setBoard(currentBoardClone);    
-    }
-
-    @Override
     public void processMoveAccepted(Position position) {
         System.out.println("Computer move accepted.");
     }
@@ -101,4 +87,53 @@ public class ComputerPlayer extends AbstractPlayer implements IGetMoveCmdExec {
         System.out.println("Computer move rejected !!!");
     }
 
+    @Override
+    public void answerRequest(int reqType) {
+        AnswerRequestRes answerRes = new AnswerRequestRes(ResponseExecutorManager.getAnswerRequestResponseExecutor(),
+                reqType, AnswerRequestRes.ACCEPTED, "OK");
+        if (thinking != null && thinking.isAlive()) {
+            thinking.interrupt();
+        }
+        answerRes.execute();
+    }
+
+    @Override
+    public void receiveChangeNotification(int category, Object detail) {
+        if (category == NotificationBoard.NF_GAMESTATE_CHANGED) {
+            if (thinking != null && thinking.isAlive()) {
+                thinking.interrupt();
+            }
+            GameState newState = (GameState)detail;
+            this.currentBoardClone = newState.getBoard();
+            this.engine.setBoard(currentBoardClone);    
+        }
+        
+        if (category == NotificationBoard.NF_MOVE_TURN) {
+            AbstractPlayer player = (AbstractPlayer)detail;
+            if (player == this) {
+                getMoveFor(this);
+            }
+        }
+    }
+
+}
+class ComputerThinking extends Thread {
+    
+    AbstractPlayer player;
+    AbstractEngine engine;
+    Piece piece;
+    
+    public ComputerThinking(AbstractPlayer player, AbstractEngine engine, Piece piece) {
+        this.player = player;
+        this.engine = engine;
+        this.piece = piece;
+    }
+    
+    @Override
+    public void run() {
+        Position p = engine.getMove(piece);
+        GetMoveRes getMoveResponse = new GetMoveRes(
+                ResponseExecutorManager.getGetMoveResponseExecutor(player), p);
+        getMoveResponse.execute();
+    }
 }

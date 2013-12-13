@@ -5,11 +5,13 @@
 package othello.common;
 
 import org.json.JSONObject;
+import othello.command.AnswerRequestCmdExec;
 import othello.command.notify.IGameOverNtfExec;
 import othello.command.notify.IPassNtfExec;
 import othello.command.response.IGetMoveResExec;
 import othello.command.response.IMoveResExec;
-import othello.game.GameStateChangedListener;
+import othello.game.Notifiable;
+import othello.game.NotificationBoard;
 /**
  *
  * @author Hien Hoang
@@ -17,16 +19,19 @@ import othello.game.GameStateChangedListener;
  * @version Dec 8, 2013
  */
 public abstract class AbstractPlayer implements IGetMoveResExec, IMoveResExec,
-        GameStateChangedListener, IPassNtfExec, IGameOverNtfExec {
+        IPassNtfExec, IGameOverNtfExec, AnswerRequestCmdExec,
+        Notifiable {
     
     
     Piece piece;
     int score = 0;
     String name = "undefined";
+    NotificationBoard nb = NotificationBoard.getInstance();
     
     public AbstractPlayer(Piece piece) {
         
         this.piece = piece;
+        nb.subscribe(this, NotificationBoard.NF_MOVE_TURN);
     }
     
     
@@ -80,10 +85,7 @@ public abstract class AbstractPlayer implements IGetMoveResExec, IMoveResExec,
         this.name = value;
     }
     
-    @Override
     public abstract AbstractPlayer clone();
-    
-    public abstract void fireMoveTurn();
     
     @Override
     public String toString() {

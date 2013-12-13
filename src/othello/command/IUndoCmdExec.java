@@ -1,5 +1,7 @@
 package othello.command;
 
+import othello.common.AbstractPlayer;
+
 /**
  *
  * @author Hien Hoang
@@ -9,5 +11,5 @@ package othello.command;
  */
 public interface IUndoCmdExec {
     
-    public void makeUndo();
+    public void makeUndo(AbstractPlayer caller);
 }

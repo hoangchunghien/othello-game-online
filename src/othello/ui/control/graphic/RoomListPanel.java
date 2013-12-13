@@ -35,9 +35,9 @@ public class RoomListPanel extends JPanel implements IListRoomsResExec {
     public RoomListPanel() {
         super();
         initialize();
-        ICommand cmd = CommandFactory.getCommand(othello.command.ListCmd.NAME + " " 
-                + othello.command.ListCmd.ROOM);
-        cmd.execute();
+//        ICommand cmd = CommandFactory.getCommand(othello.command.ListCmd.NAME + " " 
+//                + othello.command.ListCmd.ROOM);
+//        cmd.execute();
     }
     
     private void initialize() {

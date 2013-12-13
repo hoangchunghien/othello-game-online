@@ -34,11 +34,11 @@ public class ConsoleCtrl extends AbstractControlUI {
         
         System.out.print("Command> ");
         ICommand command;
-        do {
+//        do {
             String cmd = scanner.nextLine();
-            command = CommandFactory.getCommand(cmd);
-        } while (command == null);
-        command.execute();
+//            command = CommandFactory.getCommand(cmd);
+//        } while (command == null);
+//        command.execute();
     }
 
 

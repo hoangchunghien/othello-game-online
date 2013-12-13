@@ -3,9 +3,13 @@ package othello.game;
 import othello.common.Position;
 import java.util.ArrayList;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Queue;
 import java.util.Stack;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import othello.command.AnswerRequestCmd;
 import othello.command.IMoveCmdExec;
 import othello.command.IRedoCmdExec;
 import othello.command.IUndoCmdExec;
@@ -13,8 +17,10 @@ import othello.command.notify.GameOverNtf;
 import othello.command.notify.IGameOverNtfExec;
 import othello.command.notify.IPassNtfExec;
 import othello.command.notify.PassNtf;
+import othello.command.response.AnswerRequestResExec;
 import othello.command.response.IMoveResExec;
 import othello.command.response.MoveRes;
+import othello.command.response.UndoRes;
 import othello.common.AbstractPlayer;
 import othello.common.Board;
 import othello.common.Piece;
@@ -26,22 +32,26 @@ import othello.ui.control.AbstractControlUI;
  * @author Hien Hoang
  * @version Nov 7, 2013
  */
-public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
+public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec, AnswerRequestResExec {
+    
+    public static final Integer WAIT_RES_UNDO = 1;
+    public static final Integer WAIT_RES_REDO = 2;
+    public static final Integer WAIT_RES_DRAW = 3;
     
     protected GameState state; // The current game state
     protected int turn;
-    protected List<GameStateChangedListener> stateChangedListeners;
     protected Dictionary<AbstractPlayer, Boolean> isReady;
     protected List<AbstractPlayer> viewers;
     // Store the game record
-    List<Position> gameRecords;
-    Stack undoState;
-    Stack redoState;
-    Dictionary<Position, GameState> recordStates;
+    protected List<Position> gameRecords;
+    protected Stack undoState;
+    protected Stack redoState;
+    protected Dictionary<Position, GameState> recordStates;
+    protected HashMap<Integer, Queue> waitingResList;
+    protected NotificationBoard nb = NotificationBoard.getInstance();
     
     public GameMonitor() {
         
-        stateChangedListeners = new ArrayList<>();
         isReady = new Hashtable<>();
         viewers = new ArrayList<>();
         state = new GameState();
@@ -49,6 +59,7 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
         undoState = new Stack();
         redoState = new Stack();
         recordStates = new Hashtable<>();
+        waitingResList = new HashMap<>();
     }
     
     public GameState getState() {
@@ -73,8 +84,8 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
         }
         else {
             System.out.println("All player is ready to play, game started.");
-            notifyStateChanged();
-            state.getCurrentPlayer().fireMoveTurn();
+            nb.fireChangeNotification(NotificationBoard.NF_GAMESTATE_CHANGED, state);
+            nb.fireChangeNotification(NotificationBoard.NF_MOVE_TURN, state.getCurrentPlayer());
         }
     }
     
@@ -97,7 +108,8 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
             viewers.add(player);
             System.out.println("Player list already full, joined viewer list");
         }
-        this.addGameStateChangedListener(player);
+        
+        nb.subscribe(player, NotificationBoard.NF_GAMESTATE_CHANGED);
     }
     
     public void setReady(AbstractPlayer player) {
@@ -121,11 +133,14 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
         undoState.push(state.clone());
         gameRecords.add(p);
         recordStates.put(p, state.clone());
+        
+        // Allow undo
+        nb.fireChangeNotification(NotificationBoard.NF_UNDOABLE, Boolean.TRUE);
     }
      
     @Override
     public void makeMove(Position position, AbstractPlayer caller) {
-        this.redoState.removeAllElements();
+        
 
         Piece currentPiece = state.getCurrentPlayer().getPiece();
         Board currentBoard = state.getBoard();
@@ -137,7 +152,7 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
             moveResponse.execute();
             
             // Let player re get move
-            state.getCurrentPlayer().fireMoveTurn();
+            nb.fireChangeNotification(NotificationBoard.NF_MOVE_TURN, state.getCurrentPlayer());
         }
         else {
 
@@ -151,8 +166,12 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
             state.setCurrentPlayer(state.getPlayers()[turn]);
             state.calculateScore();        
             
+            // Unallow redo
+            this.redoState.removeAllElements();
+            nb.fireChangeNotification(NotificationBoard.NF_REDOABLE, Boolean.FALSE);
+        
             // Notify state changed
-            notifyStateChanged();
+            nb.fireChangeNotification(NotificationBoard.NF_GAMESTATE_CHANGED, state);
             
             MoveRes moveResponse = new MoveRes((IMoveResExec)caller, MoveRes.ACCEPTED, "OK", position);
             moveResponse.execute();
@@ -161,7 +180,7 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
             // has any valid move ...
             if (currentBoard.hasAnyValidMove(state.getCurrentPlayer().getPiece())) {
 
-                state.getCurrentPlayer().fireMoveTurn();
+                nb.fireChangeNotification(NotificationBoard.NF_MOVE_TURN, state.getCurrentPlayer());
             }
             else if (currentBoard.isGameOver()) {
 
@@ -186,7 +205,7 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
                     passNotify.execute();
 
                     // Tell the current player to make move
-                    state.getCurrentPlayer().fireMoveTurn();
+                    nb.fireChangeNotification(NotificationBoard.NF_MOVE_TURN, state.getCurrentPlayer());
 
                 }
                 else {
@@ -207,25 +226,14 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
     
 
     @Override
-    public void makeUndo() {
-        AbstractControlUI controlUI = UIFactory.getControlUI();
-
-        if (!undoState.isEmpty()) {
-
-            // Turn the undo to the last user move if play with computer
-//            do {
-//                this.redoState.push(this.state.clone());   // Copy this state to redo
-//                this.state = (GameState) this.undoState.pop();  // Set this state to undo state
-//                this.turn = (this.state.getCurrentPlayer() == this.state.getPlayers()[0])?0:1;
-//            } while (!undoState.isEmpty() && this.state.getCurrentPlayer().isComputerPlayer());
-
-            controlUI.notifyMessage("Undo OK");
-        }
-        else {
-
-            controlUI.notifyMessage("Can't Undo");
-        }
-        this.start();
+    public void makeUndo(AbstractPlayer caller) {
+        
+        if (waitingResList.get(WAIT_RES_UNDO) == null) {
+            waitingResList.put(WAIT_RES_UNDO, new ConcurrentLinkedQueue());
+        }   
+        Queue waitingQueue = waitingResList.get(WAIT_RES_UNDO);
+        waitingQueue.add(caller);
+        
     }
 
     @Override
@@ -249,21 +257,35 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec {
         this.start();
     }
     
-    public void addGameStateChangedListener(GameStateChangedListener listener) {
-        
-        this.stateChangedListeners.add(listener);
-    }
-    
-    public void removeGameStateChangedListener(GameStateChangedListener listener) {
-        
-        this.stateChangedListeners.remove(listener);
-    }
 
-    private void notifyStateChanged() {
-        for (GameStateChangedListener listener : stateChangedListeners) {
+    @Override
+    public void requestAccepted(int reqType, AbstractPlayer respondent) {
+        
+        Queue waiting = waitingResList.get(reqType);
+        if (waiting == null) {
+            return;
+        }
+        else {
+            AbstractPlayer caller = (AbstractPlayer)waiting.peek();
+            if (isPlayer(respondent) && respondent != caller) {
+                
+            }
             
-            listener.fireStateChanged(state);
         }
     }
+
+    @Override
+    public void requestRejected(int reqType, AbstractPlayer respondent) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    protected boolean isPlayer(AbstractPlayer player) {
+        for (AbstractPlayer p : this.getState().players) {
+            if (player == p) {
+                return true;
+            }
+        }
+        return false;
+    } 
     
 }

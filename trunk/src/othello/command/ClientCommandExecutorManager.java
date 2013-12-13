@@ -70,8 +70,10 @@ public class ClientCommandExecutorManager {
     public static IUndoCmdExec getUndoCommandExecutor() {
         if (cfg.getPlayingType().name.equalsIgnoreCase("online")) {
             return OnlineGameMonitor.getInstance();
-        }
-        return null;   
+        } 
+        else {
+            return ClientGameMonitor.getInstance();
+        } 
     }
     
     public static IResignCmdExec getResignCommandExecutor() {

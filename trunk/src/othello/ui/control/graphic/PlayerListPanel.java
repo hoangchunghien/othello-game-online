@@ -36,8 +36,8 @@ public class PlayerListPanel extends JPanel implements
     
     public PlayerListPanel() {
         initialize();
-        ICommand cmd = CommandFactory.getCommand(ListCmd.NAME + " " + ListCmd.PLAYER);
-        cmd.execute();
+//        ICommand cmd = CommandFactory.getCommand(ListCmd.NAME + " " + ListCmd.PLAYER);
+//        cmd.execute();
         this.setVisible(true);
         
     }

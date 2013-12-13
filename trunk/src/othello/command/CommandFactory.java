@@ -14,7 +14,7 @@ import othello.configuration.Configuration;
  */
 public class CommandFactory {
     
-    public static ICommand getCommand(String str) {
+    public static ICommand getCommand(String str, AbstractPlayer caller) {
         String element[] = str.split(" ");
         switch (element[0].toLowerCase()) {
             case MoveCmd.NAME:
@@ -45,7 +45,7 @@ public class CommandFactory {
                 else {
                     undoExecutor = OnlineGameMonitor.getInstance();
                 }
-                return new UndoCmd(undoExecutor);
+                return new UndoCmd(undoExecutor, caller);
                 
             }
             case RedoCmd.NAME:
@@ -115,7 +115,7 @@ public class CommandFactory {
         return null;
     }
     
-    public static ICommand getServerCommand(IExec executor, JSONObject jObj) {
+    public static ICommand getServerCommand(IExec executor,AbstractPlayer caller, JSONObject jObj) {
         switch(jObj.getString("command")) {
             case JoinCmd.NAME:
                 JoinCmd join = new JoinCmd((IJoinCmdExec)executor, null);
@@ -138,7 +138,7 @@ public class CommandFactory {
                 draw.deserializeJSON(jObj);
                 return draw;
             case UndoCmd.NAME:
-                UndoCmd undo = new UndoCmd((IUndoCmdExec)executor);
+                UndoCmd undo = new UndoCmd((IUndoCmdExec)executor, caller);
                 undo.deserializeJSON(jObj);
                 return undo;
             case RedoCmd.NAME:

@@ -38,6 +38,7 @@ import othello.command.notify.INotification;
 import othello.command.notify.IPassNtfExec;
 import othello.command.notify.MoveTurnNtfExec;
 import othello.command.notify.NotifyFactory;
+import othello.command.response.AnswerRequestResExec;
 import othello.command.response.IJoinPlayerResExec;
 import othello.command.response.IMoveResExec;
 import othello.command.response.MoveRes;
@@ -50,6 +51,7 @@ import othello.configuration.Configuration;
 import othello.configuration.PlayerCfg;
 import othello.game.GameState;
 import othello.game.GameStateChangedListener;
+import othello.game.NotificationBoard;
 
 
 /**
@@ -60,7 +62,7 @@ import othello.game.GameStateChangedListener;
 public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdExec, IRedoCmdExec,
         IResignCmdExec, IQuitCmdExec, IJoinCmdExec, IListCmdExec, IGetBoardsCmdExec, IChatCmdExec,
         IMoveResExec, IJoinPlayerCmdExec, IJoinPlayerResExec, MoveTurnNtfExec, 
-        GameStateNtfExec, IPassNtfExec, IGameOverNtfExec {
+        GameStateNtfExec, IPassNtfExec, IGameOverNtfExec, AnswerRequestResExec {
     
     private String serverAddress;
     private int serverPort;
@@ -73,7 +75,7 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
     protected Configuration cfg = Configuration.getInstance();
     protected AbstractPlayer onlinePlayer;
     protected List<GameStateChangedListener> stateChangedListeners;
-
+    protected NotificationBoard nb = NotificationBoard.getInstance();
     
     // User profile, the information about the user like username, 
     // full name, level, type, etc...
@@ -109,7 +111,7 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
                 if (cfg.players.players.get(cfg.players.getPlayerOnlineIndex())
                         .getType().equalsIgnoreCase(PlayerCfg.TYPE_COMPUTER)) {
                     AbstractPlayer viewers = new HumanPlayer(Piece.UNDEFINED);
-                    stateChangedListeners.add(viewers);
+                    nb.subscribe(viewers, NotificationBoard.NF_GAMESTATE_CHANGED);
                 }
             }
         } catch(UnknownHostException ue) {
@@ -135,7 +137,7 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
     }
 
     @Override
-    public void makeUndo() {
+    public void makeUndo(AbstractPlayer caller) {
         
         String command = "undo ";
         System.out.println("Invoking command: " + command);
@@ -242,7 +244,7 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
         onlinePlayer.setPiece(player.getPiece());
         onlinePlayer.setScore(player.getScore());
         
-        stateChangedListeners.add(onlinePlayer);
+        nb.subscribe(onlinePlayer, NotificationBoard.NF_GAMESTATE_CHANGED);
     }
 
     @Override
@@ -253,14 +255,13 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
     @Override
     public void fireMoveTurnNotify() {
         
-        onlinePlayer.fireMoveTurn();
+        nb.fireChangeNotification(NotificationBoard.NF_MOVE_TURN, onlinePlayer);
     }
 
     @Override
     public void fireStateChangedNotify(GameState state) {
-        for (GameStateChangedListener listener : stateChangedListeners) {
-            listener.fireStateChanged(state);
-        }
+        
+        nb.fireChangeNotification(NotificationBoard.NF_GAMESTATE_CHANGED, state);
     }
 
     @Override
@@ -271,6 +272,16 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
     @Override
     public void makeOverGame() {
         onlinePlayer.makeOverGame();
+    }
+
+    @Override
+    public void requestAccepted(int reqType, AbstractPlayer respondent) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void requestRejected(int reqType, AbstractPlayer respondent) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

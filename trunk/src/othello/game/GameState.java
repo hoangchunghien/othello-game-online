@@ -37,8 +37,8 @@ public class GameState {
         
         GameState _state = new GameState();
         _state.board = this.board.clone();
-        _state.players[0] = this.players[0].clone();
-        _state.players[1] = this.players[1].clone();
+        _state.players[0] = this.players[0];
+        _state.players[1] = this.players[1];
         _state.currentPlayer = _state.players[this.players[0]==this.currentPlayer?0:1];
         _state.terminated = this.terminated;
         _state.gameBegin = this.gameBegin;

@@ -3,12 +3,14 @@ package othello.client;
 import othello.command.ClientCommandExecutorManager;
 import othello.command.GetMoveCmd;
 import othello.command.MoveCmd;
+import othello.command.UndoCmd;
 import othello.command.notify.IGameOverNtfExec;
 import othello.command.notify.IMoveNtfExec;
 import othello.common.AbstractPlayer;
 import othello.common.Piece;
 import othello.common.Position;
 import othello.game.GameState;
+import othello.game.NotificationBoard;
 import othello.ui.UIFactory;
 
 /**
@@ -22,9 +24,12 @@ import othello.ui.UIFactory;
 public class HumanPlayer extends AbstractPlayer implements IMoveNtfExec{
     
     public static final String TYPE = "human";
+    
+    NotificationBoard nb = NotificationBoard.getInstance();
 
     public HumanPlayer(Piece piece) {
         super(piece);
+        nb.subscribe(this, NotificationBoard.NF_UNDOCALLED);
     }
     
     public HumanPlayer(Piece piece, String name) {
@@ -32,12 +37,6 @@ public class HumanPlayer extends AbstractPlayer implements IMoveNtfExec{
         this.setName(name);
     }
     
-    @Override
-    public void fireMoveTurn() {
-        GetMoveCmd getMoveCmd = 
-                new GetMoveCmd(ClientCommandExecutorManager.getGetMoveCommandExecutor(this), this);
-        getMoveCmd.execute();
-    }
 
     @Override
     public void makeMoving(Position p) {
@@ -67,12 +66,6 @@ public class HumanPlayer extends AbstractPlayer implements IMoveNtfExec{
     }
 
     @Override
-    public void fireStateChanged(GameState state) {
-        
-        UIFactory.getControlUI().fireStateChanged(state);
-    }
-
-    @Override
     public void processMoveAccepted(Position position) {
         System.out.println("Human move accepted.");
     }
@@ -85,6 +78,33 @@ public class HumanPlayer extends AbstractPlayer implements IMoveNtfExec{
     @Override
     public void notifyMoving(Position p) {
         
+    }
+
+    @Override
+    public void answerRequest(int reqType) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void receiveChangeNotification(int category, Object detail) {
+        if (category == NotificationBoard.NF_GAMESTATE_CHANGED) {
+
+            GameState newState = (GameState)detail;
+            UIFactory.getControlUI().fireStateChanged(newState);
+        }
+        if (category == NotificationBoard.NF_UNDOCALLED) {
+            
+            UndoCmd undoCmd = new UndoCmd(ClientCommandExecutorManager.getUndoCommandExecutor(), this);
+            undoCmd.execute();
+        }
+        if (category == NotificationBoard.NF_MOVE_TURN) {
+            AbstractPlayer player = (AbstractPlayer)detail;
+            if (player == this) {
+                GetMoveCmd getMoveCmd = 
+                    new GetMoveCmd(ClientCommandExecutorManager.getGetMoveCommandExecutor(this), this);
+                getMoveCmd.execute();
+            }
+        }
     }
 
 }

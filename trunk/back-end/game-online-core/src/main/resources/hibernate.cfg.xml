@@ -11,9 +11,10 @@
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="show_sql">true</property>
-        <property name="hbm2ddl.auto">create</property>
+        <property name="hbm2ddl.auto">update</property>
         <mapping class="com.anores.game.persistence.domain.User"></mapping>
         <mapping class="com.anores.game.persistence.domain.Role"></mapping>
         <mapping class="com.anores.game.persistence.domain.Profile"></mapping>
+        <mapping class="com.anores.game.persistence.domain.MetaProfile"></mapping>
     </session-factory>
 </hibernate-configuration>

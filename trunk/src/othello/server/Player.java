@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
-import othello.command.AnswerRequestCmdExec;
 import othello.command.CommandFactory;
 import othello.command.IChatCmdExec;
 import othello.command.ICommand;
@@ -29,7 +28,6 @@ import othello.command.IUndoCmdExec;
 import othello.command.JoinCmd;
 import othello.command.notify.GameOverNtf;
 import othello.command.notify.GameStateNtf;
-import othello.command.notify.IGameOverNtfExec;
 import othello.command.notify.MoveTurnNtf;
 import othello.command.notify.PassNtf;
 import othello.command.response.ChatRes;
@@ -343,6 +341,11 @@ public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDraw
                 MoveTurnNtf moveTurnNtf = new MoveTurnNtf(null);
                 getWriter().println(moveTurnNtf.serializeJSON());
             }
+        }
+        
+        if (category == NotificationBoard.NF_GAMEOVER) {
+            GameOverNtf gameOverNtf = new GameOverNtf(null);
+            getWriter().println(gameOverNtf.serializeJSON());
         }
     }
     

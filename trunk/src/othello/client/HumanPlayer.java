@@ -104,6 +104,10 @@ public class HumanPlayer extends AbstractPlayer implements IMoveNtfExec{
                 getMoveCmd.execute();
             }
         }
+        
+        if (category == NotificationBoard.NF_GAMEOVER) {
+            System.out.println("Human: GAMEOVER");
+        }
     }
 
 }

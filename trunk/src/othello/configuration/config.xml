@@ -20,6 +20,8 @@
         <Player id = "1" name = "Human" color = "White" type = "human"/>
         <Player id = "2" name = "Computer" color = "Black" type = "computer"/>
     </Players>
+    
+    <Timer secsPerMove = "30" secsPerGame = "1800" />
    
     <Playing>
         <Type name = "online"/>

@@ -32,6 +32,7 @@ public abstract class AbstractPlayer implements IGetMoveResExec, IMoveResExec,
         
         this.piece = piece;
         nb.subscribe(this, NotificationBoard.NF_MOVE_TURN);
+        nb.subscribe(this, NotificationBoard.NF_GAMEOVER);
     }
     
     

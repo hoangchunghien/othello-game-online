@@ -23,7 +23,7 @@ public class ThinkingTimerPanel extends JPanel implements Notifiable{
     int seconds;
     AbstractPlayer player;
     PieceImagePanel pieceImagePanel;
-    JLabel lbDigitalClock = new JLabel(String.format("%d:%02d", 6, 5));
+    JLabel lbDigitalClock = new JLabel("-:--");
     NotificationBoard nb = NotificationBoard.getInstance();
     
     public ThinkingTimerPanel() {

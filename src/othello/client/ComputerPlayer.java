@@ -3,7 +3,6 @@ package othello.client;
 import othello.command.ClientCommandExecutorManager;
 import othello.command.IGetMoveCmdExec;
 import othello.command.MoveCmd;
-import othello.command.notify.IGameOverNtfExec;
 import othello.command.response.AnswerRequestRes;
 import othello.command.response.GetMoveRes;
 import othello.command.response.ResponseExecutorManager;
@@ -113,6 +112,10 @@ public class ComputerPlayer extends AbstractPlayer implements IGetMoveCmdExec {
             if (player == this) {
                 getMoveFor(this);
             }
+        }
+        
+        if (category == NotificationBoard.NF_GAMEOVER) {
+            System.out.println("Computer: Gameover");
         }
     }
 

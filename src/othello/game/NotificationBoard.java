@@ -23,6 +23,7 @@ public class NotificationBoard {
     public static final Integer NF_TIMER_RESUME = 11;
     public static final Integer NF_MOVE_TURN = 12;
     public static final Integer NF_TIMER_START = 13;
+    public static final Integer NF_GAMEOVER = 14;
     
     private HashMap<Integer, ArrayList<Notifiable>> clientMap;
     

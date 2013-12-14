@@ -21,6 +21,9 @@ public class Configuration {
     @XmlElement(name = "Players", required = true)
     public PlayersCfg players;
     
+    @XmlElement(name = "Timer", required = true)
+    public TimerCfg timer;
+    
     @XmlElement(name = "Playing", required = true)
     public PlayingCfg playing;
     

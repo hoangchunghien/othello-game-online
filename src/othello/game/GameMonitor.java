@@ -32,12 +32,13 @@ import othello.ui.control.AbstractControlUI;
  * @author Hien Hoang
  * @version Nov 7, 2013
  */
-public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec, AnswerRequestResExec {
+public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRedoCmdExec, AnswerRequestResExec {
     
     public static final Integer WAIT_RES_UNDO = 1;
     public static final Integer WAIT_RES_REDO = 2;
     public static final Integer WAIT_RES_DRAW = 3;
     
+    protected GameTimer gameTimer;
     protected GameState state; // The current game state
     protected int turn;
     protected Dictionary<AbstractPlayer, Boolean> isReady;
@@ -50,9 +51,11 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec, An
     protected HashMap<Integer, Queue> waitingResList;
     protected NotificationBoard nb = NotificationBoard.getInstance();
     protected boolean isGameReady = false;
+    protected boolean isTerminated = false;
     
     public GameMonitor() {
         
+        gameTimer = new GameTimer();
         isReady = new Hashtable<>();
         viewers = new ArrayList<>();
         state = new GameState();
@@ -61,6 +64,7 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec, An
         redoState = new Stack();
         recordStates = new Hashtable<>();
         waitingResList = new HashMap<>();
+        nb.subscribe(this, NotificationBoard.NF_TIMEOUT);
     }
     
     public GameState getState() {
@@ -96,12 +100,14 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec, An
             state.players[0] = player;
             System.out.println(player.getName() + " joined first player.");
             isReady.put(player, Boolean.FALSE);
+            gameTimer.registerTimer(player);
         } 
         else if (state.players[1] == null) {
             
             state.players[1] = player;
             System.out.println(player.getName() + " joined second player.");
             isReady.put(player, Boolean.FALSE);
+            gameTimer.registerTimer(player);
         }
         else {
 
@@ -141,7 +147,10 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec, An
     @Override
     public void makeMove(Position position, AbstractPlayer caller) {
         
-
+        if (isTerminated) {
+            return;
+        }
+        
         Piece currentPiece = state.getCurrentPlayer().getPiece();
         Board currentBoard = state.getBoard();
 
@@ -210,12 +219,7 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec, An
                 }
                 else {
 
-                    // Notify game over to all players
-                    for (int i = 0; i < 2; i++) {
-                        GameOverNtf gameOverNotify = 
-                                new GameOverNtf((IGameOverNtfExec)state.getPlayers()[i]);
-                        gameOverNotify.execute();
-                     }
+                    nb.fireChangeNotification(NotificationBoard.NF_GAMEOVER, this);
                 }
 
             }
@@ -287,5 +291,20 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec, An
         }
         return false;
     } 
+
+    @Override
+    public void receiveChangeNotification(int category, Object detail) {
+        
+        if (category == NotificationBoard.NF_TIMEOUT) {
+            AbstractPlayer player = (AbstractPlayer)detail;
+            
+            terminateGame();
+        }
+    }
     
+    private void terminateGame() {
+        
+        isTerminated = true;
+        nb.fireChangeNotification(NotificationBoard.NF_GAMEOVER, null);
+    }
 }

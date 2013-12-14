@@ -1,7 +1,14 @@
 package com.anores.game.persistence.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -27,10 +34,19 @@ public class Profile extends BaseEntityAudit {
 	
 	@Column(name = "phone")
 	private String phone;
+	
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, targetEntity=MetaProfile.class)
+	@JoinColumn(name="profile_id")
+	private Set<MetaProfile> metaProfiles;
 
 	public Profile() {
-
+		initialize();
 	}
+	
+	private void initialize() {
+		metaProfiles = new HashSet<MetaProfile>();
+	}
+
 
 	public String getFirstName() {
 		return firstName;
@@ -70,5 +86,13 @@ public class Profile extends BaseEntityAudit {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	public Set<MetaProfile> getMetaProfiles() {
+		return metaProfiles;
+	}
+
+	public void setMetaProfiles(Set<MetaProfile> metaProfiles) {
+		this.metaProfiles = metaProfiles;
 	}
 }

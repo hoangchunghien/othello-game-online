@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "meta_profile")
+@Table(name = "meta_profiles")
 public class MetaProfile extends BaseEntityAudit {
 	
 	/**
@@ -13,33 +13,34 @@ public class MetaProfile extends BaseEntityAudit {
 	 */
 	private static final long serialVersionUID = -4361100797625418233L;
 
-	@Column(name = "key")
-	private String key;
+	@Column(name = "meta_key")
+	private String metaKey;
 	
-	@Column(name = "value")
-	private String value;
+	@Column(name = "meta_value")
+	private String metaValue;
 	
 	@Column(name = "description")
 	private String description;
 	
-	public MetaProfile() {
-		
+	public MetaProfile(String key, String value) {
+		this.metaKey = key;
+		this.metaValue = value;
 	}
 
-	public String getKey() {
-		return key;
+	public String getMetaKey() {
+		return metaKey;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	public void setMetaKey(String metaKey) {
+		this.metaKey = metaKey;
 	}
 
-	public String getValue() {
-		return value;
+	public String getMetaValue() {
+		return metaValue;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setMetaValue(String metaValue) {
+		this.metaValue = metaValue;
 	}
 
 	public String getDescription() {

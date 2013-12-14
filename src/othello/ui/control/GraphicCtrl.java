@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.GroupLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -22,6 +23,7 @@ public class GraphicCtrl extends AbstractControlUI {
     JFrame controlFrame = new JFrame();
     JPanel bPanel = new JPanel();
     FeatureAndBoardPanel fboardPanel = new FeatureAndBoardPanel();
+    InfoPanel infoPanel = new InfoPanel();
     Configuration cfg = Configuration.getInstance();
     
     // Online components
@@ -30,41 +32,39 @@ public class GraphicCtrl extends AbstractControlUI {
     
     public GraphicCtrl() {
         
-        // If playing type is online, let contruct the object for online play
-        if (cfg.getPlayingType().name.equalsIgnoreCase(TypeCfg.TYPE_ONLINE)) {
-            
-            plPanel = PlayerListPanel.getInstance();
-        }
         initialize();
     }
     
     private void initialize() {
         
         controlFrame.setLayout(new GridBagLayout());
-        controlFrame.setSize(800, 700);
+        controlFrame.setSize(900, 700);
         controlFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        GridBagConstraints c = new GridBagConstraints();
         
+        bPanel.setMinimumSize(new Dimension(800, 600));
+        bPanel.setMaximumSize(new Dimension(800, 600));
+        GroupLayout layout = new GroupLayout(bPanel);
+        bPanel.setLayout(layout);
         
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridheight = 3;
-        bPanel.setMinimumSize(new Dimension(520, 700));
-        bPanel.add(fboardPanel);
-        controlFrame.add(bPanel,c);
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
         
-        // Loading online component
-        if (cfg.getPlayingType().name.equalsIgnoreCase(TypeCfg.TYPE_ONLINE)) {
-            
-            c.fill = GridBagConstraints.HORIZONTAL;
-            c.ipady = 300;
-            c.ipadx = 200;
-            c.gridx = 1;
-            c.gridy = 3;
-            c.gridheight = 1;
-            controlFrame.add(plPanel,c);
-        }
+        layout.setHorizontalGroup(
+            layout.createSequentialGroup()
+                .addComponent(fboardPanel)
+                .addComponent(infoPanel)
+         );
+        
+         layout.setVerticalGroup(
+            layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                    .addComponent(fboardPanel)
+                    .addComponent(infoPanel)
+                )
+         );
+         
+         controlFrame.add(bPanel);
+        
     }
     
     @Override
@@ -106,13 +106,11 @@ public class GraphicCtrl extends AbstractControlUI {
 
     @Override
     public void fireStateChanged(GameState newState) {
-        
+        System.out.println("State changed");
         if (!controlFrame.isVisible())
             controlFrame.setVisible(true);
         this.renderGameState(newState);
     }
-
-    
     
     
 }

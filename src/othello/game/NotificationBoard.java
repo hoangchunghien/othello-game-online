@@ -22,6 +22,7 @@ public class NotificationBoard {
     public static final Integer NF_TIMER_PAUSED = 10;
     public static final Integer NF_TIMER_RESUME = 11;
     public static final Integer NF_MOVE_TURN = 12;
+    public static final Integer NF_TIMER_START = 13;
     
     private HashMap<Integer, ArrayList<Notifiable>> clientMap;
     
@@ -30,7 +31,7 @@ public class NotificationBoard {
     }
     
     private static NotificationBoard singletonObject;
-    private static Object lock = new Object();
+    private static final Object lock = new Object();
     
     public static NotificationBoard getInstance() {
         synchronized(lock) {
@@ -42,16 +43,19 @@ public class NotificationBoard {
     }
     
     public void subscribe(Notifiable client, Integer category){
-        if (clientMap.get(category) == null) {
-            clientMap.put(category, new ArrayList<Notifiable>());
-        }
-        ArrayList<Notifiable> notifiableList = clientMap.get(category);
-        if (notifiableList.contains(client)) {
-            System.out.println("Notifiable list already contain this object");
-            return;
-        }
-        else {
-            notifiableList.add(client);
+        synchronized(lock) {
+            if (clientMap.get(category) == null) {
+                clientMap.put(category, new ArrayList<Notifiable>());
+            }
+            ArrayList<Notifiable> notifiableList = clientMap.get(category);
+            if (notifiableList.contains(client)) {
+                // System.out.println("Notifiable list already contain this object");
+                return;
+            }
+            else {
+                // System.out.println("Subscribed: " + client);
+                notifiableList.add(client);
+            }
         }
     }
     
@@ -66,15 +70,21 @@ public class NotificationBoard {
     }
     
     public void fireChangeNotification(Integer category, Object detail) {
-        if (clientMap.get(category) == null) {
-            
-            return;
-        }
-        else {
-            
-            ArrayList<Notifiable> notifiableList = clientMap.get(category);
-            for (Notifiable notify : notifiableList) {
-                notify.receiveChangeNotification(category, detail);
+        synchronized(lock) {
+            if (clientMap.get(category) == null) {
+
+                return;
+            }
+            else {
+
+                ArrayList<Notifiable> notifiableList = clientMap.get(category);
+//                System.out.println("Category: " + category);
+//                System.out.println("List: " + notifiableList);
+//                System.out.println("ListLength: " + notifiableList.size());
+//                System.out.println("Detail: " + detail);
+                for (Notifiable notify : notifiableList) {
+                    notify.receiveChangeNotification(category, detail);
+                }
             }
         }
     }

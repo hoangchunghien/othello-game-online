@@ -16,7 +16,7 @@
         "false", this mean the UI didn't show anything, this useful while 
         let computer auto play for testing
     -->   
-    <Players playFirstId = "1" playOnlineId = "1" autoViewer = "false"> 
+    <Players playFirstId = "1" playOnlineId = "1" autoViewer = "true"> 
         <Player id = "1" name = "Human" color = "White" type = "human"/>
         <Player id = "2" name = "Computer" color = "Black" type = "computer"/>
     </Players>

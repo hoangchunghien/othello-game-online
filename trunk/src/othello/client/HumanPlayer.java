@@ -4,7 +4,6 @@ import othello.command.ClientCommandExecutorManager;
 import othello.command.GetMoveCmd;
 import othello.command.MoveCmd;
 import othello.command.UndoCmd;
-import othello.command.notify.IGameOverNtfExec;
 import othello.command.notify.IMoveNtfExec;
 import othello.common.AbstractPlayer;
 import othello.common.Piece;

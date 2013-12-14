@@ -49,6 +49,7 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec, An
     protected Dictionary<Position, GameState> recordStates;
     protected HashMap<Integer, Queue> waitingResList;
     protected NotificationBoard nb = NotificationBoard.getInstance();
+    protected boolean isGameReady = false;
     
     public GameMonitor() {
         
@@ -78,8 +79,7 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec, An
     
     public void start() {
         
-        if (isReady.get(state.players[0]) == Boolean.FALSE || 
-                isReady.get(state.players[1]) == Boolean.FALSE) {
+        if (!isGameReady) {
             System.out.println("Waiting other player to ready...");
         }
         else {
@@ -114,12 +114,12 @@ public class GameMonitor implements IMoveCmdExec, IUndoCmdExec, IRedoCmdExec, An
     
     public void setReady(AbstractPlayer player) {
         
-        System.out.println("Player " + player.getName() + " ready.");
+        System.out.println("Player " + player + " ready.");
         this.isReady.put(player, Boolean.TRUE);
         
         if (isReady.size() >= 2 && isReady.get(state.players[0]) != Boolean.FALSE && 
                 isReady.get(state.players[1]) != Boolean.FALSE) {
-            this.start();
+            this.isGameReady = true;
         }
     }
     

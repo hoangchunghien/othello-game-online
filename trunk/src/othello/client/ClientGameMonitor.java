@@ -59,12 +59,14 @@ public class ClientGameMonitor extends GameMonitor {
     
     @Override
     public void makeUndo(AbstractPlayer caller) {
-        // Alway accept
-        if (undoState.size() > 0 ) {
+        // Alway accept 
+        if (isPlayer(caller) && undoState.size() > 0 ) {
             GameState undo;
             do {
                 undo = (GameState)undoState.pop();
                 redoState.push(undo);
+                System.out.println("Caller: " + caller.hashCode());
+                System.out.println("Undo: " + undo.getCurrentPlayer().hashCode());
             } while (undo.getCurrentPlayer() != caller && undoState.size() > 0);
             
             this.state = undo;

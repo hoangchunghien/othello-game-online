@@ -22,7 +22,9 @@ public class Game {
     OnlineGameMonitor onlineMonitor;
     Configuration cfg = Configuration.getInstance();
 
-    public Game() {
+    public Game(){
+        
+        UIFactory.getControlUI();
         
         if (cfg.getPlayingType().name.equalsIgnoreCase(TypeCfg.TYPE_ONLINE)) {
             onlineMonitor = OnlineGameMonitor.getInstance();
@@ -30,6 +32,7 @@ public class Game {
         else {
             monitor = ClientGameMonitor.getInstance();
         }
+        
     }
 
     public void play() {

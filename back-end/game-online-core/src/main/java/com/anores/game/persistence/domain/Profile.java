@@ -35,7 +35,7 @@ public class Profile extends BaseEntityAudit {
 	@Column(name = "phone")
 	private String phone;
 	
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, targetEntity=MetaProfile.class)
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name="profile_id")
 	private Set<MetaProfile> metaProfiles;
 

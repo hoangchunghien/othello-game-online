@@ -13,10 +13,10 @@ public class MetaGameHistory extends BaseEntityAudit {
 	 */
 	private static final long serialVersionUID = -165782267442157534L;
 
-	@Column(name = "key")
+	@Column(name = "meta_key")
 	private String key;
 	
-	@Column(name = "value")
+	@Column(name = "meta_value")
 	private String value;
 	
 	@Column(name = "description")

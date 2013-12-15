@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "meta_profiles")
+@Table(name = "meta_profile")
 public class MetaProfile extends BaseEntityAudit {
 	
 	/**
@@ -22,10 +22,13 @@ public class MetaProfile extends BaseEntityAudit {
 	@Column(name = "description")
 	private String description;
 	
+	public MetaProfile() {}
+	
 	public MetaProfile(String key, String value) {
 		this.metaKey = key;
 		this.metaValue = value;
 	}
+	
 
 	public String getMetaKey() {
 		return metaKey;

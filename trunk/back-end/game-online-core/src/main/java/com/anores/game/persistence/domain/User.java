@@ -1,11 +1,15 @@
 package com.anores.game.persistence.domain;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -36,9 +40,23 @@ public class User extends BaseEntityAudit {
 	@Column(name = "activation_key", length = 60)
 	private String activationKey;
 	
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Profile profile;
 	
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private Role role;
+	
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name="user_id")
+	private Set<GameHistory> gameHistories;
+	
+	public User() {
+		Initialize();
+	}
+	
+	private void Initialize() {
+		gameHistories = new HashSet<GameHistory>();
+	}
 
 	public String getUsername() {
 		return username;
@@ -88,7 +106,6 @@ public class User extends BaseEntityAudit {
 		this.activationKey = activationKey;
 	}
 
-	@OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
 	public Profile getProfile() {
 		return profile;
 	}
@@ -97,12 +114,19 @@ public class User extends BaseEntityAudit {
 		this.profile = profile;
 	}
 
-	@OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
 	public Role getRole() {
 		return role;
 	}
 
 	public void setRole(Role role) {
 		this.role = role;
+	}
+
+	public Set<GameHistory> getGameHistories() {
+		return gameHistories;
+	}
+
+	public void setGameHistories(Set<GameHistory> gameHistories) {
+		this.gameHistories = gameHistories;
 	}
 }

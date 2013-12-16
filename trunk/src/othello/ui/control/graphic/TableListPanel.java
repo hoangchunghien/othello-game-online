@@ -3,8 +3,6 @@ package othello.ui.control.graphic;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JPanel;
 import othello.command.response.IGetBoardsResExec;
 import othello.models.Board;

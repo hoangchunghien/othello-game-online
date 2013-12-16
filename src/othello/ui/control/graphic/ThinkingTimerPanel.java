@@ -3,7 +3,6 @@ package othello.ui.control.graphic;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
@@ -23,7 +22,7 @@ public class ThinkingTimerPanel extends JPanel implements Notifiable{
     int seconds;
     AbstractPlayer player;
     PieceImagePanel pieceImagePanel;
-    JLabel lbDigitalClock = new JLabel("-:--");
+    JLabel lbDigitalClock = new JLabel("--:--");
     NotificationBoard nb = NotificationBoard.getInstance();
     
     public ThinkingTimerPanel() {

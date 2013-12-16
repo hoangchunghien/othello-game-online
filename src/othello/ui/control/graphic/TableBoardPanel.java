@@ -17,11 +17,13 @@ public class TableBoardPanel extends JPanel implements MouseListener {
     public static final String TABLE_ENABLE = PIC_PATH + "TABLE_ENABLE.png";
     public static final String TABLE_DISABLE = PIC_PATH + "TABLE_DISABLE.png";
     public static final String TABLE_ACTIVE = PIC_PATH + "TABLE_ACTIVE.png";
+    public static final String TABLE_ACTIVE_PRESS = PIC_PATH + "TABLE_ACTIVE_PRESS.png";
     
     String imgLocation;
     protected int imgWidth = 90;
     ImageIcon image = new ImageIcon() ;
     protected boolean isDisabled = false;
+    protected boolean isActivated = false;
     
     
     public TableBoardPanel() {
@@ -65,15 +67,30 @@ public class TableBoardPanel extends JPanel implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
+    	if (!isDisabled) {
+    		imgLocation = TABLE_ACTIVE_PRESS;
+    		updateUI();
+    	}
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+    	if (!isDisabled) {
+    		if (isActivated)
+    			imgLocation = TABLE_ACTIVE;
+    		else 
+    			imgLocation = TABLE_ENABLE;
+    	}
+    	else {
+    		imgLocation = TABLE_DISABLE;
+    	}
+    	updateUI();
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
         if (!isDisabled) {
+        	isActivated = true;
             imgLocation = TABLE_ACTIVE;
             updateUI();
         }
@@ -88,6 +105,7 @@ public class TableBoardPanel extends JPanel implements MouseListener {
         else {
             imgLocation = TABLE_DISABLE;
         }
+        isActivated = false;
         updateUI();
     }
 }

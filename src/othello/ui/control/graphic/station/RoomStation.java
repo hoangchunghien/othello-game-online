@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -13,13 +15,17 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
+
+import othello.command.response.IListRoomsResExec;
+import othello.models.Location;
 
 /**
  *
  * @author Hien Hoang
  */
-public class RoomStation extends JPanel {
+public class RoomStation extends JPanel implements IListRoomsResExec {
     
     JLabel titleLabel = new JLabel();
     private DefaultListModel roomsModel = new DefaultListModel();
@@ -28,6 +34,7 @@ public class RoomStation extends JPanel {
     BackNextGroup btnBackNext = new BackNextGroup();
     
     public RoomStation() {
+    	
         initialize();
     }
     
@@ -38,11 +45,12 @@ public class RoomStation extends JPanel {
         titleLabel.setFont(othelloFont);
         titleLabel.setForeground(Color.GRAY);
         
+        roomsList.setFont(new Font(this.getFont().getFontName(), Font.TRUETYPE_FONT, 28));
+        roomsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new GridLayout(1, 0));
         contentPanel.add(scrollPane);
-//        contentPanel.add(Box.createVerticalGlue());
-//        contentPanel.setBorder(BorderFactory.createLineBorder(Color.red));
         
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -67,5 +75,16 @@ public class RoomStation extends JPanel {
                 .addComponent(btnBackNext)
 
          );
+    }
+    
+    @Override
+    public void loadRoomsList(List<Location> rooms) {
+
+        this.roomsModel.clear();
+        System.out.println("Loading rooms...");
+        for (Location room : rooms) {
+            System.out.println("Adding room: " + room.name);
+            this.roomsModel.addElement(room);
+        }
     }
 }

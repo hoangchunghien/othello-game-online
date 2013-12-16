@@ -39,7 +39,7 @@ public class OButton extends JLabel implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        this.setBackground(Color.BLACK);
+        this.setBackground(Color.GRAY);
         this.setOpaque(true);
         this.setForeground(Color.WHITE);
     }
@@ -53,7 +53,7 @@ public class OButton extends JLabel implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        Border border = new LineBorder(Color.RED, 1, false);
+        Border border = new LineBorder(Color.BLACK, 1, false);
         this.setBorder(border);
     }
 

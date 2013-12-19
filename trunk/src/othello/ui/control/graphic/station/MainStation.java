@@ -3,9 +3,12 @@ package othello.ui.control.graphic.station;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import othello.game.NotificationBoard;
 
 /**
  *
@@ -20,6 +23,8 @@ public class MainStation extends JPanel {
     OButton helpButton = new OButton();
     OButton aboutButton = new OButton();
     
+    NotificationBoard nb = NotificationBoard.getInstance();
+    
     private int btnW = 250;
     private int btnH = 45;
     
@@ -29,14 +34,17 @@ public class MainStation extends JPanel {
     }
     
     private void initialize() {
+    	
         othelloLabel.setText("OTHELLO");
         Font othelloFont = new Font(this.getFont().getFontName(), Font.BOLD, 40);
         othelloLabel.setFont(othelloFont);
         othelloLabel.setForeground(Color.GRAY);
         
         offlineButton.setText("OFFLINE");
+        offlineButton.setLetter(StationUIManager.STATION_PLAY_WITH);
         
         onlineButton.setText("ONLINE");
+        onlineButton.setLetter(StationUIManager.STATION_LOGIN);
         
         settingButton.setText("SETTING");
         
@@ -72,5 +80,25 @@ public class MainStation extends JPanel {
                 .addComponent(helpButton, btnH, btnH, btnH).addGap(15)
                 .addComponent(aboutButton, btnH, btnH, btnH).addGap(15)
          );
+    }
+    
+    public void setOfflineLetter(String letter) {
+    	offlineButton.setLetter(letter);
+    }
+    
+    public void setOnlineLetter(String letter) {
+    	onlineButton.setLetter(letter);
+    }
+    
+    public void setSettingLetter(String letter) {
+    	settingButton.setLetter(letter);
+    }
+    
+    public void setHelpLetter(String letter) {
+    	helpButton.setLetter(letter);
+    }
+    
+    public void setAboutLetter(String letter) {
+    	aboutButton.setLetter(letter);
     }
 }

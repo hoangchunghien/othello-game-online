@@ -56,6 +56,15 @@ public class PlayersCfg {
         }
     }
     
+    public void setFirstPlayerByType(String type) {
+    	for (int i = 0; i < players.size(); i ++) {
+            if (players.get(i).type.equalsIgnoreCase(type)) {
+            	this.playFirstId = players.get(i).id;
+            	break;
+            }
+        }
+    }
+    
     public int getFirstPlayerIndex() {
         if (playFirstId <= 1) {
             return 0;
@@ -68,6 +77,14 @@ public class PlayersCfg {
     public boolean hasHumanPlayer() {
         for (PlayerCfg player : players) {
             if (player.type.equalsIgnoreCase(PlayerCfg.TYPE_HUMAN)) 
+                return true;
+        }
+        return false;
+    }
+    
+    public boolean hasComputerPlayer() {
+    	for (PlayerCfg player : players) {
+            if (player.type.equalsIgnoreCase(PlayerCfg.TYPE_COMPUTER)) 
                 return true;
         }
         return false;

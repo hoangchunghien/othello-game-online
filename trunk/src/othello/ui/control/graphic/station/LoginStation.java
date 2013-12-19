@@ -3,6 +3,7 @@ package othello.ui.control.graphic.station;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
@@ -76,5 +77,13 @@ public class LoginStation extends JPanel {
                 .addComponent(btnBackNext)
 
          );
+    }
+    
+    public void setBackLetter(String letter) {
+    	btnBackNext.setBackLetter(letter);
+    }
+    
+    public void setNextLetter(String letter) {
+    	btnBackNext.setNextLetter(letter);
     }
 }

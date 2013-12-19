@@ -46,7 +46,7 @@ public class GraphicCtrl extends AbstractControlUI implements WindowListener {
         controlFrame.setLayout(new GridBagLayout());
         controlFrame.setSize(900, 700);
         controlFrame.addWindowListener(this);
-        // controlFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        controlFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         
         bPanel.setMinimumSize(new Dimension(800, 600));

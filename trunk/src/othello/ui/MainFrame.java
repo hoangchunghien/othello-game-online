@@ -2,6 +2,7 @@ package othello.ui;
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.JFrame;
@@ -133,10 +134,22 @@ public class MainFrame extends JFrame implements Notifiable {
 					changedUI(currentPanel);
 					break;
 				case StationUIManager.STATION_PLAY_GAME:
-					this.setVisible(false);
-					UIFactory.getControlUI();
-					File file = new File(OthelloPlay.class.getResource("OthelloPlay.class").getPath());
-					System.out.println(file.getAbsolutePath());
+					this.setVisible(false);;
+					File file = new File(OthelloPlay.class.getResource("OthelloPlay.class").getPath()).getParentFile();
+					File dir = file.getParentFile();
+					Runtime runTime = Runtime.getRuntime();
+					try {
+						String env[] = new String[] {"classpath=%classpath%;.;"};
+						Process process = runTime.exec("java othello.OthelloPlay", env, dir);
+						process.waitFor();
+						this.setVisible(true);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}  
 					break;
 				case StationUIManager.STATION_LOGIN:
 					cfg.playing.setSelectedType(TypeCfg.TYPE_ONLINE);

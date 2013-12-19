@@ -1,5 +1,8 @@
 package othello;
 
+import java.io.File;
+import java.io.IOException;
+
 import othello.client.OnlineGameMonitor;
 import othello.command.JoinPlayerCmd;
 import othello.command.response.IJoinPlayerResExec;
@@ -70,4 +73,23 @@ public class Test implements IJoinPlayerResExec {
     public void joinRejected(String message) {
         
     }
+}
+
+class OthelloPlayTest {
+	public static void main(String args[]) {
+		File file = new File(OthelloPlay.class.getResource("OthelloPlay.class").getPath()).getParentFile();
+		File dir = file.getParentFile();
+		Runtime runTime = Runtime.getRuntime();
+		try {
+			String env[] = new String[] {"classpath=%classpath%;.;"};
+			Process process = runTime.exec("java othello.OthelloPlay", env, dir);
+			process.waitFor();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+	}
 }

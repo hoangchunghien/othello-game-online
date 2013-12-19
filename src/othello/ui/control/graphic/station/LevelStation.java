@@ -3,6 +3,9 @@ package othello.ui.control.graphic.station;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -11,11 +14,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import othello.configuration.Configuration;
+import othello.configuration.LevelCfg;
+
 /**
  *
  * @author Hien Hoang
  */
-public class LevelStation extends JPanel {
+public class LevelStation extends JPanel implements ActionListener {
     JLabel titleLabel = new JLabel();
     ButtonGroup group = new ButtonGroup();
     JRadioButton rdEasy = new JRadioButton();
@@ -23,6 +29,8 @@ public class LevelStation extends JPanel {
     JRadioButton rdHard = new JRadioButton();
     JRadioButton rdExpert = new JRadioButton();
     BackNextGroup btnBackNext = new BackNextGroup();
+    
+    protected Configuration cfg = Configuration.getInstance();
     
     public LevelStation() {
         initialize();
@@ -37,16 +45,27 @@ public class LevelStation extends JPanel {
         
         Font radFont = new Font(this.getFont().getFontName(), Font.BOLD, 26);
         rdEasy.setText("EASY");
+        rdEasy.setName("easy");
+        rdEasy.addActionListener(this);
         rdEasy.setFont(radFont);
         
         rdNormal.setText("NORMAL");
+        rdNormal.setName("normal");
+        rdNormal.addActionListener(this);
         rdNormal.setFont(radFont);
         
         rdHard.setText("HARD");
+        rdHard.setName("hard");
+        rdHard.addActionListener(this);
         rdHard.setFont(radFont);
         
         rdExpert.setText("EXPERT");
+        rdExpert.setName("expert");
+        rdExpert.addActionListener(this);
         rdExpert.setFont(radFont);
+        
+        setSelectedLevel(cfg.getSelectedLevel().name);
+        setNextLetter(StationUIManager.STATION_PLAY_FIRST);
         
         group.add(rdEasy);
         group.add(rdNormal);
@@ -87,4 +106,44 @@ public class LevelStation extends JPanel {
 
          );
      }
+    
+    public void setSelectedLevel(String name) {
+    	switch (name.toLowerCase()) {
+    		case LevelCfg.EASY:
+    			cfg.setSelectedLevel(LevelCfg.EASY);
+    			rdEasy.setSelected(true);
+    			break;
+    		case LevelCfg.NORMAL:
+    			cfg.setSelectedLevel(LevelCfg.NORMAL);
+    			rdNormal.setSelected(true);
+    			break;
+    		case LevelCfg.HARD:
+    			cfg.setSelectedLevel(LevelCfg.HARD);
+    			rdHard.setSelected(true);
+    			break;
+    		case LevelCfg.EXPERT:
+    			cfg.setSelectedLevel(LevelCfg.EXPERT);
+    			rdExpert.setSelected(true);
+    			break;
+			default:
+				cfg.setSelectedLevel(LevelCfg.NORMAL);
+    			rdNormal.setSelected(true);
+    			break;
+    	}
+    	cfg.serialize(Configuration.CONFIG_FILEPATH);
+    }
+    
+    public void setBackLetter(String letter) {
+    	btnBackNext.setBackLetter(letter);
+    }
+    
+    public void setNextLetter(String letter) {
+    	btnBackNext.setNextLetter(letter);
+    }
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		JRadioButton rd = (JRadioButton)e.getSource();
+		setSelectedLevel(rd.getName());
+	}
 }

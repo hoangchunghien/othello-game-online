@@ -4,10 +4,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+
+import othello.game.NotificationBoard;
 
 /**
  *
@@ -18,6 +21,22 @@ public class OButton extends JLabel implements MouseListener {
     private int fontSize = 28;
     Font font = new Font(this.getFont().getFontName(), Font.BOLD, fontSize);
     Border defaultBorder = new LineBorder(Color.LIGHT_GRAY, 1, false);
+    
+    protected NotificationBoard nb = NotificationBoard.getInstance();
+    protected String letter;
+    protected Integer notifyCategory = NotificationBoard.NF_UI_NEXT;
+    
+    public void setLetter(String letter) {
+    	this.letter = letter;
+    }
+    
+    public String getLetter() {
+    	return this.letter;
+    }
+    
+    public void setNotifyCategory(int category) {
+    	this.notifyCategory = category;
+    }
     
     public void setFontSize(int size) {
         this.fontSize = size;
@@ -35,6 +54,7 @@ public class OButton extends JLabel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+    	nb.fireChangeNotification(notifyCategory, letter);
     }
 
     @Override

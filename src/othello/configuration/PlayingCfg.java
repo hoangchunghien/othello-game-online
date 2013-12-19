@@ -16,4 +16,16 @@ public class PlayingCfg {
     
     @XmlElement(name = "Type")
     public List<TypeCfg> types;
+    
+    public void setSelectedType(String type) {
+    	for (TypeCfg item : types) {
+    		if (item.name.equalsIgnoreCase(type)) {
+    			item.selected = true;
+    		}
+    		else {
+    			item.selected = false;
+    		}
+    	}
+    }
+    
 }

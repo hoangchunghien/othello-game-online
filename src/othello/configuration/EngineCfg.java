@@ -9,10 +9,13 @@ import javax.xml.bind.annotation.*;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Engine")
 public class EngineCfg {
+	
     @XmlAttribute(name = "name")
     public String name;
+    
     @XmlAttribute(name = "depth")
     public int depth;
+    
     @XmlAttribute(name = "selected")
     public boolean selected;
 }

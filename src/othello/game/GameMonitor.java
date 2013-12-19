@@ -38,7 +38,7 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
     public static final Integer WAIT_RES_REDO = 2;
     public static final Integer WAIT_RES_DRAW = 3;
     
-    protected GameTimer gameTimer;
+    protected GameTimer gameTimer = new GameTimer();
     protected GameState state; // The current game state
     protected int turn;
     protected Dictionary<AbstractPlayer, Boolean> isReady;
@@ -55,7 +55,13 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
     
     public GameMonitor() {
         
-        gameTimer = new GameTimer();
+    	this.initialize();
+        nb.subscribe(this, NotificationBoard.NF_TIMEOUT);
+    }
+    
+    protected void initialize() {
+    	
+        gameTimer.initialize();
         isReady = new Hashtable<>();
         viewers = new ArrayList<>();
         state = new GameState();
@@ -64,7 +70,6 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
         redoState = new Stack();
         recordStates = new Hashtable<>();
         waitingResList = new HashMap<>();
-        nb.subscribe(this, NotificationBoard.NF_TIMEOUT);
     }
     
     public GameState getState() {
@@ -83,11 +88,14 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
     
     public void start() {
         
+    	nb.fireChangeNotification(NotificationBoard.NF_GAME_STARTING, null);
+    	
         if (!isGameReady) {
             System.out.println("Waiting other player to ready...");
         }
         else {
             System.out.println("All player is ready to play, game started.");
+            System.out.println("Turn: " + state.getCurrentPlayer().getName());
             nb.fireChangeNotification(NotificationBoard.NF_GAMESTATE_CHANGED, state);
             nb.fireChangeNotification(NotificationBoard.NF_MOVE_TURN, state.getCurrentPlayer());
         }
@@ -302,7 +310,7 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
         }
     }
     
-    private void terminateGame() {
+    protected void terminateGame() {
         
         isTerminated = true;
         nb.fireChangeNotification(NotificationBoard.NF_GAMEOVER, null);

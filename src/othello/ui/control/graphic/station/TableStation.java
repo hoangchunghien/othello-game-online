@@ -97,4 +97,11 @@ public class TableStation extends JPanel implements IGetBoardsResExec {
         
     }
 	
+	public void setBackLetter(String letter) {
+    	btnBackNext.setBackLetter(letter);
+    }
+    
+    public void setNextLetter(String letter) {
+    	btnBackNext.setNextLetter(letter);
+    }
 }

@@ -37,12 +37,16 @@ public class GameTimer extends TimerTask implements Notifiable {
     protected int maxTimePerGame;
     
     public GameTimer() {
-        timePerGame = new HashMap<>();
-        timePerMove = new HashMap<>();
-        maxTimePerGame = cfg.timer.secsPerGame;
-        maxTimePerMove = cfg.timer.secsPerMove;
+    	initialize();
         nb.subscribe(this, NotificationBoard.NF_MOVE_TURN);
         nb.subscribe(this, NotificationBoard.NF_GAMEOVER);
+    }
+    
+    public void initialize() {
+    	timePerGame = new HashMap<>();
+        timePerMove = new HashMap<>();
+        maxTimePerGame = cfg.timer.getSelectedGameTimer().value;
+        maxTimePerMove = cfg.timer.getSelectedMoveTimer().value;
     }
 
     public int getMaxTimePerMove() {
@@ -127,6 +131,14 @@ public class GameTimer extends TimerTask implements Notifiable {
         
         if (category == NotificationBoard.NF_GAMEOVER) {
             timer.stop();
+        }
+        
+        if (category == NotificationBoard.NF_GAME_EXITED){
+        	timer.stop();
+        }
+        
+        if (category == NotificationBoard.NF_GAME_STARTING) {
+        	
         }
     }
 

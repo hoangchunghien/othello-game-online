@@ -24,6 +24,11 @@ public class NotificationBoard {
     public static final Integer NF_MOVE_TURN = 12;
     public static final Integer NF_TIMER_START = 13;
     public static final Integer NF_GAMEOVER = 14;
+    public static final Integer NF_UI_NEXT = 15;
+    public static final Integer NF_UI_BACK = 16;
+    public static final Integer NF_GAME_EXITED = 17;
+    public static final Integer NF_GAME_STARTING = 18;
+    public static final Integer NF_START_GAME = 19;
     
     private HashMap<Integer, ArrayList<Notifiable>> clientMap;
     

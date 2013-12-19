@@ -17,9 +17,12 @@ public class ClientGameMonitor extends GameMonitor {
     public ClientGameMonitor() {
         super();
         this.initialize();
+        nb.subscribe(this, NotificationBoard.NF_GAME_EXITED);
+        // nb.subscribe(this, NotificationBoard.NF_GAME_STARTING);
     }
     
-    private void initialize() {
+    protected void initialize() {
+        super.initialize();
         
         Configuration cfg = Configuration.getInstance();
         int firstIndex = cfg.players.getFirstPlayerIndex();
@@ -81,6 +84,19 @@ public class ClientGameMonitor extends GameMonitor {
             }
             
             nb.fireChangeNotification(NotificationBoard.NF_MOVE_TURN, state.getCurrentPlayer());
+        }
+    }
+    
+    @Override
+    public void receiveChangeNotification(int category, Object detail) {
+        
+        super.receiveChangeNotification(category, detail);
+        
+        if (category == NotificationBoard.NF_GAME_EXITED) {
+        	terminateGame();
+        }
+        if (category == NotificationBoard.NF_GAME_STARTING) {
+        	initialize();
         }
     }
     

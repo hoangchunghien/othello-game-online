@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.*;
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "Othello")
 public class Configuration {
-    public final static String CONFIG_FILEPATH = "src/othello/configuration/config.xml";
+    public static final String CONFIG_FILEPATH = "src/othello/configuration/config.xml";
     
     private static Configuration SingletonObject = null;
     
@@ -33,6 +33,9 @@ public class Configuration {
     @XmlElement(name = "Engines", required = true)
     public EnginesCfg engines;
     
+    @XmlElement(name = "Levels", required = true)
+    public LevelsCfg levels;
+    
     @XmlElement(name = "UserInterfaces", required = true)
     public UserInterfacesCfg userInterfaces;
     
@@ -46,6 +49,26 @@ public class Configuration {
             }
         }
         return null;
+    }
+    
+    public LevelCfg getSelectedLevel() {
+        for (LevelCfg e : levels.items) {
+            if (e.selected) {
+                return e;
+            }
+        }
+        return null;
+    }
+    
+    public void setSelectedLevel(String name) {
+    	 for (LevelCfg e : levels.items) {
+             if (e.name.equalsIgnoreCase(name)) {
+                 e.selected = true;
+             }
+             else {
+            	 e.selected = false;
+             }
+         }
     }
     
     public ServerCfg getSelectedServer() {

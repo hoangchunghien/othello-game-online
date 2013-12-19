@@ -87,4 +87,12 @@ public class RoomStation extends JPanel implements IListRoomsResExec {
             this.roomsModel.addElement(room);
         }
     }
+    
+    public void setBackLetter(String letter) {
+    	btnBackNext.setBackLetter(letter);
+    }
+    
+    public void setNextLetter(String letter) {
+    	btnBackNext.setNextLetter(letter);
+    }
 }

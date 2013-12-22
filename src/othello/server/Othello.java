@@ -3,16 +3,14 @@ package othello.server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-import othello.configuration.server.Configuration;
-import othello.configuration.server.PortCfg;
-
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import othello.server.configuration.Configuration;
+import othello.server.configuration.PortCfg;
 import othello.server.location.Board;
 import othello.server.location.Room;
 import othello.server.location.Station;

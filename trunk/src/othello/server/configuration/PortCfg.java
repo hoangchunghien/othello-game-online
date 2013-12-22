@@ -1,4 +1,4 @@
-package othello.configuration.server;
+package othello.server.configuration;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

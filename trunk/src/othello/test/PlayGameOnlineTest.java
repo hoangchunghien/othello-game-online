@@ -10,8 +10,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import othello.configuration.server.Configuration;
+
 import othello.server.Player;
+import othello.server.configuration.Configuration;
 import othello.server.location.Board;
 
 /**

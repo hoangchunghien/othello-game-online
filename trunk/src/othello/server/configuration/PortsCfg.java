@@ -1,4 +1,4 @@
-package othello.configuration.server;
+package othello.server.configuration;
 
 import java.util.List;
 

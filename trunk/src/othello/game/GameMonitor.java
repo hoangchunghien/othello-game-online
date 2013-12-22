@@ -1,6 +1,7 @@
 package othello.game;
 
 import othello.common.Position;
+
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
 import othello.command.AnswerRequestCmd;
 import othello.command.IMoveCmdExec;
 import othello.command.IRedoCmdExec;
@@ -166,9 +168,12 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
     @Override
     public void makeMove(Position position, AbstractPlayer caller) {
         
+    	System.out.println("Request monitor make move !!!");
+    	
         if (isTerminated) {
-            return;
+            //return;
         }
+        
         
         Piece currentPiece = state.getCurrentPlayer().getPiece();
         Board currentBoard = state.getBoard();

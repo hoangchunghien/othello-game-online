@@ -181,7 +181,7 @@ public class Board implements ILocation, IBoard {
 
     @Override
     public void makeMove(othello.common.AbstractPlayer player, Position position) {
-        
+    	System.out.println("Request board make move !!!");
         this.gameMonitor.makeMove(position, player);
     }
 

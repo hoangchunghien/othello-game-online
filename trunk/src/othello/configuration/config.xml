@@ -48,6 +48,6 @@
 		</Control>
 	</UserInterfaces>
 	<Servers>
-		<Server address="192.168.1.23" selectionPort="1234" playingPort="1235" selected="true" />
+		<Server address="localhost" selectionPort="1234" playingPort="1235" selected="true" />
 	</Servers>
 </Othello>

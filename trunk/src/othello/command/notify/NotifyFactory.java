@@ -21,7 +21,7 @@ public class NotifyFactory {
                 return moveTurnNtf;
                 
             case GameStateNtf.NAME:
-            	 JOptionPane.showMessageDialog(null, "Got state changed message");
+            	// JOptionPane.showMessageDialog(null, "Got state changed message");
                 GameStateNtf gameStateNtf = new GameStateNtf(OnlineGameMonitor.getInstance(), null);
                 gameStateNtf.deserializeJSON(json);
                 return gameStateNtf;

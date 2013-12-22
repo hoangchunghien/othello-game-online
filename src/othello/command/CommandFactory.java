@@ -121,7 +121,7 @@ public class CommandFactory {
     public static Commandable getJoinPlayerCmd(String boardId) {
     	if (Configuration.getInstance().getPlayingType()
                 .name.equalsIgnoreCase("online")) {
-    		JoinPlayerCmd command = new JoinPlayerCmd(OnlineGameMonitor.getInstance());
+    		JoinPlayerCmd command = new JoinPlayerCmd(GameSelection.getInstance());
     		command.setBoardId(boardId);
     		return command;
     	}

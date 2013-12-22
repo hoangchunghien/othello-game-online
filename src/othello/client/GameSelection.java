@@ -105,15 +105,15 @@ public class GameSelection implements FetchBoardListCmdExecutable, FetchRoomList
 
 	@Override
 	public void joinPlayer(String boardId) {
-		JoinPlayerCmd joinPlayerCmd = new JoinPlayerCmd(null);
-        System.out.println("Sending command: " + joinPlayerCmd.serializeJSON());
-        writer.println(joinPlayerCmd.serializeJSON());
+		JoinPlayerCmd command = new JoinPlayerCmd(null);
+		command.setBoardId(boardId);
+		System.out.println("Sending command: " + command.serializeJSON());
+		writer.println(command.serializeJSON());
 	}
 
 	@Override
 	public void joinAccepted(String playerTicket) {
-		// TODO Auto-generated method stub
-		
+		nb.fireChangeNotification(NotificationBoard.NF_TICKET_RECEIVED, playerTicket);
 	}
 
 	@Override

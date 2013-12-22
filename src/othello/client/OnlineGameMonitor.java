@@ -10,8 +10,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import org.json.JSONObject;
 
@@ -49,6 +53,7 @@ import othello.configuration.PlayerCfg;
 import othello.game.GameState;
 import othello.game.GameStateChangedListener;
 import othello.game.NotificationBoard;
+import othello.ui.UIFactory;
 
 
 /**
@@ -58,7 +63,7 @@ import othello.game.NotificationBoard;
  */
 public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdExec, IRedoCmdExec,
         IResignCmdExec, IQuitCmdExec, IJoinCmdExec, IChatCmdExec,
-        IMoveResExec, MoveTurnNtfExec, JoinPlayerCmdExecutable, 
+        IMoveResExec, MoveTurnNtfExec,
         GameStateNtfExec, IPassNtfExec, IGameOverNtfExec, AnswerRequestResExec {
     
     private String serverAddress;
@@ -111,6 +116,12 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
                     nb.subscribe(viewers, NotificationBoard.NF_GAMESTATE_CHANGED);
                 }
             }
+            
+            // Send ticket to server
+            Map<String, String> env = System.getenv();
+            String playerTicket = env.get("playticket");
+            writer.println(playerTicket);
+            
         } catch(UnknownHostException ue) {
             // Notify can't connect to server
             System.out.print(ue);    
@@ -200,7 +211,11 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
     @Override
     public void fireStateChangedNotify(GameState state) {
         
+    	JOptionPane.showMessageDialog(null, "Show UI");
         nb.fireChangeNotification(NotificationBoard.NF_GAMESTATE_CHANGED, state);
+        JOptionPane.showMessageDialog(null, "Show UI");
+        
+        UIFactory.getControlUI().show();
     }
 
     @Override
@@ -223,13 +238,6 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-	@Override
-	public void joinPlayer(String boardId) {
-		JoinPlayerCmd command = new JoinPlayerCmd(null);
-		command.setBoardId(boardId);
-		System.out.println("Sending command: " + command.serializeJSON());
-		writer.println(command.serializeJSON());
-	}
 
 }
 
@@ -252,6 +260,7 @@ class GameListener extends Thread {
                 System.out.println("Received: " + receivedJSON);
                 if (receivedJSON.getString("cmdType").equalsIgnoreCase("response")) {
                     System.out.println("Received Response message");
+                    JOptionPane.showMessageDialog(null, receivedJSON);
                     IResponse responseCmd = ResponseFactory.getResponse(receivedJSON);
                     if (responseCmd == null) {
                         System.out.println("Executor not found...");
@@ -264,9 +273,13 @@ class GameListener extends Thread {
                 }
                 else if (receivedJSON.getString("cmdType").equalsIgnoreCase("notify")) {
                     System.out.println("Received Notify message");
+                    JOptionPane.showMessageDialog(null, receivedJSON);
                     INotification notifyCmd = NotifyFactory.getNotifyCommand(receivedJSON);
+                    
                     if (notifyCmd == null) {
                         System.out.println("Notify '" + receivedJSON.getString("command") +
+                                "' unsupported");
+                        JOptionPane.showMessageDialog(null, "Notify '" + receivedJSON.getString("command") +
                                 "' unsupported");
                     }
                     else {
@@ -307,6 +320,7 @@ class NotifyExecuting extends Thread {
     @Override
     public void run() {
         System.out.println("Executing notify...");
+        
         this.notify.execute();
     }
 }

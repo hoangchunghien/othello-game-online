@@ -37,6 +37,8 @@ public class MainFrame extends JFrame implements Notifiable {
 	Configuration cfg = Configuration.getInstance();
 	JPanel currentPanel;
 	
+	private String playingTicket = "";
+	
     MainStation mainStation;
     PlayWithStation playWithStation;
     LevelStation levelStation;
@@ -54,6 +56,7 @@ public class MainFrame extends JFrame implements Notifiable {
         nb.subscribe(this, NotificationBoard.NF_UI_NEXT);
         nb.subscribe(this, NotificationBoard.NF_UI_BACK);
         nb.subscribe(this, NotificationBoard.NF_GAME_EXITED);
+        nb.subscribe(this, NotificationBoard.NF_TICKET_RECEIVED);
     }
     
     private void initialize() {
@@ -136,12 +139,13 @@ public class MainFrame extends JFrame implements Notifiable {
 					changedUI(currentPanel);
 					break;
 				case StationUIManager.STATION_PLAY_GAME:
-					this.setVisible(false);;
+					this.setVisible(false);
+					cfg.serialize(Configuration.CONFIG_FILEPATH);
 					File file = new File(OthelloPlay.class.getResource("OthelloPlay.class").getPath()).getParentFile();
 					File dir = file.getParentFile();
 					Runtime runTime = Runtime.getRuntime();
 					try {
-						String env[] = new String[] {"classpath=%classpath%;.;"};
+						String env[] = new String[] {"classpath=%classpath%;.;", "playticket=" + playingTicket};
 						Process process = runTime.exec("java othello.OthelloPlay", env, dir);
 						process.waitFor();
 						this.setVisible(true);
@@ -215,6 +219,13 @@ public class MainFrame extends JFrame implements Notifiable {
 		
 		if (category == NotificationBoard.NF_GAME_EXITED) {
 			this.setVisible(true);
+		}
+		
+		if (category == NotificationBoard.NF_TICKET_RECEIVED) {
+			String ticket = (String)detail;
+			this.playingTicket = ticket;
+			
+			nb.fireChangeNotification(NotificationBoard.NF_UI_NEXT ,StationUIManager.STATION_PLAY_GAME);
 		}
 	}
     

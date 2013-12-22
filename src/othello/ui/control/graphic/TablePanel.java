@@ -22,7 +22,7 @@ import othello.models.Board;
  *
  * @author Hien Hoang
  */
-public class TablePanel extends JPanel implements MouseListener {
+public class TablePanel extends JPanel {
     
     Board board;
     
@@ -62,35 +62,13 @@ public class TablePanel extends JPanel implements MouseListener {
                 .addComponent(boardPanel)
 
          );
+        
+        boardPanel.setBoardId(board.getId());
     }
     
     public void updateBoard(Board board) {
+    	
         this.board = board;
-
     }
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		Commandable joinPlayerCmd = CommandFactory.getJoinPlayerCmd(board.getId());
-		joinPlayerCmd.execute();
-	}
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+
 }

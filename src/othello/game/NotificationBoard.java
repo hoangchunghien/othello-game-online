@@ -31,6 +31,7 @@ public class NotificationBoard {
     public static final Integer NF_START_GAME = 19;
     public static final Integer NF_BOARD_LIST_CHANGED = 20;
     public static final Integer NF_ROOM_LIST_CHANGED = 21;
+    public static final Integer NF_TICKET_RECEIVED = 22;
     
     private HashMap<Integer, ArrayList<Notifiable>> clientMap;
     

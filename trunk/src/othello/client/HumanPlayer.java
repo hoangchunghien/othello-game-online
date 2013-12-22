@@ -1,5 +1,7 @@
 package othello.client;
 
+import javax.swing.JOptionPane;
+
 import othello.command.ClientCommandExecutorManager;
 import othello.command.GetMoveCmd;
 import othello.command.MoveCmd;
@@ -87,8 +89,9 @@ public class HumanPlayer extends AbstractPlayer implements IMoveNtfExec{
     @Override
     public void receiveChangeNotification(int category, Object detail) {
         if (category == NotificationBoard.NF_GAMESTATE_CHANGED) {
-
-            GameState newState = (GameState)detail;
+        	// JOptionPane.showMessageDialog(null, "Human state changed");
+        	
+            GameState newState = (GameState)detail; 
             UIFactory.getControlUI().fireStateChanged(newState);
         }
         if (category == NotificationBoard.NF_UNDOCALLED) {

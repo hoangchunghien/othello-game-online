@@ -123,7 +123,7 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
             }
         	else {
         		
-        		JOptionPane.showMessageDialog(null, "Human playing");
+        		// JOptionPane.showMessageDialog(null, "Human playing");
         		onlinePlayer = new HumanPlayer(Piece.UNDEFINED);
         	}
             
@@ -223,7 +223,8 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
     @Override
     public void fireStateChangedNotify(GameState state) {
         
-    	
+    	// JOptionPane.showMessageDialog(null, "State changed: " + state.getBoard().serializeJson());
+    	onlinePlayer.receiveChangeNotification(NotificationBoard.NF_GAMESTATE_CHANGED, state);
         nb.fireChangeNotification(NotificationBoard.NF_GAMESTATE_CHANGED, state);
     }
 
@@ -269,7 +270,7 @@ class GameListener extends Thread {
                 System.out.println("Received: " + receivedJSON);
                 if (receivedJSON.getString("cmdType").equalsIgnoreCase("response")) {
                     System.out.println("Received Response message");
-                    JOptionPane.showMessageDialog(null, receivedJSON);
+                    // JOptionPane.showMessageDialog(null, receivedJSON);
                     IResponse responseCmd = ResponseFactory.getResponse(receivedJSON);
                     if (responseCmd == null) {
                         System.out.println("Executor not found...");
@@ -282,14 +283,14 @@ class GameListener extends Thread {
                 }
                 else if (receivedJSON.getString("cmdType").equalsIgnoreCase("notify")) {
                     System.out.println("Received Notify message");
-                    JOptionPane.showMessageDialog(null, receivedJSON);
+                    // JOptionPane.showMessageDialog(null, receivedJSON);
                     INotification notifyCmd = NotifyFactory.getNotifyCommand(receivedJSON);
                     
                     if (notifyCmd == null) {
                         System.out.println("Notify '" + receivedJSON.getString("command") +
                                 "' unsupported");
-                        JOptionPane.showMessageDialog(null, "Notify '" + receivedJSON.getString("command") +
-                                "' unsupported");
+                        // JOptionPane.showMessageDialog(null, "Notify '" + receivedJSON.getString("command") +
+                        //        "' unsupported");
                     }
                     else {
                         NotifyExecuting exe = new NotifyExecuting(notifyCmd);

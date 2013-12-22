@@ -2,10 +2,12 @@ package othello.server.configuration;
 
 import java.io.File;
 import java.io.FileOutputStream;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.*;
+
 /**
  *
  * @author Hien Hoang
@@ -14,7 +16,8 @@ import javax.xml.bind.annotation.*;
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "OthelloServer")
 public class Configuration {
-    public final static String CONFIG_FILEPATH = "src/othello/configuration/server/config.xml";
+	static File file = new File(Configuration.class.getResource("config.xml").getPath());
+    public static final String CONFIG_FILEPATH = file.getAbsolutePath();
     
     private static Configuration SingletonObject = null;
     

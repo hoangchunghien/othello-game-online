@@ -52,7 +52,7 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
     protected Stack redoState;
     protected Dictionary<Position, GameState> recordStates;
     protected HashMap<Integer, Queue> waitingResList;
-    protected NotificationBoard nb;
+    protected NotificationBoard nb = NotificationBoard.getInstance();
     protected boolean isGameReady = false;
     protected boolean isTerminated = false;
     

@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import othello.command.response.FetchBoardListRes;
 import othello.command.response.FetchRoomListRes;
+import othello.common.AbstractPlayer;
 import othello.common.Piece;
 import othello.models.Location;
 
@@ -35,16 +36,16 @@ public class LocationManager {
 		rooms = new ArrayList<>();
 		boards = new ArrayList<>();
 		
-		for (int i = 0; i < 10; i++ ) {
+		for (int i = 0; i < 50; i++ ) {
 			Room room = new Room();
 			room.setId("r" + i);
 			room.setName("room " + i);
-			List<Board> _boards = new ArrayList<Board>();
-			room.setBoards(boards);
-			for (int j = 0; j < 10; j++) {
+			List<Board> _boards = new ArrayList<>();
+			room.setBoards(_boards);
+			for (int j = 0; j < 50; j++) {
 				Board board = new Board();
               	board.setId("b" + i + j);
-              	board.setName("Board " + 1);
+              	board.setName("Board " + i + j);
               	_boards.add(board);
               	boards.add(board);
 			}
@@ -67,22 +68,24 @@ public class LocationManager {
 	
 	public void fetchBoardList(Socket connection, String roomId) {
         List<othello.models.Board> boards = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            othello.models.Board board = new othello.models.Board("board " + i);
-            othello.models.Player p1 = new othello.models.Player();
-            p1.setUsername("user" + i);
-            p1.setType(1);
-            p1.setScore(i+100);
-            othello.models.Player p2 = new othello.models.Player();
-            p2.setUsername("opp" + i);
-            p2.setType(2);
-            p2.setScore(i + 200);
-            board.setPlayer(Piece.BLACK, p1);
-            board.setPlayer(Piece.WHITE, p2);
-            boards.add(board);
+        for (Room room : rooms) {
+        	if (room.getId().equals(roomId)) {
+        		System.out.println("Room id: " + roomId);
+        		System.out.println("Board nums: " + room.getBoards().size());
+        		for (Board b : room.getBoards()) {
+        			othello.models.Board mB = new othello.models.Board(b.getName());
+        			
+        			boards.add(mB);
+        		}
+        		break;
+        	}
         }
         FetchBoardListRes boardsRes = new FetchBoardListRes(null, boards);
         sendTo(connection, boardsRes.serializeJSON());
+	}
+	
+	public void joinPlayer(Socket connection, String boardId) {
+		
 	}
 	
 	private void sendTo(Socket soc, JSONObject jObj){

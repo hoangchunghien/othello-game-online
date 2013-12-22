@@ -23,7 +23,7 @@ public abstract class AbstractPlayer implements IGetMoveResExec, IMoveResExec,
         Notifiable {
     
     
-    Piece piece;
+    Piece piece = Piece.UNDEFINED;
     int score = 0;
     String name = "undefined";
     NotificationBoard nb = NotificationBoard.getInstance();

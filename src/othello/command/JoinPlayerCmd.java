@@ -10,17 +10,16 @@ import othello.common.AbstractPlayer;
 public class JoinPlayerCmd implements Commandable {
 
     public static final String NAME = "join player";
-    private IJoinPlayerCmdExec executor;
-    private AbstractPlayer player;
+    private JoinPlayerCmdExecutable executor;
+    private String boardId;
     
-    public JoinPlayerCmd(IJoinPlayerCmdExec executor, AbstractPlayer player) {
+    public JoinPlayerCmd(JoinPlayerCmdExecutable executor) {
         this.executor = executor;
-        this.player = player;
     }
     
     @Override
     public void execute() {
-        executor.joinPlayer(player);
+        executor.joinPlayer(boardId);
     }
 
     @Override
@@ -29,13 +28,15 @@ public class JoinPlayerCmd implements Commandable {
         JSONObject json = new JSONObject();
         json.put("cmdType", "command");
         json.put("command", NAME);
+        json.put("boardId", boardId);
+        
         
         return json;
     }
 
     @Override
     public void deserializeJSON(JSONObject jObj) {
-        
+        boardId = jObj.getString("boardId");
     }
 
 }

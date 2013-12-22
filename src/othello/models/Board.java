@@ -39,9 +39,18 @@ public class Board {
     public JSONObject serializeJSON() {
         
         JSONObject json = new JSONObject();
-        json.put("name", name);
-        json.put("black", seats.get(Piece.BLACK).serializeJSON());
-        json.put("white", seats.get(Piece.WHITE).serializeJSON());
+        json.put("name", name);        
+        
+        if (seats.get(Piece.BLACK) != null)
+        	json.put("black", seats.get(Piece.BLACK).serializeJSON());
+        else 
+        	json.put("black", "undefined");
+        
+        if (seats.get(Piece.WHITE) != null)
+        	json.put("white", seats.get(Piece.WHITE).serializeJSON());
+        else 
+        	json.put("white", "undefined");
+        
         return json;
     }
     
@@ -49,9 +58,14 @@ public class Board {
         
         this.name = json.getString("name");
         Player black = new Player();
-        black.deserializeJSON(json.getJSONObject("black"));
+        
+        if (!json.getString("black").equalsIgnoreCase("undefined"))
+        	black.deserializeJSON(json.getJSONObject("black"));
+        
         Player white = new Player();
-        white.deserializeJSON(json.getJSONObject("white"));
+        if (!json.getString("white").equalsIgnoreCase("undefined"))
+        	white.deserializeJSON(json.getJSONObject("white"));
+        
         seats.put(Piece.BLACK, black);
         seats.put(Piece.WHITE, white);
     }

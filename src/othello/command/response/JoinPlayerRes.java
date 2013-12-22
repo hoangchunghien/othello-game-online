@@ -16,18 +16,28 @@ public class JoinPlayerRes implements IResponse {
     public final static String ACCEPTED = "accepted";
     public final static String REJECTED = "rejected";
     
-    private String message;
-    private String status;
-    private IJoinPlayerResExec executor;
-    private AbstractPlayer player;
+    private String message = "";
+    private String status = REJECTED;
+    private String playerTicket = "";
+    private JoinPlayerResExecutable executor;
     
-    public JoinPlayerRes(IJoinPlayerResExec executor, String status, String message, AbstractPlayer player) {
+    public JoinPlayerRes(JoinPlayerResExecutable executor) {
         
         this.executor = executor;
-        this.message = message;
-        this.status = status;
-        this.player = player;
     }
+    
+    public void setPlayerTicket(String ticket) {
+    	this.playerTicket = ticket;
+    }
+    
+    public void setStatus(String status) {
+    	this.status = status;
+    }
+    
+    public void setMessage(String message) {
+    	this.message = message;
+    }
+    
     @Override
     public JSONObject serializeJSON() {
         
@@ -36,23 +46,22 @@ public class JoinPlayerRes implements IResponse {
         json.put("command", NAME);
         json.put("message", message);
         json.put("status", status);
-        json.put("player", player.serializeJson());
+        json.put("ticket", playerTicket);
         return json;
     }
 
     @Override
     public void deserializeJSON(JSONObject json) {
-        this.player = new HumanPlayer(Piece.EMPTY);
         this.message = json.getString("message");
         this.status = json.getString("status");
-        this.player.deserializeJson(json.getJSONObject("player"));
+        this.playerTicket = json.getString("ticket");
     }
 
     @Override
     public void execute() {
         
         if (status.equalsIgnoreCase(ACCEPTED)) {
-            executor.joinAccepted(player);
+            executor.joinAccepted(playerTicket);
         }
         else {
             executor.joinRejected(message);

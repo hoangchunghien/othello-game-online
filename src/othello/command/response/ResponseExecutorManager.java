@@ -90,8 +90,8 @@ public class ResponseExecutorManager {
         return (IGetMoveResExec)caller;
     }
     
-    public static IJoinPlayerResExec getJoinPlayerResponseExecutor() {
-        return OnlineGameMonitor.getInstance();
+    public static JoinPlayerResExecutable getJoinPlayerResponseExecutor() {
+        return GameSelection.getInstance();
     }
     
     public static AnswerRequestResExec getAnswerRequestResponseExecutor() {

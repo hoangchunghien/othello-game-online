@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.json.JSONObject;
 
+import othello.Othello;
 import othello.command.response.JoinPlayerResExecutable;
 import othello.common.AbstractPlayer;
 import othello.common.Piece;
@@ -38,6 +40,7 @@ public class Board implements ILocation, IBoard {
     private GameMonitor gameMonitor;
     private NotificationBoard nb;
     private GameTimer timer;
+    private List<AbstractPlayer> players;
     
     public Board() {
         
@@ -52,6 +55,7 @@ public class Board implements ILocation, IBoard {
         supportedPiece = new ArrayList<Piece>();
         supportedPiece.add(Piece.BLACK);
         supportedPiece.add(Piece.WHITE);
+        players = new ArrayList<>();
     }
     
     @Override
@@ -192,8 +196,9 @@ public class Board implements ILocation, IBoard {
 
 	@Override
 	public void joinPlayer(AbstractPlayer player) {
-		// TODO Auto-generated method stub
-		
+		gameMonitor.addPlayer(player);
+		othello.server.Othello.getPlayingTicket()
+		.put(UUID.randomUUID().toString(), player);
 	}
     
 }

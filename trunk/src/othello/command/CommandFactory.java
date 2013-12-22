@@ -118,6 +118,16 @@ public class CommandFactory {
 		return null;
     }
     
+    public static Commandable getJoinPlayerCmd(String boardId) {
+    	if (Configuration.getInstance().getPlayingType()
+                .name.equalsIgnoreCase("online")) {
+    		JoinPlayerCmd command = new JoinPlayerCmd(OnlineGameMonitor.getInstance());
+    		command.setBoardId(boardId);
+    		return command;
+    	}
+    	return null;
+    }
+    
     public static Commandable getServerCommand(Executable executor,AbstractPlayer caller, JSONObject jObj) {
         switch(jObj.getString("command")) {
             case JoinCmd.NAME:

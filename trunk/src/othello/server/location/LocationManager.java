@@ -75,7 +75,7 @@ public class LocationManager {
         		System.out.println("Board nums: " + room.getBoards().size());
         		for (Board b : room.getBoards()) {
         			othello.models.Board mB = new othello.models.Board(b.getName());
-        			
+        			mB.setId(b.getId());
         			boards.add(mB);
         		}
         		break;

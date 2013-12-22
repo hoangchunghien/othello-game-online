@@ -17,6 +17,10 @@ public class JoinPlayerCmd implements Commandable {
         this.executor = executor;
     }
     
+    public void setBoardId(String boardId) {
+    	this.boardId = boardId;
+    }
+    
     @Override
     public void execute() {
         executor.joinPlayer(boardId);

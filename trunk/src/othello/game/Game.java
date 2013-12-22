@@ -41,6 +41,9 @@ public class Game {
         if (cfg.getPlayingType().name.equalsIgnoreCase(TypeCfg.TYPE_OFFLINE)) {
             monitor.start();
         }
+        else {
+        	
+        }
         
     }
     

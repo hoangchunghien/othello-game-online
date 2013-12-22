@@ -1,1 +1,53 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Othello><Players playFirstId="1" playOnlineId="1" autoViewer="true"><Player id="1" name="Human" color="White" type="human"/><Player id="2" name="Computer" color="Black" type="computer"/></Players><Timer><MoveTimer><Time name="10" value="10" selected="true"/><Time name="30" value="30" selected="false"/><Time name="60" value="60" selected="false"/><Time name="120" value="120" selected="false"/><Time name="180" value="180" selected="false"/><Time name="360" value="360" selected="false"/></MoveTimer><GameTimer><Time name="600" value="600" selected="false"/><Time name="900" value="900" selected="true"/><Time name="1800" value="1800" selected="false"/></GameTimer></Timer><Playing><Type name="online" selected="false"/><Type name="offline" selected="true"/></Playing><Board width="8" height="8"/><Engines><Engine name="Random" depth="1" selected="true"/></Engines><Levels><Level name="Easy" depth="1" selected="false"/><Level name="Normal" depth="3" selected="false"/><Level name="Hard" depth="5" selected="true"/><Level name="Expert" depth="6" selected="false"/></Levels><UserInterfaces><Configuration><UI name="Console" selected="true"/><UI name="Graphic" selected="false"/></Configuration><Control><UI name="Console" selected="false"/><UI name="Graphic" selected="true"/></Control></UserInterfaces><Servers><Server address="localhost" port="1234" selected="true"/></Servers></Othello>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Othello>
+	<Players playFirstId="1" playOnlineId="1" autoViewer="true">
+		<Player id="1" name="Human" color="White" type="human" />
+		<Player id="2" name="Computer" color="Black" type="computer" />
+	</Players>
+	<Timer>
+		<MoveTimer>
+			<Time name="10" value="10" selected="true" />
+			<Time name="30" value="30" selected="false" />
+			<Time name="60" value="60" selected="false" />
+			<Time name="120" value="120" selected="false" />
+			<Time name="180" value="180" selected="false" />
+			<Time name="360" value="360" selected="false" />
+		</MoveTimer>
+		<GameTimer>
+			<Time name="600" value="600" selected="false" />
+			<Time name="900" value="900" selected="true" />
+			<Time name="1800" value="1800" selected="false" />
+		</GameTimer>
+	</Timer>
+	<Playing>
+		<Type name="online" selected="false" />
+		<Type name="offline" selected="true" />
+	</Playing>
+	<Online>
+		<Connection key = "" />
+		<Login remember = "true" username = "" password = "" />		
+	</Online>
+	<Board width="8" height="8" />
+	<Engines>
+		<Engine name="Random" depth="1" selected="true" />
+	</Engines>
+	<Levels>
+		<Level name="Easy" depth="1" selected="false" />
+		<Level name="Normal" depth="3" selected="false" />
+		<Level name="Hard" depth="5" selected="true" />
+		<Level name="Expert" depth="6" selected="false" />
+	</Levels>
+	<UserInterfaces>
+		<Configuration>
+			<UI name="Console" selected="true" />
+			<UI name="Graphic" selected="false" />
+		</Configuration>
+		<Control>
+			<UI name="Console" selected="false" />
+			<UI name="Graphic" selected="true" />
+		</Control>
+	</UserInterfaces>
+	<Servers>
+		<Server address="localhost" selectionPort="1234" playingPort="1235" selected="true" />
+	</Servers>
+</Othello>

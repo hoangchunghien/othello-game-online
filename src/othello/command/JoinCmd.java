@@ -8,7 +8,7 @@ import org.json.JSONObject;
  * @version Dec 4, 2013
  * 
  */
-public class JoinCmd implements ICommand {
+public class JoinCmd implements Commandable {
     
     public final static String NAME = "join";
     public final static String ACCEPTED = "accepted";

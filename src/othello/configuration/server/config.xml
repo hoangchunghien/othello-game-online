@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <OthelloServer>
-    <Port number = "1234"/>
-    <Board numPlayer = "2" numViewer = "-1" /> <!-- -1 mean unlimited -->
-    <!--<Piece playerPerPiece = "1" />-->
+	<Ports>
+		<Port name = "selection" number = "1234" />
+		<Port name = "playing" number = "1235" />
+	</Ports>
+	<Board numPlayer="2" numViewer="-1" /> <!-- -1 mean unlimited -->
+	<!--<Piece playerPerPiece = "1" /> -->
 </OthelloServer>

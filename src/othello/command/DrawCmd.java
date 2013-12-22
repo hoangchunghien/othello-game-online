@@ -6,7 +6,7 @@ import org.json.JSONObject;
  *
  * @author Hien Hoang
  */
-public class DrawCmd implements ICommand {
+public class DrawCmd implements Commandable {
     
     public static final String NAME = "draw";
     public static final String ACCEPTED = "accepted";

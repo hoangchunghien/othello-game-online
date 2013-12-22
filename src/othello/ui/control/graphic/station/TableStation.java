@@ -17,7 +17,12 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
-import othello.command.response.IGetBoardsResExec;
+import othello.client.GameSelection;
+import othello.command.response.FetchBoardListResExecutable;
+import othello.configuration.Configuration;
+import othello.configuration.TypeCfg;
+import othello.game.Notifiable;
+import othello.game.NotificationBoard;
 import othello.models.Board;
 import othello.ui.control.graphic.TablePanel;
 
@@ -25,7 +30,7 @@ import othello.ui.control.graphic.TablePanel;
  *
  * @author Hien Hoang
  */
-public class TableStation extends JPanel implements IGetBoardsResExec {
+public class TableStation extends JPanel implements Notifiable {
 
 	/**
 	 * 
@@ -37,8 +42,12 @@ public class TableStation extends JPanel implements IGetBoardsResExec {
 	List<TablePanel> tableList = new ArrayList<>();
 	BackNextGroup btnBackNext = new BackNextGroup();
 	
+	protected Configuration cfg = Configuration.getInstance();
+	protected GameSelection gameSelection;
+	
 	public TableStation() {
 		initialize();
+		NotificationBoard.getInstance().subscribe(this, NotificationBoard.NF_BOARD_LIST_CHANGED);
 	}
 	
 	private void initialize() {
@@ -49,6 +58,11 @@ public class TableStation extends JPanel implements IGetBoardsResExec {
         titleLabel.setForeground(Color.GRAY);
         
         tableListPanel.setLayout(new GridLayout(0, 2));
+        
+        if (cfg.getPlayingType().name.equalsIgnoreCase(TypeCfg.TYPE_ONLINE)) {
+        	
+        	gameSelection = GameSelection.getInstance();
+        }
         
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new GridLayout(1, 0));
@@ -81,7 +95,6 @@ public class TableStation extends JPanel implements IGetBoardsResExec {
          );
 	}
 	
-	@Override
     public void loadBoards(List<Board> boards) {
         this.tableList.clear();
         this.tableListPanel.removeAll();
@@ -104,4 +117,12 @@ public class TableStation extends JPanel implements IGetBoardsResExec {
     public void setNextLetter(String letter) {
     	btnBackNext.setNextLetter(letter);
     }
+
+	@Override
+	public void receiveChangeNotification(int category, Object detail) {
+		if (category == NotificationBoard.NF_BOARD_LIST_CHANGED) {
+			List<Board> boards = (List<Board>)detail;
+			loadBoards(boards);
+		}
+	}
 }

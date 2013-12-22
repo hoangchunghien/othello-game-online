@@ -7,7 +7,7 @@ import othello.models.Board;
  *
  * @author Hien Hoang
  */
-public interface IGetBoardsResExec {
+public interface FetchBoardListResExecutable {
     
-    public void loadBoards(List<Board> boards);
+    public void loadBoardList(List<Board> boards);
 }

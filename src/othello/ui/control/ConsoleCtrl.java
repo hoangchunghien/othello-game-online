@@ -2,7 +2,7 @@ package othello.ui.control;
 
 import java.util.Scanner;
 import othello.command.CommandFactory;
-import othello.command.ICommand;
+import othello.command.Commandable;
 import othello.common.Board;
 import othello.common.Piece;
 import othello.common.AbstractPlayer;
@@ -33,7 +33,7 @@ public class ConsoleCtrl extends AbstractControlUI {
     private void getCommand() {
         
         System.out.print("Command> ");
-        ICommand command;
+        Commandable command;
 //        do {
             String cmd = scanner.nextLine();
 //            command = CommandFactory.getCommand(cmd);

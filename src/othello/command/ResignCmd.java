@@ -10,7 +10,7 @@ import org.json.JSONObject;
  *
  * @author Hien
  */
-public class ResignCmd implements ICommand {
+public class ResignCmd implements Commandable {
     
     public final static String NAME = "resign";
     

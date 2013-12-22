@@ -8,7 +8,7 @@ import othello.common.Position;
  * @author Hien Hoang
  * @version Nov 7, 2013
  */
-public class MoveCmd implements ICommand {
+public class MoveCmd implements Commandable {
 
     public final static String NAME = "move";
     

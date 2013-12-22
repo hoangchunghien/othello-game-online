@@ -29,6 +29,8 @@ public class NotificationBoard {
     public static final Integer NF_GAME_EXITED = 17;
     public static final Integer NF_GAME_STARTING = 18;
     public static final Integer NF_START_GAME = 19;
+    public static final Integer NF_BOARD_LIST_CHANGED = 20;
+    public static final Integer NF_ROOM_LIST_CHANGED = 21;
     
     private HashMap<Integer, ArrayList<Notifiable>> clientMap;
     

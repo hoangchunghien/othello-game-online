@@ -9,12 +9,16 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.json.JSONObject;
+
 import othello.command.response.IJoinPlayerResExec;
 import othello.common.AbstractPlayer;
 import othello.common.Piece;
 import othello.common.Position;
 import othello.game.GameMonitor;
+import othello.game.GameTimer;
+import othello.game.NotificationBoard;
 
 /**
  *
@@ -32,10 +36,14 @@ public class Board implements ILocation, IBoard {
     private Dictionary<Piece, Boolean> pieceSelected;
     private List<Piece> supportedPiece;
     private GameMonitor gameMonitor;
+    private NotificationBoard nb;
+    private GameTimer timer;
     
     public Board() {
         
-        this.gameMonitor = new GameMonitor();
+    	nb = new NotificationBoard();
+    	timer = new GameTimer(nb);
+        this.gameMonitor = new GameMonitor(nb, timer);
         this.connections = new ArrayList<Socket>();
         this.playerConnections = new ArrayList<Socket>();
         this.viewerConnections = new ArrayList<Socket>();

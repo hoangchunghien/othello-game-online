@@ -11,7 +11,7 @@ import othello.common.AbstractPlayer;
  * . This command is client only
  * . Use for invoke the executor to get a move
  */
-public class GetMoveCmd implements ICommand {
+public class GetMoveCmd implements Commandable {
 
     private IGetMoveCmdExec executor;
     private AbstractPlayer caller;

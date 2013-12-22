@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import othello.command.CommandFactory;
-import othello.command.ICommand;
+import othello.command.Commandable;
 import othello.command.LoginCmd;
 import othello.command.response.ILoginResExec;
 

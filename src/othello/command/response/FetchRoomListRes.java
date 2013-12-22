@@ -10,20 +10,22 @@ import othello.models.Location;
  *
  * @author Hien Hoang
  */
-public class ListRoomsRes implements IResponse {
+public class FetchRoomListRes implements IResponse {
 
-    public static final String NAME = "list rooms";
+    public static final String NAME = "fetch_room_list";
     public static final String ACCEPTED = "accepted";
     public static final String REJECTED = "rejected";
     
     private String status;
+    private String message;
     private List<Location> rooms;
-    private IListRoomsResExec executor;
+    private FetchRoomListResExecutable executor;
     
-    public ListRoomsRes(IListRoomsResExec executor, String status, List<Location> rooms) {
+    public FetchRoomListRes(FetchRoomListResExecutable executor, String status, String message,List<Location> rooms) {
         
         this.executor = executor;
         this.status = status;
+        this.message = message;
         this.rooms = rooms;
     }
     
@@ -60,7 +62,7 @@ public class ListRoomsRes implements IResponse {
 
     @Override
     public void execute() {
-        executor.loadRoomsList(rooms);
+        executor.loadRoomList(rooms);
     }
 
 }

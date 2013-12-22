@@ -1,5 +1,6 @@
 package othello.command;
 
+import othello.client.GameSelection;
 import othello.client.OnlineGameMonitor;
 import othello.client.ClientGameMonitor;
 import othello.client.ComputerPlayer;
@@ -23,9 +24,9 @@ public class ClientCommandExecutorManager {
         return null;
     }
     
-    public static IGetBoardsCmdExec getGetBoardsCommandExecutor() {
+    public static FetchBoardListCmdExecutable getGetBoardsCommandExecutor() {
         if (cfg.getPlayingType().name.equalsIgnoreCase("online")) {
-            return OnlineGameMonitor.getInstance();
+            return GameSelection.getInstance();
         }
         return null;
     }

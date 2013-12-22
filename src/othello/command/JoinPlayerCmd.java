@@ -7,7 +7,7 @@ import othello.common.AbstractPlayer;
  *
  * @author Hien Hoang
  */
-public class JoinPlayerCmd implements ICommand {
+public class JoinPlayerCmd implements Commandable {
 
     public static final String NAME = "join player";
     private IJoinPlayerCmdExec executor;

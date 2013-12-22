@@ -37,6 +37,8 @@ public class LoginStation extends JPanel {
         titleLabel.setFont(othelloFont);
         titleLabel.setForeground(Color.GRAY);
         
+        btnBackNext.setNextLetter(StationUIManager.STATION_ROOM);
+        
         chkRemember.setText("Remember");
         chkRemember.setFont(new Font(getFont().getFontName(), Font.TRUETYPE_FONT, 28));
         

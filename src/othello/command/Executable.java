@@ -8,6 +8,6 @@ package othello.command;
  *
  * @author Hien
  */
-public interface IExec {
+public interface Executable {
     
 }

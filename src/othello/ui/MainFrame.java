@@ -10,6 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import othello.OthelloPlay;
+import othello.command.CommandFactory;
+import othello.command.Commandable;
 import othello.configuration.Configuration;
 import othello.configuration.TypeCfg;
 import othello.game.Game;
@@ -160,6 +162,8 @@ public class MainFrame extends JFrame implements Notifiable {
 				case StationUIManager.STATION_ROOM:
 					cfg.playing.setSelectedType(TypeCfg.TYPE_ONLINE);
 					roomStation.setBackLetter(letters.get(currentPanel));
+					Commandable cmd = CommandFactory.getFetchRoomListCmd("");
+	                cmd.execute();
 					currentPanel = roomStation;
 					changedUI(currentPanel);
 					break;

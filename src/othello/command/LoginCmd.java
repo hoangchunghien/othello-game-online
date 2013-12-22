@@ -9,7 +9,7 @@ import org.json.JSONObject;
  * Description
  * . TODO
  */
-public class LoginCmd implements ICommand{
+public class LoginCmd implements Commandable{
     
     public final static String NAME = "login";
     

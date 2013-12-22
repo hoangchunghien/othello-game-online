@@ -12,10 +12,10 @@ import java.util.logging.Logger;
 import org.json.JSONObject;
 import othello.command.CommandFactory;
 import othello.command.IChatCmdExec;
-import othello.command.ICommand;
+import othello.command.Commandable;
 import othello.command.IDrawExec;
-import othello.command.IExec;
-import othello.command.IGetBoardsCmdExec;
+import othello.command.Executable;
+import othello.command.FetchBoardListCmdExecutable;
 import othello.command.IJoinCmdExec;
 import othello.command.IJoinPlayerCmdExec;
 import othello.command.IListCmdExec;
@@ -31,10 +31,10 @@ import othello.command.notify.GameStateNtf;
 import othello.command.notify.MoveTurnNtf;
 import othello.command.notify.PassNtf;
 import othello.command.response.ChatRes;
-import othello.command.response.GetBoardsRes;
+import othello.command.response.FetchBoardListRes;
 import othello.command.response.IJoinPlayerResExec;
 import othello.command.response.JoinPlayerRes;
-import othello.command.response.ListRoomsRes;
+import othello.command.response.FetchRoomListRes;
 import othello.command.response.MoveRes;
 import othello.common.AbstractPlayer;
 import othello.server.location.IBoard;
@@ -57,14 +57,23 @@ import othello.models.Location;
  * . it also communicate with other object in the server like Station, Room, 
  * . Board,...
  */
-public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDrawExec, IListCmdExec, 
-       ILoginCmdExec, IMoveCmdExec, IQuitCmdExec, IRedoCmdExec, IResignCmdExec, IUndoCmdExec, IGetBoardsCmdExec, 
+public class Player extends AbstractPlayer implements Executable, IJoinCmdExec, IDrawExec,
+       ILoginCmdExec, IMoveCmdExec, IQuitCmdExec, IRedoCmdExec, IResignCmdExec, IUndoCmdExec, 
        IChatCmdExec, IJoinPlayerResExec, IJoinPlayerCmdExec {
     
     private Socket connection;
     private BufferedReader reader;
     private PrintWriter writer;
     private ILocation location;
+    private int connectionKey = this.hashCode();
+    
+    public int getConnectionKey() {
+    	return this.connectionKey;
+    }
+    
+    public void setConnection(Socket connection) {
+    	this.connection = connection;
+    }
     
     public Socket getConnection() {
         return connection;
@@ -125,6 +134,7 @@ public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDraw
             
             writer = new PrintWriter(connection.getOutputStream(), true);
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            
         } catch (IOException ex) {
             
             Logger.getLogger(Player.class.getName()).log(Level.SEVERE, null, ex);
@@ -133,9 +143,10 @@ public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDraw
     
     
     public void startListenFromClient() {
-        
-        Listener listener = new Listener(reader, this);
-        listener.start();
+        if (connection != null) {
+	        CommandListener listener = new CommandListener(reader, this);
+	        listener.start();
+        }
     }
 
     @Override
@@ -164,16 +175,6 @@ public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDraw
 
     @Override
     public void dealDraw() {
-    }
-
-    @Override
-    public void listLocations() {
-        getLocation().listLocations(connection);
-    }
-
-    @Override
-    public void listPlayers() {
-        getLocation().listPlayers(connection);
     }
 
     @Override
@@ -213,41 +214,6 @@ public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDraw
     @Override
     public void rejectDraw() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void listRooms() {
-        List<Location> rooms = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            Location room = new Location();
-            room.id = "" + i;
-            room.name = "Room " + i;
-            room.numUsers = i;
-            rooms.add(room);
-        }
-        ListRoomsRes listRoomsRes = new ListRoomsRes(null, ListRoomsRes.ACCEPTED , rooms);
-        getWriter().println(listRoomsRes.serializeJSON());
-    }
-
-    @Override
-    public void getBoards(String roomId) {
-        List<Board> boards = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            Board board = new Board("board " + i);
-            othello.models.Player p1 = new othello.models.Player();
-            p1.setUsername("user" + i);
-            p1.setType(1);
-            p1.setScore(i+100);
-            othello.models.Player p2 = new othello.models.Player();
-            p2.setUsername("opp" + i);
-            p2.setType(2);
-            p2.setScore(i + 200);
-            board.setPlayer(Piece.BLACK, p1);
-            board.setPlayer(Piece.WHITE, p2);
-            boards.add(board);
-        }
-        GetBoardsRes boardsRes = new GetBoardsRes(null, boards);
-        getWriter().println(boardsRes.serializeJSON());
     }
 
     @Override
@@ -350,12 +316,12 @@ public class Player extends AbstractPlayer implements IExec, IJoinCmdExec, IDraw
     }
     
 }
-class Listener extends Thread {
+class CommandListener extends Thread {
     
     private BufferedReader reader;
     private Player player;
     
-    public Listener(BufferedReader reader, Player player) {
+    public CommandListener(BufferedReader reader, Player player) {
         this.reader = reader;
         this.player = player;
     }
@@ -367,7 +333,7 @@ class Listener extends Thread {
                 System.out.println("waiting command...");
                 JSONObject command = new JSONObject(reader.readLine());
                 System.out.println("Received command: " + command);
-                ICommand cmd = CommandFactory.getServerCommand(player, player, command);
+                Commandable cmd = CommandFactory.getServerCommand(player, player, command);
                 if (cmd != null) {
                     
                     cmd.execute();

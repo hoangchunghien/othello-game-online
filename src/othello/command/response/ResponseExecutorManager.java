@@ -6,6 +6,7 @@ package othello.command.response;
 
 import othello.Test;
 import othello.client.ClientGameMonitor;
+import othello.client.GameSelection;
 import othello.client.OnlineGameMonitor;
 import othello.common.AbstractPlayer;
 import othello.configuration.Configuration;
@@ -59,18 +60,18 @@ public class ResponseExecutorManager {
         return null;
     }
     
-    public static IGetBoardsResExec getBoardsResponseExecutor() {
+    public static FetchBoardListResExecutable getBoardsResponseExecutor() {
         
         if (config.getSelectedControlUI().name.equalsIgnoreCase(UICfg.UI_GRAPHIC)) {
             System.out.println("Get boards executor found");
-            return TableListPanel.getInstance();
+            return GameSelection.getInstance();
         }
         return null;
     }
     
-    public static IListRoomsResExec getListRoomsResponseExecutor() {
+    public static FetchRoomListResExecutable getListRoomsResponseExecutor() {
         if (config.getSelectedControlUI().name.equalsIgnoreCase(UICfg.UI_GRAPHIC)) {
-            return RoomListPanel.getInstance();
+            return GameSelection.getInstance();
         }
         System.out.println("Executor not found...");
         return null;

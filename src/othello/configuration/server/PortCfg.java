@@ -12,6 +12,12 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Port")
 public class PortCfg {
+	public static final String NAME_SELECTION = "selection";
+	public static final String NAME_PLAYING = "playing";
+	
+	@XmlAttribute(name = "name")
+    public String name;
+	
     @XmlAttribute(name = "number")
     public int number;
 }

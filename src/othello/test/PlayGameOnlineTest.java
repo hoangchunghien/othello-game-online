@@ -43,32 +43,32 @@ public class PlayGameOnlineTest {
         }
 }
 
-class OneBoardServerTest {
-    
-    public static void main(String args[]) throws Exception {
-        System.out.println("Othello server starting..." + Configuration.getInstance().port);
-        System.out.println("Running port: " + Configuration.getInstance().port.number);
-        ServerSocket listener = new ServerSocket(
-                Configuration.getInstance().port.number);
-        System.out.println("Othello server running");
-
-        Board board = new Board();
-        board.setId("board" +1);
-        board.setName("Board " + 1);
-        
-        while (true) {
-            
-            try {
-                Socket connection = listener.accept();
-                System.out.println("Player accepted");
-                Player player = new Player(connection);
-                player.setLocation(board);
-                player.getLocation().join(connection);
-                player.startListenFromClient();
-            }
-            catch (IOException ie) {
-                ie.printStackTrace();
-            }
-        }
-    }
-}
+//class OneBoardServerTest {
+//    
+//    public static void main(String args[]) throws Exception {
+//        System.out.println("Othello server starting..." + Configuration.getInstance().port);
+//        System.out.println("Running port: " + Configuration.getInstance().port.number);
+//        ServerSocket listener = new ServerSocket(
+//                Configuration.getInstance().port.number);
+//        System.out.println("Othello server running");
+//
+//        Board board = new Board();
+//        board.setId("board" +1);
+//        board.setName("Board " + 1);
+//        
+//        while (true) {
+//            
+//            try {
+//                Socket connection = listener.accept();
+//                System.out.println("Player accepted");
+//                Player player = new Player(connection);
+//                player.setLocation(board);
+//                player.getLocation().join(connection);
+//                player.startListenFromClient();
+//            }
+//            catch (IOException ie) {
+//                ie.printStackTrace();
+//            }
+//        }
+//    }
+//}

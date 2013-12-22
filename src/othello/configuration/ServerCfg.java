@@ -14,8 +14,13 @@ import javax.xml.bind.annotation.XmlType;
 public class ServerCfg {
     @XmlAttribute(name = "address")
     public String address;
-    @XmlAttribute(name = "port")
-    public int port;
+    
+    @XmlAttribute(name = "selectionPort")
+    public int selectionPort;
+    
+    @XmlAttribute(name = "playingPort")
+    public int playingPort;
+    
     @XmlAttribute(name = "selected")
     public boolean selected;
 }

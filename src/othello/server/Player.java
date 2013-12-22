@@ -286,6 +286,7 @@ public class Player extends AbstractPlayer implements Executable, IJoinCmdExec, 
             if (player == this) {
                 MoveTurnNtf moveTurnNtf = new MoveTurnNtf(null);
                 moveTurnNtf.setPiece(this.getPiece());
+                moveTurnNtf.setValidMoves(validMoves);
                 getWriter().println(moveTurnNtf.serializeJSON());
                 
                 // for debug

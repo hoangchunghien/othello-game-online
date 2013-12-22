@@ -102,9 +102,11 @@ public class HumanPlayer extends AbstractPlayer implements IMoveNtfExec{
         if (category == NotificationBoard.NF_MOVE_TURN) {
             AbstractPlayer player = (AbstractPlayer)detail;
             if (player == this) {
+            	
                 GetMoveCmd getMoveCmd = 
                     new GetMoveCmd(ClientCommandExecutorManager.getGetMoveCommandExecutor(this), this);
                 getMoveCmd.execute();
+                nb.fireChangeNotification(NotificationBoard.NF_VALID_MOVE_CHANGED, validMoves);
             }
         }
         

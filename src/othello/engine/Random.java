@@ -27,6 +27,7 @@ public class Random extends AbstractEngine {
         }
         Position pos;   
         List<Position> positionList = this.board.getValidMoveList(p);
+        System.out.println("valid move: " + positionList.size());
         pos = positionList.get(0);
         
         return pos;

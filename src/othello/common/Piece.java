@@ -14,6 +14,7 @@ public enum Piece {
     EMPTY,
     BLACK,
     WHITE,
+    VALID,
     UNDEFINED;
     
     //private Piece opp;
@@ -26,6 +27,8 @@ public enum Piece {
                 return "X";
             case WHITE:
                 return "O";
+            case VALID:
+            	return "V";
             case UNDEFINED:
                 return "U";
             default: 
@@ -41,6 +44,8 @@ public enum Piece {
                 return Piece.BLACK;
             case "O":
                 return Piece.WHITE;
+            case "V":
+            	return Piece.VALID;
             default:
                 return Piece.UNDEFINED;
         }

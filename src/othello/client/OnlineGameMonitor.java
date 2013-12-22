@@ -215,9 +215,11 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
     }
 
     @Override
-    public void fireMoveTurnNotify(Piece piece) {
+    public void fireMoveTurnNotify(Piece piece, List<Position> validMoves) {
         onlinePlayer.setPiece(piece);
+        onlinePlayer.setValidMoves(validMoves);
         nb.fireChangeNotification(NotificationBoard.NF_MOVE_TURN, onlinePlayer);
+        
     }
 
     @Override

@@ -34,7 +34,7 @@ public class Board {
         
         // Initialize 4 piece in new board
         int m = pieces.length / 2;
-	pieces[m - 1][m - 1] = Piece.WHITE;
+        pieces[m - 1][m - 1] = Piece.WHITE;
         pieces[m - 1][m] = Piece.BLACK;
         pieces[m][m - 1] = Piece.BLACK;
         pieces[m][m] = Piece.WHITE;
@@ -47,7 +47,7 @@ public class Board {
         
         for (int i = 0; i < pieces.length; i++) {
             for (int j = 0; j < pieces[i].length; j++) {
-                result.setPiece(Piece.toPiece(this.getPiece(j, i).toString()), new Position(j, i));
+                result.setPiece(this.getPiece(j, i), new Position(j, i));
             }
         }
         
@@ -106,7 +106,7 @@ public class Board {
         return Piece.UNDEFINED;
     }
     
-    private void setPiece(Piece p, Position pos) {
+    public void setPiece(Piece p, Position pos) {
         pieces[pos.getY()][pos.getX()] = p;
     }
     
@@ -117,6 +117,15 @@ public class Board {
         }
         // Place this piece
         pieces[pos.getY()][pos.getX()] = p;
+        for (Position po : getValidMoveList(p.getOpposite())) {
+        	System.out.println(po.toString());
+        }
+    }
+    
+    public void setValidPosition(Piece p) {
+    	for (Position po : getValidMoveList(p)) {
+    		setPiece(Piece.VALID, po);
+    	}
     }
     
     private void setPieceDirection(Piece p, Position pos, Neighbor n) {
@@ -146,7 +155,7 @@ public class Board {
             return false;
         
         // Only empty slot can be placed
-        if (getPiece(pos) == Piece.EMPTY) {
+        if (getPiece(pos) == Piece.EMPTY || getPiece(pos) == Piece.VALID) {
             //System.out.println("This slot empty");
             for (Neighbor n : Neighbor.values()) {
                 //System.out.println("In the for");
@@ -168,7 +177,7 @@ public class Board {
         for (int i = 0; i < pieces.length; i++) {
             for (int j = 0; j < pieces[i].length; j++) {
                 //System.out.println("Checking...");
-                if (pieces[i][j] == Piece.EMPTY && isValidMove(p, new Position(j, i))) {
+                if ((pieces[i][j] == Piece.EMPTY || pieces[i][j] == Piece.VALID) && isValidMove(p, new Position(j, i))) {
                     return true;
                 }
             }
@@ -188,9 +197,10 @@ public class Board {
         for (int i = 0; i < pieces.length; i++) {
             for (int j = 0; j < pieces[i].length; j++) {
                 //System.out.println("Add valid move to move list");
-                if (pieces[i][j] == Piece.EMPTY && isValidMove(p, new Position(j, i))) {
+            	Position position = new Position(j, i);
+                if (isValidMove(p, position)) {
                     //System.out.println("Add valid move to move list");
-                    moveList.add(new Position(j, i));
+                    moveList.add(position);
                 }
             }
         }

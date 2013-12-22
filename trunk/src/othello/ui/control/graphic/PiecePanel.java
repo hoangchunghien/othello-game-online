@@ -3,9 +3,14 @@ package othello.ui.control.graphic;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.util.ArrayList;
+
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+
 import othello.common.Piece;
 import othello.common.Position;
 /**
@@ -13,8 +18,14 @@ import othello.common.Position;
  * @author Hien Hoang
  * @version Nov 10, 2013
  */
-public class PiecePanel extends JPanel implements ActionListener {
+public class PiecePanel extends JPanel implements ActionListener, MouseListener {
     
+	protected static final String PIC_PATH = "pixmaps/";
+	protected static final String IMG_NAME = "standard-1";			
+	protected static final String TYPE_NORMAL = PIC_PATH + IMG_NAME + ".png";
+	protected static final String TYPE_VALID = PIC_PATH + IMG_NAME + "_VALID.png";
+	protected static final String TYPE_ACTIVE = PIC_PATH + IMG_NAME + "_ACTIVE.png";
+	
     public final static int PIC_SPACE = 60;
     public final static int MAX_ANIMATE_NUMBER = 32;
     private final static int BLACK_X = 1;
@@ -24,7 +35,7 @@ public class PiecePanel extends JPanel implements ActionListener {
     private final static int EMPTY_X = 0;
     private final static int EMPTY_Y = 0;
     
-    String imgLocation = "pixmaps/standard-1.png";
+    String imgLocation = TYPE_NORMAL;
     ImageIcon pieceImg = new ImageIcon() ;
     
     private Piece piece;
@@ -33,6 +44,19 @@ public class PiecePanel extends JPanel implements ActionListener {
     private int locationX;
     private int locationY;
     private int width;
+    
+    private boolean isValid = false;
+    
+    public void displayValid(boolean flag) {
+    	isValid = flag;
+    	if (isValid) {
+    		imgLocation = TYPE_VALID;
+    	}
+    	else {
+    		imgLocation = TYPE_NORMAL;
+    	}
+    	updateUI();
+    }
     
     // For animation
     ArrayList<Position> animationPieces = new ArrayList<Position>();
@@ -178,12 +202,17 @@ public class PiecePanel extends JPanel implements ActionListener {
             animationPieces.add(j++, new Position((i%8)*PIC_SPACE, (i/8)*PIC_SPACE));
         }
         maxTransisitonNums = j;
-        
+        this.addMouseListener(this);
     }
     
     @Override
     public void paint(Graphics g) {
-        
+    	try {
+    		pieceImg = new ImageIcon(PiecePanel.class.getResource(imgLocation));
+    	}
+    	catch (Exception ie) {
+    		ie.printStackTrace();
+    	}
         g.drawImage(pieceImg.getImage(),0, 0, width, width, locationX, locationY, locationX + PIC_SPACE, locationY + PIC_SPACE, this);
     }
 
@@ -216,5 +245,50 @@ public class PiecePanel extends JPanel implements ActionListener {
 //            
 //        }
     }
+
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		if (isValid) {
+			imgLocation = TYPE_ACTIVE;
+		}
+		else {
+			imgLocation = TYPE_NORMAL;
+		}
+		updateUI();
+	}
+
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		if (isValid) {
+			imgLocation = TYPE_VALID;
+		}
+		else {
+			imgLocation = TYPE_NORMAL;
+		}
+		updateUI();
+	}
+
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
     
 }

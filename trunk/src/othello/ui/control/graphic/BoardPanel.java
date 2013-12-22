@@ -21,20 +21,24 @@ import othello.common.AbstractPlayer;
 import othello.common.Board;
 import othello.common.Position;
 import othello.configuration.Configuration;
+import othello.game.Notifiable;
+import othello.game.NotificationBoard;
 
 /**
  *
  * @author Hien Hoang
  * @version Nov 10, 2013
  */
-public class BoardPanel extends JPanel implements MouseListener, ActionListener, IGetMoveCmdExec {
+public class BoardPanel extends JPanel implements MouseListener, ActionListener, IGetMoveCmdExec, Notifiable {
     
     private Configuration cfg = Configuration.getInstance();
+    private NotificationBoard nb = NotificationBoard.getInstance();
     private AbstractPlayer getMoveCaller;
     private boolean allowGetMove = false;
     private static Object lock = new Object();
     
     private PiecePanel pieces[][] = new PiecePanel[cfg.board.height][cfg.board.width];
+    private List<Position> validMoves;
     private Board board;
     Timer timer;
     int pixWidth;
@@ -89,16 +93,40 @@ public class BoardPanel extends JPanel implements MouseListener, ActionListener,
                 this.add(pieces[i][j]);
             }
         }
+        nb.subscribe(this, NotificationBoard.NF_VALID_MOVE_CHANGED);
     }
     
     public void renderBoard(Board board) throws InterruptedException {
-        
+    	// JOptionPane.showMessageDialog(null, "Board changed");
+    	for (int i = 0; i < board.getHeight(); i++) {
+            
+        	for (int j = 0; j < board.getWidth(); j++) {
+        		pieces[i][j].displayValid(false);
+        	}
+        }
+    	
         List<PiecePanel> changedPieces = getChangedPieces(board);
         for (PiecePanel item : changedPieces) {
             
-            item.changePieceTo(board.getPiece(item.getPositionX(), item.getPositionY()));
+        	Position po = new Position(item.getPositionX(), item.getPositionY());
+            item.changePieceTo(board.getPiece(po));
+            // this.board.setPiece(board.getPiece(po), po);
         }
         this.board = board.clone();
+        
+        this.showValidMove(validMoves);
+    }
+    
+    public void showValidMove(List<Position> validMoves) {
+    	// JOptionPane.showMessageDialog(null, "Show valid move");
+    	if (getMoveCaller != null && cfg.userInterfaces.controlUI.showValidMove && allowGetMove) {
+
+    		// JOptionPane.showMessageDialog(null, board.serializeJson());
+    		for (Position p : validMoves) {
+    			if (board.isValidMove(getMoveCaller.getPiece(), p))
+    				pieces[p.getY()][p.getX()].displayValid(true);
+    		}
+    	}
     }
     
     public List<PiecePanel> getChangedPieces(Board board) {
@@ -121,10 +149,10 @@ public class BoardPanel extends JPanel implements MouseListener, ActionListener,
     @Override
     public void mouseClicked(MouseEvent e) {
         if (this.allowGetMove) {
-            //this.allowGetMove = false;
+            this.allowGetMove = false;
         	
             PiecePanel piece = (PiecePanel) e.getSource();
-            JOptionPane.showMessageDialog(null, "Postion: " + piece.getPositionX() + "-" + piece.getPositionY());
+            // JOptionPane.showMessageDialog(null, "Postion: " + piece.getPositionX() + "-" + piece.getPositionY());
             GetMoveRes getMoveResponse = 
                     new GetMoveRes(ResponseExecutorManager.getGetMoveResponseExecutor(getMoveCaller), 
                                     new Position(piece.getPositionX(), piece.getPositionY()));
@@ -163,7 +191,18 @@ public class BoardPanel extends JPanel implements MouseListener, ActionListener,
     public void getMoveFor(AbstractPlayer player) {
         this.allowGetMove = true;
         this.getMoveCaller = player;
+        // JOptionPane.showMessageDialog(null, "Get move for me now");
+        // showValidMove();
     }
+
+	@Override
+	public void receiveChangeNotification(int category, Object detail) {
+		if (category == NotificationBoard.NF_VALID_MOVE_CHANGED) {
+			List<Position> validMoves = (List<Position>)detail;
+			this.validMoves = validMoves;
+			this.showValidMove(validMoves);
+		}
+	}
 }
 
 class ResponseExecuting extends Thread {

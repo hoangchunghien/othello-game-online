@@ -106,6 +106,7 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
             System.out.println("All player is ready to play, game started.");
             System.out.println("Turn: " + state.getCurrentPlayer().getName());
             nb.fireChangeNotification(NotificationBoard.NF_GAMESTATE_CHANGED, state);
+            state.getCurrentPlayer().setValidMoves(state.getBoard().getValidMoveList(state.getCurrentPlayer().getPiece()));
             nb.fireChangeNotification(NotificationBoard.NF_MOVE_TURN, state.getCurrentPlayer());
         }
     }
@@ -213,6 +214,7 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
             // has any valid move ...
             if (currentBoard.hasAnyValidMove(state.getCurrentPlayer().getPiece())) {
 
+            	state.getCurrentPlayer().setValidMoves(state.getBoard().getValidMoveList(state.getCurrentPlayer().getPiece()));
                 nb.fireChangeNotification(NotificationBoard.NF_MOVE_TURN, state.getCurrentPlayer());
             }
             else if (currentBoard.isGameOver()) {

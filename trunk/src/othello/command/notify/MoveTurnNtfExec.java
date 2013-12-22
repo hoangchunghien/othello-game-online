@@ -1,6 +1,9 @@
 package othello.command.notify;
 
+import java.util.List;
+
 import othello.common.Piece;
+import othello.common.Position;
 
 /**
  *
@@ -11,5 +14,5 @@ import othello.common.Piece;
  * . TODO
  */
 public interface MoveTurnNtfExec {
-    public void fireMoveTurnNotify(Piece piece);
+    public void fireMoveTurnNotify(Piece piece, List<Position> validMoves);
 }

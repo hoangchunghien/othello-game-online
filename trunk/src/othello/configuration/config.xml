@@ -42,7 +42,7 @@
 			<UI name="Console" selected="true" />
 			<UI name="Graphic" selected="false" />
 		</Configuration>
-		<Control>
+		<Control showValidMove = "true">
 			<UI name="Console" selected="false" />
 			<UI name="Graphic" selected="true" />
 		</Control>

@@ -4,7 +4,10 @@
  */
 package othello.common;
 
+import java.util.List;
+
 import org.json.JSONObject;
+
 import othello.command.AnswerRequestCmdExec;
 import othello.command.notify.IGameOverNtfExec;
 import othello.command.notify.IPassNtfExec;
@@ -26,6 +29,7 @@ public abstract class AbstractPlayer implements IGetMoveResExec, IMoveResExec,
     Piece piece = Piece.UNDEFINED;
     int score = 0;
     String name = "undefined";
+    protected List<Position> validMoves;
     NotificationBoard nb = NotificationBoard.getInstance();
     
     public AbstractPlayer(Piece piece) {
@@ -84,6 +88,10 @@ public abstract class AbstractPlayer implements IGetMoveResExec, IMoveResExec,
     public void setName(String value) {
         
         this.name = value;
+    }
+    
+    public void setValidMoves(List<Position> validMoves) {
+    	this.validMoves = validMoves;
     }
     
     public abstract AbstractPlayer clone();

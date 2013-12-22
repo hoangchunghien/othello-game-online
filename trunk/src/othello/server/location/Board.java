@@ -21,6 +21,7 @@ import othello.common.Position;
 import othello.game.GameMonitor;
 import othello.game.GameTimer;
 import othello.game.NotificationBoard;
+import othello.server.Player;
 
 /**
  *
@@ -40,7 +41,7 @@ public class Board implements ILocation, IBoard {
     private GameMonitor gameMonitor;
     private NotificationBoard nb;
     private GameTimer timer;
-    private List<AbstractPlayer> players;
+    private List<Player> players;
     
     public Board() {
         
@@ -192,13 +193,31 @@ public class Board implements ILocation, IBoard {
     @Override
     public void setReady(AbstractPlayer player) {
         gameMonitor.setReady(player);
+        this.startGame();
     }
 
 	@Override
 	public void joinPlayer(AbstractPlayer player) {
 		gameMonitor.addPlayer(player);
-		othello.server.Othello.getPlayingTicket()
-		.put(UUID.randomUUID().toString(), player);
+		
+		// generate unique id for ticket
+		String uuid = UUID.randomUUID().toString(); 
+		othello.server.Othello.getPlayingTicket().put(uuid, player);
+		othello.server.Othello.getTicketPlayer().put(player, uuid);
+		
+		players.add((Player)player);
 	}
-    
+	
+	public void startGame() {
+		boolean isAllPlayerReady = true;
+		for (Player player : players) {
+			if (player.getConnection() == null) {
+				isAllPlayerReady = false;
+				break;
+			}
+		}
+		if (isAllPlayerReady == true) {
+			gameMonitor.start();
+		}
+	}
 }

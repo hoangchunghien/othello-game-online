@@ -10,9 +10,9 @@ import org.json.JSONObject;
 
 import othello.command.response.FetchBoardListRes;
 import othello.command.response.FetchRoomListRes;
-import othello.common.AbstractPlayer;
-import othello.common.Piece;
+import othello.command.response.JoinPlayerRes;
 import othello.models.Location;
+import othello.server.Othello;
 import othello.server.Player;
 
 public class LocationManager {
@@ -88,10 +88,21 @@ public class LocationManager {
 	public void joinPlayer(Socket connection, String boardId) {
 		for (Board board : boards)
 		{
-			if (board.getId() == boardId)
+			if (board.getId().equals(boardId))
 			{
 				Player player = new Player(null);
 				board.joinPlayer(player);
+				player.setLocation(board);
+				player.setBoard(board);
+				
+				String ticket = Othello.getTicketPlayer().get(player);
+				
+				JoinPlayerRes res = new JoinPlayerRes(null);
+				res.setPlayerTicket(ticket);
+				res.setMessage("");
+				res.setStatus(JoinPlayerRes.ACCEPTED);
+				
+				sendTo(connection, res.serializeJSON());
 			}
 		}
 	}

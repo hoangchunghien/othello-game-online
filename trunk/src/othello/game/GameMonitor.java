@@ -50,7 +50,7 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
     protected Stack redoState;
     protected Dictionary<Position, GameState> recordStates;
     protected HashMap<Integer, Queue> waitingResList;
-    protected NotificationBoard nb = NotificationBoard.getInstance();
+    protected NotificationBoard nb;
     protected boolean isGameReady = false;
     protected boolean isTerminated = false;
     
@@ -116,6 +116,8 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
             System.out.println(player.getName() + " joined first player.");
             isReady.put(player, Boolean.FALSE);
             gameTimer.registerTimer(player);
+            state.setCurrentPlayer(player);
+            player.setPiece(Piece.BLACK);
         } 
         else if (state.players[1] == null) {
             
@@ -123,6 +125,7 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
             System.out.println(player.getName() + " joined second player.");
             isReady.put(player, Boolean.FALSE);
             gameTimer.registerTimer(player);
+            player.setPiece(Piece.WHITE);
         }
         else {
 
@@ -131,6 +134,7 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
         }
         
         nb.subscribe(player, NotificationBoard.NF_GAMESTATE_CHANGED);
+        nb.subscribe(player, NotificationBoard.NF_MOVE_TURN);
     }
     
     public void setReady(AbstractPlayer player) {

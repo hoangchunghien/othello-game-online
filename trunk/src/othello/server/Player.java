@@ -17,8 +17,7 @@ import othello.command.IDrawExec;
 import othello.command.Executable;
 import othello.command.FetchBoardListCmdExecutable;
 import othello.command.IJoinCmdExec;
-import othello.command.IJoinPlayerCmdExec;
-import othello.command.IListCmdExec;
+import othello.command.JoinPlayerCmdExecutable;
 import othello.command.ILoginCmdExec;
 import othello.command.IMoveCmdExec;
 import othello.command.IQuitCmdExec;
@@ -32,7 +31,7 @@ import othello.command.notify.MoveTurnNtf;
 import othello.command.notify.PassNtf;
 import othello.command.response.ChatRes;
 import othello.command.response.FetchBoardListRes;
-import othello.command.response.IJoinPlayerResExec;
+import othello.command.response.JoinPlayerResExecutable;
 import othello.command.response.JoinPlayerRes;
 import othello.command.response.FetchRoomListRes;
 import othello.command.response.MoveRes;
@@ -59,7 +58,7 @@ import othello.models.Location;
  */
 public class Player extends AbstractPlayer implements Executable, IJoinCmdExec, IDrawExec,
        ILoginCmdExec, IMoveCmdExec, IQuitCmdExec, IRedoCmdExec, IResignCmdExec, IUndoCmdExec, 
-       IChatCmdExec, IJoinPlayerResExec, IJoinPlayerCmdExec {
+       IChatCmdExec {
     
     private Socket connection;
     private BufferedReader reader;
@@ -247,33 +246,6 @@ public class Player extends AbstractPlayer implements Executable, IJoinCmdExec, 
     public void processMoveRejected(String msg) {
         MoveRes moveRes = new MoveRes(null, MoveRes.REJECTED, "Invalid move!!!", Position.UNDEFINED);
         getWriter().println(moveRes.serializeJSON());
-    }
-
-    @Override
-    public void joinAccepted(AbstractPlayer player) {
-        // Return join player response to client
-        JoinPlayerRes joinPlayerRes = new JoinPlayerRes(null, JoinPlayerRes.ACCEPTED, "OK", player);
-        this.getWriter().println(joinPlayerRes.serializeJSON());
-        
-        if (location.isBoard()) {
-            IBoard board = (IBoard)location;
-            board.setReady(player);
-        }
-    }
-
-    @Override
-    public void joinRejected(String message) {
-        // Return join player response failure to client
-        JoinPlayerRes joinPlayerRes = new JoinPlayerRes(null, JoinPlayerRes.REJECTED, "Can't join", null);
-        this.getWriter().println(joinPlayerRes.serializeJSON());
-    }
-
-    @Override
-    public void joinPlayer(AbstractPlayer player) {
-        if (location.isBoard()) {
-            IBoard board = (IBoard)location;
-            board.joinPlayer(player);
-        }
     }
 
     @Override

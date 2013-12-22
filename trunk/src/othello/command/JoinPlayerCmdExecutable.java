@@ -6,6 +6,6 @@ import othello.common.AbstractPlayer;
  *
  * @author Hien Hoang
  */
-public interface IJoinPlayerCmdExec {
-    public void joinPlayer(AbstractPlayer player);
+public interface JoinPlayerCmdExecutable {
+    public void joinPlayer(String boardId);
 }

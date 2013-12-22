@@ -6,7 +6,7 @@ import othello.common.AbstractPlayer;
  *
  * @author Hien Hoang
  */
-public interface IJoinPlayerResExec {
-    public void joinAccepted(AbstractPlayer player);
+public interface JoinPlayerResExecutable {
+    public void joinAccepted(String playerTicket);
     public void joinRejected(String message);
 }

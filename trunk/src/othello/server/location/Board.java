@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 import org.json.JSONObject;
 
-import othello.command.response.IJoinPlayerResExec;
+import othello.command.response.JoinPlayerResExecutable;
 import othello.common.AbstractPlayer;
 import othello.common.Piece;
 import othello.common.Position;
@@ -92,33 +92,33 @@ public class Board implements ILocation, IBoard {
     public void listPlayers(Socket connectionSoc) {
     }
 
-    @Override
-    public void joinPlayer(AbstractPlayer player) {
-        
-        String msg;
-        IJoinPlayerResExec joinPlayerResExec = (IJoinPlayerResExec)player;
-        if (gameMonitor.getState().getPlayers()[0] == null) {
-
-            player.setPiece(Piece.BLACK);
-            gameMonitor.addPlayer(player);
-            gameMonitor.getState().setCurrentPlayer(player);
-            msg = "Joined";
-            joinPlayerResExec.joinAccepted(player);
-        } 
-        else if (gameMonitor.getState().getPlayers()[1] == null) {
-
-            player.setPiece(Piece.WHITE);
-            gameMonitor.addPlayer(player);
-            msg = "Joined";
-            joinPlayerResExec.joinAccepted(player);
-        }
-        else {
-            msg = "Can't join, table full!!!";
-            
-            joinPlayerResExec.joinRejected(msg);
-        }
-
-    }
+//    @Override
+//    public void joinPlayer(AbstractPlayer player) {
+//        
+//        String msg;
+//        JoinPlayerResExecutable joinPlayerResExec = (JoinPlayerResExecutable)player;
+//        if (gameMonitor.getState().getPlayers()[0] == null) {
+//
+//            player.setPiece(Piece.BLACK);
+//            gameMonitor.addPlayer(player);
+//            gameMonitor.getState().setCurrentPlayer(player);
+//            msg = "Joined";
+//            joinPlayerResExec.joinAccepted(player);
+//        } 
+//        else if (gameMonitor.getState().getPlayers()[1] == null) {
+//
+//            player.setPiece(Piece.WHITE);
+//            gameMonitor.addPlayer(player);
+//            msg = "Joined";
+//            joinPlayerResExec.joinAccepted(player);
+//        }
+//        else {
+//            msg = "Can't join, table full!!!";
+//            
+//            joinPlayerResExec.joinRejected(msg);
+//        }
+//
+//    }
     
     private void sendTo(Socket soc, JSONObject jObj){
         try {
@@ -189,5 +189,11 @@ public class Board implements ILocation, IBoard {
     public void setReady(AbstractPlayer player) {
         gameMonitor.setReady(player);
     }
+
+	@Override
+	public void joinPlayer(AbstractPlayer player) {
+		// TODO Auto-generated method stub
+		
+	}
     
 }

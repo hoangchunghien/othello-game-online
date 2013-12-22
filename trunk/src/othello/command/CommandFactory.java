@@ -167,7 +167,7 @@ public class CommandFactory {
                 chat.deserializeJSON(jObj);
                 return chat;
             case JoinPlayerCmd.NAME:
-                JoinPlayerCmd joinPlayer = new JoinPlayerCmd((IJoinPlayerCmdExec)executor, (AbstractPlayer)executor);
+                JoinPlayerCmd joinPlayer = new JoinPlayerCmd((JoinPlayerCmdExecutable)executor);
                 joinPlayer.deserializeJSON(jObj);
                 return joinPlayer;
             default:

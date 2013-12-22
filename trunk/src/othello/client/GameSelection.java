@@ -14,19 +14,23 @@ import othello.command.FetchBoardListCmd;
 import othello.command.FetchBoardListCmdExecutable;
 import othello.command.FetchRoomListCmd;
 import othello.command.FetchRoomListCmdExecutable;
+import othello.command.JoinPlayerCmd;
+import othello.command.JoinPlayerCmdExecutable;
 import othello.command.notify.INotification;
 import othello.command.notify.NotifyFactory;
 import othello.command.response.FetchBoardListResExecutable;
 import othello.command.response.FetchRoomListResExecutable;
 import othello.command.response.IResponse;
+import othello.command.response.JoinPlayerResExecutable;
 import othello.command.response.ResponseFactory;
+import othello.common.AbstractPlayer;
 import othello.configuration.Configuration;
 import othello.game.NotificationBoard;
 import othello.models.Board;
 import othello.models.Location;
 
 public class GameSelection implements FetchBoardListCmdExecutable, FetchRoomListCmdExecutable, FetchRoomListResExecutable,
-	FetchBoardListResExecutable {
+	FetchBoardListResExecutable, JoinPlayerCmdExecutable, JoinPlayerResExecutable {
 	
     private String serverAddress;
     private int serverPort;
@@ -97,6 +101,25 @@ public class GameSelection implements FetchBoardListCmdExecutable, FetchRoomList
 	@Override
 	public void loadBoardList(List<Board> boards) {
 		nb.fireChangeNotification(NotificationBoard.NF_BOARD_LIST_CHANGED, boards);
+	}
+
+	@Override
+	public void joinPlayer(String boardId) {
+		JoinPlayerCmd joinPlayerCmd = new JoinPlayerCmd(null);
+        System.out.println("Sending command: " + joinPlayerCmd.serializeJSON());
+        writer.println(joinPlayerCmd.serializeJSON());
+	}
+
+	@Override
+	public void joinAccepted(String playerTicket) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void joinRejected(String message) {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

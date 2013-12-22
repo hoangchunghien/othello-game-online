@@ -16,7 +16,7 @@ import org.json.JSONObject;
 import othello.command.ChatCmd;
 import othello.command.IChatCmdExec;
 import othello.command.IJoinCmdExec;
-import othello.command.IJoinPlayerCmdExec;
+import othello.command.JoinPlayerCmdExecutable;
 import othello.command.ILoginCmdExec;
 import othello.command.IMoveCmdExec;
 import othello.command.IQuitCmdExec;
@@ -35,7 +35,7 @@ import othello.command.notify.IPassNtfExec;
 import othello.command.notify.MoveTurnNtfExec;
 import othello.command.notify.NotifyFactory;
 import othello.command.response.AnswerRequestResExec;
-import othello.command.response.IJoinPlayerResExec;
+import othello.command.response.JoinPlayerResExecutable;
 import othello.command.response.IMoveResExec;
 import othello.command.response.MoveRes;
 import othello.command.response.ResponseFactory;
@@ -57,7 +57,7 @@ import othello.game.NotificationBoard;
  */
 public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdExec, IRedoCmdExec,
         IResignCmdExec, IQuitCmdExec, IJoinCmdExec, IChatCmdExec,
-        IMoveResExec, IJoinPlayerCmdExec, IJoinPlayerResExec, MoveTurnNtfExec, 
+        IMoveResExec, MoveTurnNtfExec, 
         GameStateNtfExec, IPassNtfExec, IGameOverNtfExec, AnswerRequestResExec {
     
     private String serverAddress;
@@ -188,32 +188,6 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
         
         MoveRes moveRes = new MoveRes(onlinePlayer, MoveRes.REJECTED, msg, Position.UNDEFINED);
         moveRes.execute();
-    }
-
-
-    @Override
-    public void joinPlayer(AbstractPlayer player) {
-        JoinPlayerCmd joinPlayerCmd = new JoinPlayerCmd(null, player);
-        System.out.println("Sending command: " + joinPlayerCmd.serializeJSON());
-        writer.println(joinPlayerCmd.serializeJSON());
-    }
-
-    @Override
-    public void joinAccepted(AbstractPlayer player) {
-        
-        System.out.println("Accepted join player command");
-        onlinePlayer = PlayerFactory.getPlayer(cfg.players.players
-                .get(cfg.players.getPlayerOnlineIndex()).getType());
-        onlinePlayer.setName(player.getName());
-        onlinePlayer.setPiece(player.getPiece());
-        onlinePlayer.setScore(player.getScore());
-        
-        nb.subscribe(onlinePlayer, NotificationBoard.NF_GAMESTATE_CHANGED);
-    }
-
-    @Override
-    public void joinRejected(String message) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

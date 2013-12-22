@@ -17,9 +17,12 @@ import othello.command.Commandable;
 import othello.command.Executable;
 import othello.command.FetchBoardListCmdExecutable;
 import othello.command.FetchRoomListCmdExecutable;
+import othello.command.JoinPlayerCmdExecutable;
+import othello.common.AbstractPlayer;
 import othello.server.location.LocationManager;
 
-public class Selecter implements FetchRoomListCmdExecutable, FetchBoardListCmdExecutable, Executable {
+public class Selecter implements FetchRoomListCmdExecutable, FetchBoardListCmdExecutable, JoinPlayerCmdExecutable, 
+	Executable {
 	
 	private Socket connection;
 	private BufferedReader reader;
@@ -66,6 +69,7 @@ public class Selecter implements FetchRoomListCmdExecutable, FetchBoardListCmdEx
         public CommandListener(Executable executor) {
         	this.executor = executor;
         }
+        
         @Override
         public void run() {
             try {
@@ -85,5 +89,10 @@ public class Selecter implements FetchRoomListCmdExecutable, FetchBoardListCmdEx
             }
         }
     }
+
+	@Override
+	public void joinPlayer(String boardId) {
+		locationManager.joinPlayer(connection, boardId);
+	}
 
 }

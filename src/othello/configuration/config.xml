@@ -6,17 +6,17 @@
 	</Players>
 	<Timer>
 		<MoveTimer>
-			<Time name="10" value="10" selected="true" />
+			<Time name="10" value="10" selected="false" />
 			<Time name="30" value="30" selected="false" />
 			<Time name="60" value="60" selected="false" />
 			<Time name="120" value="120" selected="false" />
 			<Time name="180" value="180" selected="false" />
-			<Time name="360" value="360" selected="false" />
+			<Time name="360" value="360" selected="true" />
 		</MoveTimer>
 		<GameTimer>
 			<Time name="600" value="600" selected="false" />
-			<Time name="900" value="900" selected="true" />
-			<Time name="1800" value="1800" selected="false" />
+			<Time name="900" value="900" selected="false" />
+			<Time name="1800" value="1800" selected="true" />
 		</GameTimer>
 	</Timer>
 	<Playing>

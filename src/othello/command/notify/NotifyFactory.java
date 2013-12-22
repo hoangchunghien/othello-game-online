@@ -15,12 +15,13 @@ public class NotifyFactory {
         
         switch (json.getString("command")) {
             case MoveTurnNtf.NAME:
-            	JOptionPane.showMessageDialog(null, "Got executor for move turn");
+            	// JOptionPane.showMessageDialog(null, "Got executor for move turn");
                 MoveTurnNtf moveTurnNtf = new MoveTurnNtf(OnlineGameMonitor.getInstance());
                 moveTurnNtf.deserializeJSON(json);
                 return moveTurnNtf;
                 
             case GameStateNtf.NAME:
+            	 JOptionPane.showMessageDialog(null, "Got state changed message");
                 GameStateNtf gameStateNtf = new GameStateNtf(OnlineGameMonitor.getInstance(), null);
                 gameStateNtf.deserializeJSON(json);
                 return gameStateNtf;

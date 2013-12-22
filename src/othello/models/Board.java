@@ -12,14 +12,22 @@ import othello.common.Piece;
 public class Board {
     
     String name;
+    String id;
     Dictionary<Piece, Player> seats;
 
     public Board() {
         seats = new Hashtable<>();
-
-    }
+    }        
     
-    public String getName() {
+    public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
         return this.name;
     }
     
@@ -39,7 +47,8 @@ public class Board {
     public JSONObject serializeJSON() {
         
         JSONObject json = new JSONObject();
-        json.put("name", name);        
+        json.put("name", name);    
+        json.put("id", id);
         
         if (seats.get(Piece.BLACK) != null)
         	json.put("black", seats.get(Piece.BLACK).serializeJSON());
@@ -57,6 +66,7 @@ public class Board {
     public void deserializeJSON(JSONObject json) {
         
         this.name = json.getString("name");
+        this.id = json.getString("id");
         Player black = new Player();
         
         if (!json.getString("black").equalsIgnoreCase("undefined"))

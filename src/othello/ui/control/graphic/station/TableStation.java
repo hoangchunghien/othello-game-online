@@ -103,7 +103,6 @@ public class TableStation extends JPanel implements Notifiable {
             TablePanel tablePanel = new TablePanel(board);
             System.out.println("Adding board: " + board.getName());
             tableListPanel.add(tablePanel);
-//            tableListPanel.add(Box.createRigidArea(new Dimension(0,25)));
             this.tableList.add(tablePanel);
             this.updateUI();
         }

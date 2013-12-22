@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.json.JSONObject;
+
 import othello.command.ChatCmd;
 import othello.command.IChatCmdExec;
 import othello.command.IJoinCmdExec;
@@ -42,7 +44,6 @@ import othello.command.response.ResponseFactory;
 import othello.common.AbstractPlayer;
 import othello.common.Piece;
 import othello.common.Position;
-
 import othello.configuration.Configuration;
 import othello.configuration.PlayerCfg;
 import othello.game.GameState;
@@ -57,7 +58,7 @@ import othello.game.NotificationBoard;
  */
 public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdExec, IRedoCmdExec,
         IResignCmdExec, IQuitCmdExec, IJoinCmdExec, IChatCmdExec,
-        IMoveResExec, MoveTurnNtfExec, 
+        IMoveResExec, MoveTurnNtfExec, JoinPlayerCmdExecutable, 
         GameStateNtfExec, IPassNtfExec, IGameOverNtfExec, AnswerRequestResExec {
     
     private String serverAddress;
@@ -221,6 +222,14 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
     public void requestRejected(int reqType, AbstractPlayer respondent) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+	@Override
+	public void joinPlayer(String boardId) {
+		JoinPlayerCmd command = new JoinPlayerCmd(null);
+		command.setBoardId(boardId);
+		System.out.println("Sending command: " + command.serializeJSON());
+		writer.println(command.serializeJSON());
+	}
 
 }
 

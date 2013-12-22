@@ -13,6 +13,7 @@ import othello.command.response.FetchRoomListRes;
 import othello.common.AbstractPlayer;
 import othello.common.Piece;
 import othello.models.Location;
+import othello.server.Player;
 
 public class LocationManager {
 	
@@ -85,7 +86,14 @@ public class LocationManager {
 	}
 	
 	public void joinPlayer(Socket connection, String boardId) {
-		
+		for (Board board : boards)
+		{
+			if (board.getId() == boardId)
+			{
+				Player player = new Player(null);
+				board.joinPlayer(player);
+			}
+		}
 	}
 	
 	private void sendTo(Socket soc, JSONObject jObj){

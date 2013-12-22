@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import othello.common.AbstractPlayer;
 import othello.server.configuration.Configuration;
 import othello.server.configuration.PortCfg;
 import othello.server.location.Board;
@@ -24,8 +25,12 @@ import othello.server.location.Station;
  */
 public class Othello {
 	
-    static HashMap<String, Player> playingTicket = new HashMap<>();
+    static HashMap<String, AbstractPlayer> playingTicket = new HashMap<>();
     static Configuration cfg = Configuration.getInstance();
+    
+    public static HashMap<String, AbstractPlayer> getPlayingTicket() {
+    	return playingTicket;
+    }
     
     public static void main(String[] args) throws Exception {
         
@@ -54,9 +59,9 @@ public class Othello {
 class SelectionListener extends Thread {
 	
 	ServerSocket listener;
-	HashMap<String, Player> playingTicket;
+	HashMap<String, AbstractPlayer> playingTicket;
 	
-	public SelectionListener(ServerSocket listener, HashMap<String, Player> playingTicket) {
+	public SelectionListener(ServerSocket listener, HashMap<String, AbstractPlayer> playingTicket) {
 		
 		this.listener = listener;
 		this.playingTicket = playingTicket;
@@ -79,9 +84,9 @@ class SelectionListener extends Thread {
 class PlayingListener extends Thread {
 	
 	ServerSocket listener;
-	HashMap<String, Player> playingTicket;
+	HashMap<String, AbstractPlayer> playingTicket;
 	
-	public PlayingListener(ServerSocket listener, HashMap<String, Player> playingTicket) {
+	public PlayingListener(ServerSocket listener, HashMap<String, AbstractPlayer> playingTicket) {
 		
 		this.listener = listener;
 		this.playingTicket = playingTicket;
@@ -95,7 +100,7 @@ class PlayingListener extends Thread {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 				String ticket = reader.readLine();
 				System.out.println("Got a ticket: " + ticket);
-				Player player = playingTicket.get(ticket);
+				Player player = (Player)playingTicket.get(ticket);
 				if (player != null) {
 					player.setConnection(connection);
 					player.startListenFromClient();

@@ -8,7 +8,7 @@ import othello.common.AbstractPlayer;
  * @author Hien Hoang
  * @version Dec 4, 2013
  */
-public class UndoCmd implements ICommand {
+public class UndoCmd implements Commandable {
     
     public final static String NAME = "undo";
 

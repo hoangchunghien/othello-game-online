@@ -43,6 +43,9 @@ public class Configuration {
     @XmlElement(name = "UserInterfaces", required = true)
     public UserInterfacesCfg userInterfaces;
     
+    @XmlElement(name = "Online", required = true)
+    public OnlineCfg online;
+    
     @XmlElement(name = "Servers", required = true)
     public ServersCfg servers;
     
@@ -141,7 +144,9 @@ public class Configuration {
             return (Configuration) um.unmarshal(new File(fileName));
         } 
         catch (Exception e) {
-            return new Configuration();
+        	
+        	e.printStackTrace();
+            return null;
         }
     }
 }

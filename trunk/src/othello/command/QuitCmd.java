@@ -10,7 +10,7 @@ import org.json.JSONObject;
  *
  * @author Hien
  */
-public class QuitCmd implements ICommand {
+public class QuitCmd implements Commandable {
     
     public static final String NAME = "quit";
     

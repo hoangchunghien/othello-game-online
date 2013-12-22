@@ -9,15 +9,15 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import othello.command.CommandFactory;
-import othello.command.ICommand;
-import othello.command.response.IListRoomsResExec;
+import othello.command.Commandable;
+import othello.command.response.FetchRoomListResExecutable;
 import othello.models.Location;
 
 /**
  *
  * @author Hien Hoang
  */
-public class RoomListPanel extends JPanel implements IListRoomsResExec {
+public class RoomListPanel extends JPanel implements FetchRoomListResExecutable {
 
     private DefaultListModel roomsModel = new DefaultListModel();
     private JList roomsList = new JList(roomsModel);
@@ -48,7 +48,7 @@ public class RoomListPanel extends JPanel implements IListRoomsResExec {
     }
     
     @Override
-    public void loadRoomsList(List<Location> rooms) {
+    public void loadRoomList(List<Location> rooms) {
 
         this.roomsModel.clear();
         System.out.println("Loading rooms...");
@@ -64,7 +64,7 @@ public class RoomListPanel extends JPanel implements IListRoomsResExec {
         public void valueChanged(ListSelectionEvent e) {
             if (!e.getValueIsAdjusting()) {
                 Location room = (Location)roomsList.getSelectedValue();
-                ICommand cmd = CommandFactory.getCmdGetBoards(room.id);
+                Commandable cmd = CommandFactory.getFetchBoardListCmd(room.id);
                 cmd.execute();                
             }
         }

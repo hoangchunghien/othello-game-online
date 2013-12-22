@@ -10,14 +10,14 @@ import othello.models.Board;
  *
  * @author Hien Hoang
  */
-public class GetBoardsRes implements IResponse{
+public class FetchBoardListRes implements IResponse{
 
-   public final static String NAME = "list boards";
+   public final static String NAME = "fetch_board_list";
     
-    private IGetBoardsResExec executor;
+    private FetchBoardListResExecutable executor;
     private List<Board> boards;
     
-    public GetBoardsRes(IGetBoardsResExec executor, List<Board> boards) {
+    public FetchBoardListRes(FetchBoardListResExecutable executor, List<Board> boards) {
         this.executor = executor;
         this.boards = boards;
     }
@@ -54,7 +54,7 @@ public class GetBoardsRes implements IResponse{
     @Override
     public void execute() {
     
-        executor.loadBoards(boards);
+        executor.loadBoardList(boards);
     }
 
 }

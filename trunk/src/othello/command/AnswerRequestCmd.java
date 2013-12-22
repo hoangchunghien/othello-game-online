@@ -6,7 +6,7 @@ import org.json.JSONObject;
  *
  * @author Hien Hoang
  */
-public class AnswerRequestCmd implements ICommand {
+public class AnswerRequestCmd implements Commandable {
 
     public static final String NAME = "answer request";
     public static final int REQ_UNDO = 1;

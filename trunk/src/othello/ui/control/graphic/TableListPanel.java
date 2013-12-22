@@ -4,14 +4,14 @@ import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
-import othello.command.response.IGetBoardsResExec;
+import othello.command.response.FetchBoardListResExecutable;
 import othello.models.Board;
 
 /**
  *
  * @author Hien Hoang
  */
-public class TableListPanel extends JPanel implements IGetBoardsResExec {
+public class TableListPanel extends JPanel implements FetchBoardListResExecutable {
 
     List<TablePanel> tableList;
     
@@ -37,7 +37,7 @@ public class TableListPanel extends JPanel implements IGetBoardsResExec {
     }
     
     @Override
-    public void loadBoards(List<Board> boards) {
+    public void loadBoardList(List<Board> boards) {
         this.tableList.clear();
         this.removeAll();
         System.out.println("Loading boards...");

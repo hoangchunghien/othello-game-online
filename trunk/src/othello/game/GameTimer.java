@@ -42,6 +42,13 @@ public class GameTimer extends TimerTask implements Notifiable {
         nb.subscribe(this, NotificationBoard.NF_GAMEOVER);
     }
     
+    public GameTimer(NotificationBoard nb) {
+    	this.nb = nb;
+    	initialize();
+        nb.subscribe(this, NotificationBoard.NF_MOVE_TURN);
+        nb.subscribe(this, NotificationBoard.NF_GAMEOVER);
+    }
+    
     public void initialize() {
     	timePerGame = new HashMap<>();
         timePerMove = new HashMap<>();
@@ -55,6 +62,10 @@ public class GameTimer extends TimerTask implements Notifiable {
 
     public void setMaxTimePerMove(int maxTimePerMove) {
         this.maxTimePerMove = maxTimePerMove;
+        AbstractPlayer[] players = timePerMove.keySet().toArray(new AbstractPlayer[timePerMove.size()]);
+        for (AbstractPlayer player : players) {
+        	timePerMove.put(player, maxTimePerMove);
+        }
     }
 
     public int getMaxTimePerGame() {
@@ -63,6 +74,10 @@ public class GameTimer extends TimerTask implements Notifiable {
 
     public void setMaxTimePerGame(int maxTimePerGame) {
         this.maxTimePerGame = maxTimePerGame;
+        AbstractPlayer[] players = timePerGame.keySet().toArray(new AbstractPlayer[timePerGame.size()]);
+        for (AbstractPlayer player : players) {
+        	timePerGame.put(player, maxTimePerGame);
+        }
     }
     
     

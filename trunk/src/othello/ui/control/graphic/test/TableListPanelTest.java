@@ -33,7 +33,7 @@ public class TableListPanelTest {
             board.setPlayer(Piece.WHITE, p2);
             boards.add(board);
         }
-        tableListPanel.loadBoards(boards);
+        tableListPanel.loadBoardList(boards);
         testFrame.add(new JScrollPane(tableListPanel));
         testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         testFrame.setSize(1000, 500);

@@ -6,7 +6,7 @@ import org.json.JSONObject;
  *
  * @author Hien Hoang
  */
-public class GetRoomsCmd implements ICommand {
+public class GetRoomsCmd implements Commandable {
     
     public static final String NAME = "getrooms";
     

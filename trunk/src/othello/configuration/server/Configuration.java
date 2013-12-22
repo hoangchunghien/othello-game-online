@@ -18,8 +18,8 @@ public class Configuration {
     
     private static Configuration SingletonObject = null;
     
-    @XmlElement(name = "Port", required = true)
-    public PortCfg port;
+    @XmlElement(name = "Ports", required = true)
+    public PortsCfg ports;
     
     @XmlElement(name = "Board", required = true)
     public BoardCfg board;
@@ -49,6 +49,7 @@ public class Configuration {
             return (Configuration) um.unmarshal(new File(fileName));
         } 
         catch (Exception e) {
+        	e.printStackTrace();
             return new Configuration();
         }
     }

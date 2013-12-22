@@ -43,6 +43,7 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
     protected int turn;
     protected Dictionary<AbstractPlayer, Boolean> isReady;
     protected List<AbstractPlayer> viewers;
+    
     // Store the game record
     protected List<Position> gameRecords;
     protected Stack undoState;
@@ -59,9 +60,15 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
         nb.subscribe(this, NotificationBoard.NF_TIMEOUT);
     }
     
+    public GameMonitor(NotificationBoard nb, GameTimer timer) {
+    	this.nb = nb;
+    	this.gameTimer = timer;
+    	this.initialize();
+    	nb.subscribe(this, NotificationBoard.NF_TIMEOUT);
+    }
+    
     protected void initialize() {
     	
-        gameTimer.initialize();
         isReady = new Hashtable<>();
         viewers = new ArrayList<>();
         state = new GameState();

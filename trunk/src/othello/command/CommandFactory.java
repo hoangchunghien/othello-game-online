@@ -1,6 +1,8 @@
 package othello.command;
 
 import org.json.JSONObject;
+
+import othello.client.GameSelection;
 import othello.client.OnlineGameMonitor;
 import othello.client.ClientGameMonitor;
 import othello.common.AbstractPlayer;
@@ -14,7 +16,7 @@ import othello.configuration.Configuration;
  */
 public class CommandFactory {
     
-    public static ICommand getCommand(String str, AbstractPlayer caller) {
+    public static Commandable getCommand(String str, AbstractPlayer caller) {
         String element[] = str.split(" ");
         switch (element[0].toLowerCase()) {
             case MoveCmd.NAME:
@@ -86,13 +88,6 @@ public class CommandFactory {
             {
                 
             }
-            case ListCmd.NAME:
-            {
-                if (element.length >= 2 && Configuration.getInstance().getPlayingType()
-                            .name.equalsIgnoreCase("online")) {
-                    return new ListCmd(OnlineGameMonitor.getInstance(), element[1]);
-                }
-            }
             case QuitCmd.NAME:
             {
                 
@@ -107,15 +102,23 @@ public class CommandFactory {
         }
     }
     
-    public static ICommand getCmdGetBoards(String roomId) {
+    public static Commandable getFetchBoardListCmd(String roomId) {
         if (Configuration.getInstance().getPlayingType()
                             .name.equalsIgnoreCase("online")) {
-            return new GetBoardsCmd(OnlineGameMonitor.getInstance(), roomId);
+            return new FetchBoardListCmd(GameSelection.getInstance(), roomId);
         }
         return null;
     }
     
-    public static ICommand getServerCommand(IExec executor,AbstractPlayer caller, JSONObject jObj) {
+    public static Commandable getFetchRoomListCmd(String stationId) {
+    	if (Configuration.getInstance().getPlayingType()
+                .name.equalsIgnoreCase("online")) {
+    		return new FetchRoomListCmd(GameSelection.getInstance(), stationId);
+		}
+		return null;
+    }
+    
+    public static Commandable getServerCommand(Executable executor,AbstractPlayer caller, JSONObject jObj) {
         switch(jObj.getString("command")) {
             case JoinCmd.NAME:
                 JoinCmd join = new JoinCmd((IJoinCmdExec)executor, null);
@@ -125,10 +128,6 @@ public class CommandFactory {
                 MoveCmd move = new MoveCmd((IMoveCmdExec)executor, null, Position.UNDEFINED);
                 move.deserializeJSON(jObj);
                 return move;
-            case ListCmd.NAME:
-                ListCmd list = new ListCmd((IListCmdExec)executor, null);
-                list.deserializeJSON(jObj);
-                return list;
             case LoginCmd.NAME:
                 LoginCmd login = new LoginCmd((ILoginCmdExec)executor, null, null);
                 login.deserializeJSON(jObj);
@@ -153,10 +152,16 @@ public class CommandFactory {
                 QuitCmd quit = new QuitCmd((IQuitCmdExec)executor);
                 quit.deserializeJSON(jObj);
                 return quit;
-            case GetBoardsCmd.NAME:
-                GetBoardsCmd getBoards = new GetBoardsCmd((IGetBoardsCmdExec)executor, null);
+            case FetchBoardListCmd.NAME:
+                FetchBoardListCmd getBoards = new FetchBoardListCmd((FetchBoardListCmdExecutable)executor, null);
                 getBoards.deserializeJSON(jObj);
                 return getBoards;
+               
+            case FetchRoomListCmd.NAME:
+            	FetchRoomListCmd fetchRooms = new FetchRoomListCmd((FetchRoomListCmdExecutable)executor, null);
+            	fetchRooms.deserializeJSON(jObj);
+            	return fetchRooms;
+            	
             case ChatCmd.NAME:
                 ChatCmd chat = new ChatCmd((IChatCmdExec)executor, null);
                 chat.deserializeJSON(jObj);

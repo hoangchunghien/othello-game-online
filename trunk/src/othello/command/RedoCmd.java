@@ -7,7 +7,7 @@ import org.json.JSONObject;
  * @author Hien Hoang
  * @version Nov 7, 2013
  */
-public class RedoCmd implements ICommand {
+public class RedoCmd implements Commandable {
     
     public final static String NAME = "redo";
 

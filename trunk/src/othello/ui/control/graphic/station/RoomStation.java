@@ -17,15 +17,24 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-import othello.command.response.IListRoomsResExec;
+import othello.client.GameSelection;
+import othello.command.CommandFactory;
+import othello.command.Commandable;
+import othello.command.response.FetchRoomListResExecutable;
+import othello.configuration.Configuration;
+import othello.configuration.TypeCfg;
+import othello.game.Notifiable;
+import othello.game.NotificationBoard;
 import othello.models.Location;
 
 /**
  *
  * @author Hien Hoang
  */
-public class RoomStation extends JPanel implements IListRoomsResExec {
+public class RoomStation extends JPanel implements Notifiable {
     
     JLabel titleLabel = new JLabel();
     private DefaultListModel roomsModel = new DefaultListModel();
@@ -33,9 +42,13 @@ public class RoomStation extends JPanel implements IListRoomsResExec {
     private JScrollPane scrollPane = new JScrollPane(roomsList);
     BackNextGroup btnBackNext = new BackNextGroup();
     
+    protected GameSelection gameSelection;
+    protected Configuration cfg = Configuration.getInstance();
+    
     public RoomStation() {
     	
         initialize();
+        NotificationBoard.getInstance().subscribe(this, NotificationBoard.NF_ROOM_LIST_CHANGED);
     }
     
     private void initialize() {
@@ -47,6 +60,13 @@ public class RoomStation extends JPanel implements IListRoomsResExec {
         
         roomsList.setFont(new Font(this.getFont().getFontName(), Font.TRUETYPE_FONT, 28));
         roomsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        btnBackNext.setNextLetter(StationUIManager.STATION_TABLE);
+        
+        if (cfg.getPlayingType().name.equalsIgnoreCase(TypeCfg.TYPE_ONLINE)) {
+        	
+        	gameSelection = GameSelection.getInstance();
+        }
         
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new GridLayout(1, 0));
@@ -75,9 +95,10 @@ public class RoomStation extends JPanel implements IListRoomsResExec {
                 .addComponent(btnBackNext)
 
          );
+        
+        roomsList.getSelectionModel().addListSelectionListener(new RoomListModelListener());
     }
     
-    @Override
     public void loadRoomsList(List<Location> rooms) {
 
         this.roomsModel.clear();
@@ -85,6 +106,7 @@ public class RoomStation extends JPanel implements IListRoomsResExec {
         for (Location room : rooms) {
             System.out.println("Adding room: " + room.name);
             this.roomsModel.addElement(room);
+            this.updateUI();
         }
     }
     
@@ -94,5 +116,26 @@ public class RoomStation extends JPanel implements IListRoomsResExec {
     
     public void setNextLetter(String letter) {
     	btnBackNext.setNextLetter(letter);
+    }
+
+	@Override
+	public void receiveChangeNotification(int category, Object detail) {
+		if (category == NotificationBoard.NF_ROOM_LIST_CHANGED) {
+			List<Location> rooms = (List<Location>)detail;
+			loadRoomsList(rooms);
+		}
+	}
+	
+	private class RoomListModelListener implements ListSelectionListener {
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            if (!e.getValueIsAdjusting()) {
+                Location room = (Location)roomsList.getSelectedValue();
+                Commandable cmd = CommandFactory.getFetchBoardListCmd(room.id);
+                cmd.execute();                
+            }
+        }
+        
     }
 }

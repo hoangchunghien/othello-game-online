@@ -7,7 +7,7 @@ import othello.models.Location;
  *
  * @author Hien Hoang
  */
-public interface IListRoomsResExec {
+public interface FetchRoomListResExecutable {
 
-    public void loadRoomsList(List<Location> rooms);
+    public void loadRoomList(List<Location> rooms);
 }

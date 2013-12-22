@@ -14,19 +14,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
 import othello.command.ChatCmd;
-import othello.command.GetBoardsCmd;
 import othello.command.IChatCmdExec;
-import othello.command.IGetBoardsCmdExec;
 import othello.command.IJoinCmdExec;
 import othello.command.IJoinPlayerCmdExec;
-import othello.command.IListCmdExec;
 import othello.command.ILoginCmdExec;
 import othello.command.IMoveCmdExec;
 import othello.command.IQuitCmdExec;
 import othello.command.IRedoCmdExec;
 import othello.command.IResignCmdExec;
 import othello.command.IUndoCmdExec;
-import othello.command.ListCmd;
 import othello.command.response.IResponse;
 import othello.command.JoinCmd;
 import othello.command.JoinPlayerCmd;
@@ -60,7 +56,7 @@ import othello.game.NotificationBoard;
  * @version Dec 2, 2013
  */
 public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdExec, IRedoCmdExec,
-        IResignCmdExec, IQuitCmdExec, IJoinCmdExec, IListCmdExec, IGetBoardsCmdExec, IChatCmdExec,
+        IResignCmdExec, IQuitCmdExec, IJoinCmdExec, IChatCmdExec,
         IMoveResExec, IJoinPlayerCmdExec, IJoinPlayerResExec, MoveTurnNtfExec, 
         GameStateNtfExec, IPassNtfExec, IGameOverNtfExec, AnswerRequestResExec {
     
@@ -100,7 +96,7 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
         try {
             stateChangedListeners = new ArrayList<>();
             serverAddress = Configuration.getInstance().getSelectedServer().address;
-            serverPort = Configuration.getInstance().getSelectedServer().port;
+            serverPort = Configuration.getInstance().getSelectedServer().playingPort;
             socket = new Socket(serverAddress, serverPort);
             output = socket.getOutputStream();
             input = socket.getInputStream();
@@ -124,7 +120,7 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
     
     private void listenResponseFromServer() {
         
-        Listener listener = new Listener(reader);
+        GameListener listener = new GameListener(reader);
         listener.start();
     }
     
@@ -164,38 +160,6 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
         JoinCmd join = new JoinCmd(null, locationId);   
         System.out.println("Sending command: " + join.serializeJSON());
         writer.println(join.serializeJSON());
-    }
-
-    @Override
-    public void listLocations() {
-        
-        ListCmd list = new ListCmd(null, ListCmd.LOCATION);
-        System.out.println("Sending command: " + list.serializeJSON());
-        writer.println(list.serializeJSON());
-    }
-
-    @Override
-    public void listPlayers() {
-        
-        ListCmd list = new ListCmd(null, ListCmd.PLAYER);
-        System.out.println("Sending command: " + list.serializeJSON());
-        writer.println(list.serializeJSON());
-    }
-
-    @Override
-    public void listRooms() {
-        
-        ListCmd list = new ListCmd(null, ListCmd.ROOM);
-        System.out.println("Sending command: " + list.serializeJSON());
-        writer.println(list.serializeJSON());
-    }
-
-
-    @Override
-    public void getBoards(String roomId) {
-        GetBoardsCmd getBoards = new GetBoardsCmd(null, roomId);
-        System.out.println("Sending command: " + getBoards.serializeJSON());
-        writer.println(getBoards.serializeJSON());
     }
 
     @Override
@@ -285,11 +249,12 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
     }
 
 }
-class Listener extends Thread {
+
+class GameListener extends Thread {
     
     
     private BufferedReader reader;
-    public Listener(BufferedReader reader) {
+    public GameListener(BufferedReader reader) {
         this.reader = reader;
     }
     

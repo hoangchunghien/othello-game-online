@@ -6,7 +6,7 @@ import org.json.JSONObject;
  *
  * @author Hien Hoang
  */
-public class ChatCmd implements ICommand {
+public class ChatCmd implements Commandable {
 
     public static final String NAME = "chat";
     

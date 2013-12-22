@@ -20,12 +20,6 @@ public class Othello {
      */
     public static void main(String[] args) throws InterruptedException {
         
-//        if (Configuration.getInstance().getPlayingType().name.equalsIgnoreCase(TypeCfg.TYPE_ONLINE)) {
-//            JoinPlayerCmd joinPlayer = new JoinPlayerCmd(OnlineGameMonitor.getInstance(), null);
-//            joinPlayer.execute();
-//        }
-//        Game game = new Game();     
-//        game.play();
     	MainFrame mainFrame = new MainFrame();
     }
     

@@ -1,5 +1,7 @@
 package othello.command.notify;
 
+import othello.common.Piece;
+
 /**
  *
  * @author Hien Hoang
@@ -9,5 +11,5 @@ package othello.command.notify;
  * . TODO
  */
 public interface MoveTurnNtfExec {
-    public void fireMoveTurnNotify();
+    public void fireMoveTurnNotify(Piece piece);
 }

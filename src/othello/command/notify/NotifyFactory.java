@@ -1,6 +1,9 @@
 package othello.command.notify;
 
+import javax.swing.JOptionPane;
+
 import org.json.JSONObject;
+
 import othello.client.OnlineGameMonitor;
 
 /**
@@ -12,7 +15,7 @@ public class NotifyFactory {
         
         switch (json.getString("command")) {
             case MoveTurnNtf.NAME:
-                System.out.println("Got executor for move turn");
+            	JOptionPane.showMessageDialog(null, "Got executor for move turn");
                 MoveTurnNtf moveTurnNtf = new MoveTurnNtf(OnlineGameMonitor.getInstance());
                 moveTurnNtf.deserializeJSON(json);
                 return moveTurnNtf;

@@ -39,6 +39,7 @@ public class GraphicCtrl extends AbstractControlUI implements WindowListener {
     public GraphicCtrl() {
         
         initialize();
+        this.show();
     }
     
     private void initialize() {

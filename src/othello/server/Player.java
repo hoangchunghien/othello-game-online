@@ -30,9 +30,11 @@ import othello.command.JoinCmd;
 import othello.command.notify.GameOverNtf;
 import othello.command.notify.GameStateNtf;
 import othello.command.notify.MoveTurnNtf;
+import othello.command.notify.MoveTurnNtfExec;
 import othello.command.notify.PassNtf;
 import othello.command.response.ChatRes;
 import othello.command.response.FetchBoardListRes;
+import othello.command.response.IMoveResExec;
 import othello.command.response.JoinPlayerResExecutable;
 import othello.command.response.JoinPlayerRes;
 import othello.command.response.FetchRoomListRes;
@@ -60,7 +62,7 @@ import othello.models.Location;
  */
 public class Player extends AbstractPlayer implements Executable, IJoinCmdExec, IDrawExec,
        ILoginCmdExec, IMoveCmdExec, IQuitCmdExec, IRedoCmdExec, IResignCmdExec, IUndoCmdExec, 
-       IChatCmdExec {
+       IChatCmdExec, IMoveResExec {
     
     private Socket connection;
     private BufferedReader reader;
@@ -189,11 +191,8 @@ public class Player extends AbstractPlayer implements Executable, IJoinCmdExec, 
 
     @Override
     public void makeMove(Position position, othello.common.AbstractPlayer caller) {
-        
-        if (location.isBoard()) {
-            IBoard board = (IBoard)location;
-            board.makeMove(this, position);
-        }
+    	System.out.println("Request make move !!!");
+    	board.makeMove(this, position);
     }
 
     @Override
@@ -246,12 +245,14 @@ public class Player extends AbstractPlayer implements Executable, IJoinCmdExec, 
     public void processMoveAccepted(Position postion) {
         MoveRes moveRes = new MoveRes(null, MoveRes.ACCEPTED, "OK", postion);
         getWriter().println(moveRes.serializeJSON());
+        System.out.println(moveRes.serializeJSON());
     }
 
     @Override
     public void processMoveRejected(String msg) {
         MoveRes moveRes = new MoveRes(null, MoveRes.REJECTED, "Invalid move!!!", Position.UNDEFINED);
         getWriter().println(moveRes.serializeJSON());
+        System.out.println(moveRes.serializeJSON());
     }
 
     @Override
@@ -284,6 +285,7 @@ public class Player extends AbstractPlayer implements Executable, IJoinCmdExec, 
             AbstractPlayer player = (AbstractPlayer)detail;
             if (player == this) {
                 MoveTurnNtf moveTurnNtf = new MoveTurnNtf(null);
+                moveTurnNtf.setPiece(this.getPiece());
                 getWriter().println(moveTurnNtf.serializeJSON());
                 
                 // for debug

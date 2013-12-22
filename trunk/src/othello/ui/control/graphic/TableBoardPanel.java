@@ -4,8 +4,12 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+
+import othello.command.CommandFactory;
+import othello.command.Commandable;
 
 /**
  *
@@ -19,6 +23,7 @@ public class TableBoardPanel extends JPanel implements MouseListener {
     public static final String TABLE_ACTIVE = PIC_PATH + "TABLE_ACTIVE.png";
     public static final String TABLE_ACTIVE_PRESS = PIC_PATH + "TABLE_ACTIVE_PRESS.png";
     
+    String boardId;
     String imgLocation;
     protected int imgWidth = 90;
     ImageIcon image = new ImageIcon() ;
@@ -31,7 +36,21 @@ public class TableBoardPanel extends JPanel implements MouseListener {
         this.addMouseListener(this);
     }
     
-    public void setDisabled(boolean flag) {
+    
+    
+    public String getBoardId() {
+		return boardId;
+	}
+
+
+
+	public void setBoardId(String boardId) {
+		this.boardId = boardId;
+	}
+
+
+
+	public void setDisabled(boolean flag) {
         if (flag) {
             imgLocation = TABLE_DISABLE;
             isDisabled = true;
@@ -63,6 +82,8 @@ public class TableBoardPanel extends JPanel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
+    	Commandable joinPlayerCmd = CommandFactory.getJoinPlayerCmd(boardId);
+		joinPlayerCmd.execute();
     }
 
     @Override

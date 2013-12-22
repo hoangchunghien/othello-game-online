@@ -116,6 +116,18 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
                     nb.subscribe(viewers, NotificationBoard.NF_GAMESTATE_CHANGED);
                 }
             }
+
+            if (cfg.players.players.get(cfg.players.getPlayerOnlineIndex())
+                    .getType().equalsIgnoreCase(PlayerCfg.TYPE_COMPUTER)) {
+                onlinePlayer = new ComputerPlayer(Piece.UNDEFINED);
+            }
+        	else {
+        		
+        		JOptionPane.showMessageDialog(null, "Human playing");
+        		onlinePlayer = new HumanPlayer(Piece.UNDEFINED);
+        	}
+            
+            nb.subscribe(onlinePlayer, NotificationBoard.NF_GAMESTATE_CHANGED);
             
             // Send ticket to server
             Map<String, String> env = System.getenv();
@@ -203,19 +215,16 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
     }
 
     @Override
-    public void fireMoveTurnNotify() {
-        
+    public void fireMoveTurnNotify(Piece piece) {
+        onlinePlayer.setPiece(piece);
         nb.fireChangeNotification(NotificationBoard.NF_MOVE_TURN, onlinePlayer);
     }
 
     @Override
     public void fireStateChangedNotify(GameState state) {
         
-    	JOptionPane.showMessageDialog(null, "Show UI");
+    	
         nb.fireChangeNotification(NotificationBoard.NF_GAMESTATE_CHANGED, state);
-        JOptionPane.showMessageDialog(null, "Show UI");
-        
-        UIFactory.getControlUI().show();
     }
 
     @Override
@@ -319,7 +328,7 @@ class NotifyExecuting extends Thread {
     }
     @Override
     public void run() {
-        System.out.println("Executing notify...");
+    	// JOptionPane.showMessageDialog(null, "Executing notify...");
         
         this.notify.execute();
     }

@@ -26,10 +26,15 @@ import othello.server.location.Station;
 public class Othello {
 	
     static HashMap<String, AbstractPlayer> playingTicket = new HashMap<>();
+    static HashMap<AbstractPlayer, String> ticketPlayer = new HashMap<>();
     static Configuration cfg = Configuration.getInstance();
     
     public static HashMap<String, AbstractPlayer> getPlayingTicket() {
     	return playingTicket;
+    }
+
+    public static HashMap<AbstractPlayer, String> getTicketPlayer() {
+    	return ticketPlayer;
     }
     
     public static void main(String[] args) throws Exception {
@@ -104,6 +109,7 @@ class PlayingListener extends Thread {
 				if (player != null) {
 					player.setConnection(connection);
 					player.startListenFromClient();
+					player.getBoard().setReady(player);;
 				}
 				else {
 					connection.close();

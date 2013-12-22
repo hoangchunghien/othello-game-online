@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.json.JSONObject;
+
 import othello.command.CommandFactory;
 import othello.command.IChatCmdExec;
 import othello.command.Commandable;
@@ -72,6 +74,7 @@ public class Player extends AbstractPlayer implements Executable, IJoinCmdExec, 
     
     public void setConnection(Socket connection) {
     	this.connection = connection;
+    	initialize();
     }
     
     public Socket getConnection() {
@@ -113,7 +116,10 @@ public class Player extends AbstractPlayer implements Executable, IJoinCmdExec, 
         this.location.join(connection);
         
         this.board = null;
-        initialize();
+        
+        if (connection != null) {
+        	initialize();
+        }
     }
     
     public Player(Socket connection, ILocation location) {
@@ -271,6 +277,7 @@ public class Player extends AbstractPlayer implements Executable, IJoinCmdExec, 
         if (category == NotificationBoard.NF_GAMESTATE_CHANGED) {
             GameState newState = (GameState)detail;
             GameStateNtf gameStateNotify = new GameStateNtf(null, newState);
+            System.out.println("sent to client: " + gameStateNotify.serializeJSON());
             getWriter().println(gameStateNotify.serializeJSON());
         }
         if (category == NotificationBoard.NF_MOVE_TURN) {
@@ -278,6 +285,9 @@ public class Player extends AbstractPlayer implements Executable, IJoinCmdExec, 
             if (player == this) {
                 MoveTurnNtf moveTurnNtf = new MoveTurnNtf(null);
                 getWriter().println(moveTurnNtf.serializeJSON());
+                
+                // for debug
+                System.out.println("sent to client: " + moveTurnNtf.serializeJSON());
             }
         }
         

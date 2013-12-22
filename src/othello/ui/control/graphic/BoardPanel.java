@@ -8,8 +8,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.JPanel;
+
 import othello.command.IGetMoveCmdExec;
 import othello.command.response.GetMoveRes;
 import othello.command.response.IResponse;
@@ -118,8 +121,10 @@ public class BoardPanel extends JPanel implements MouseListener, ActionListener,
     @Override
     public void mouseClicked(MouseEvent e) {
         if (this.allowGetMove) {
-            this.allowGetMove = false;
+            //this.allowGetMove = false;
+        	
             PiecePanel piece = (PiecePanel) e.getSource();
+            JOptionPane.showMessageDialog(null, "Postion: " + piece.getPositionX() + "-" + piece.getPositionY());
             GetMoveRes getMoveResponse = 
                     new GetMoveRes(ResponseExecutorManager.getGetMoveResponseExecutor(getMoveCaller), 
                                     new Position(piece.getPositionX(), piece.getPositionY()));

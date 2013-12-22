@@ -267,6 +267,7 @@ class GameListener extends Thread {
             try {
                 System.out.println("Reading..");
                 receivedJSON = new JSONObject(reader.readLine());
+                
                 System.out.println("Received: " + receivedJSON);
                 if (receivedJSON.getString("cmdType").equalsIgnoreCase("response")) {
                     System.out.println("Received Response message");
@@ -282,7 +283,7 @@ class GameListener extends Thread {
                     }
                 }
                 else if (receivedJSON.getString("cmdType").equalsIgnoreCase("notify")) {
-                    System.out.println("Received Notify message");
+                	// JOptionPane.showMessageDialog(null, "Received Notify message");
                     // JOptionPane.showMessageDialog(null, receivedJSON);
                     INotification notifyCmd = NotifyFactory.getNotifyCommand(receivedJSON);
                     

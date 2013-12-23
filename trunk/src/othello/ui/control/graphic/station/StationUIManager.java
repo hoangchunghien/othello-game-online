@@ -18,4 +18,8 @@ public class StationUIManager {
     public static final String STATION_ROOM = "STATION_ROOM";
     public static final String STATION_TABLE = "STATION_TABLE";
     public static final String STATION_PLAY_GAME = "STATION_PLAY_GAME";
+    public static final String STATION_SETTING = "STATION_SETTING";
+    public static final String STATION_HELP = "STATION_HELP";
+    public static final String STATION_ABOUT = "STATION_ABOUT";
+    
 }

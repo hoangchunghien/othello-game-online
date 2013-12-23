@@ -31,6 +31,11 @@ public class NotifyFactory {
                 gameOverNtf.deserializeJSON(json);
                 return gameOverNtf;
                 
+            case PassNtf.NAME:
+            	PassNtf passNtf = new PassNtf(OnlineGameMonitor.getInstance());
+            	passNtf.deserializeJSON(json);
+            	return passNtf;
+            	
             default:
                 return null;
         }

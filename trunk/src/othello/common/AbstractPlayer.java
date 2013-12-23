@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 import othello.command.AnswerRequestCmdExec;
 import othello.command.notify.IGameOverNtfExec;
-import othello.command.notify.IPassNtfExec;
+import othello.command.notify.PassNtfExecutable;
 import othello.command.response.IGetMoveResExec;
 import othello.command.response.IMoveResExec;
 import othello.game.Notifiable;
@@ -22,7 +22,7 @@ import othello.game.NotificationBoard;
  * @version Dec 8, 2013
  */
 public abstract class AbstractPlayer implements IGetMoveResExec, IMoveResExec,
-        IPassNtfExec, IGameOverNtfExec, AnswerRequestCmdExec,
+        PassNtfExecutable, IGameOverNtfExec, AnswerRequestCmdExec,
         Notifiable {
     
     

@@ -13,9 +13,9 @@ public class PassNtf implements INotification {
 
     public final static String NAME = "pass";
     
-    private IPassNtfExec passNotifyExecutor;
+    private PassNtfExecutable passNotifyExecutor;
     
-    public PassNtf(IPassNtfExec passNotifyExecutor) {
+    public PassNtf(PassNtfExecutable passNotifyExecutor) {
         
         this.passNotifyExecutor = passNotifyExecutor;
     }
@@ -37,7 +37,7 @@ public class PassNtf implements INotification {
 
     @Override
     public void deserializeJSON(JSONObject json) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
     
 }

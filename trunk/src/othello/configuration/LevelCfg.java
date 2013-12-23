@@ -20,6 +20,9 @@ public class LevelCfg {
     @XmlAttribute(name = "depth")
     public int depth;
     
+    @XmlAttribute(name = "engine")
+    public String engine;
+    
     @XmlAttribute(name = "selected")
     public boolean selected;
 }

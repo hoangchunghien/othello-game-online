@@ -1,5 +1,7 @@
 package othello.client;
 
+import javax.swing.JOptionPane;
+
 import othello.command.ClientCommandExecutorManager;
 import othello.command.IGetMoveCmdExec;
 import othello.command.MoveCmd;
@@ -10,7 +12,9 @@ import othello.common.AbstractPlayer;
 import othello.common.Board;
 import othello.common.Piece;
 import othello.common.Position;
+import othello.configuration.Configuration;
 import othello.engine.AbstractEngine;
+import othello.engine.AlphaBeta;
 import othello.engine.EngineFactory;
 import othello.game.GameState;
 import othello.game.NotificationBoard;
@@ -30,12 +34,16 @@ public class ComputerPlayer extends AbstractPlayer implements IGetMoveCmdExec {
     
     private Board currentBoardClone;
     private AbstractEngine engine;
+    private int depth;
     private GameState currentState;
     private ComputerThinking thinking;
     
+    Configuration cfg = Configuration.getInstance();
+    
     public ComputerPlayer(Piece piece) {
         super(piece);
-        engine = EngineFactory.getEngine();
+        this.depth = cfg.getSelectedLevel().depth;
+        engine = EngineFactory.getEngine(cfg.getSelectedLevel().engine);
     }
     
     public ComputerPlayer(Piece piece, String name) {
@@ -55,6 +63,7 @@ public class ComputerPlayer extends AbstractPlayer implements IGetMoveCmdExec {
     public void getMoveFor(AbstractPlayer player) {
         
         thinking = new ComputerThinking(player, engine, getPiece());
+        thinking.setDepth(depth);
         thinking.start();
     }
 
@@ -73,7 +82,7 @@ public class ComputerPlayer extends AbstractPlayer implements IGetMoveCmdExec {
     @Override
     public void makePassing() {
         // Pass the game
-        System.out.println("Computer have no move, passed!!");
+    	JOptionPane.showMessageDialog(null, "Computer have no move, passed!!");
     }
 
     @Override
@@ -124,7 +133,12 @@ class ComputerThinking extends Thread {
     
     AbstractPlayer player;
     AbstractEngine engine;
+    int depth = 1;
     Piece piece;
+    
+    public void setDepth(int depth) {
+    	this.depth = depth;
+    }
     
     public ComputerThinking(AbstractPlayer player, AbstractEngine engine, Piece piece) {
         this.player = player;

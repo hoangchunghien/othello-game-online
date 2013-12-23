@@ -10,22 +10,18 @@ import othello.configuration.Configuration;
  */
 public class EngineFactory {
     
-    private static AbstractEngine singletonObject;
-    
-    public static AbstractEngine getEngine() {
+	static Configuration cfg = Configuration.getInstance();
+    public static AbstractEngine getEngine(String name) {
         
-        if (singletonObject == null) {
-            switch (Configuration.getInstance().getSelectedEngine().name.toLowerCase()) {
-                case "random":
-                    singletonObject = new Random(new Board());
-                    break;
-                default:
-                    singletonObject = new Random(new Board());
-                    break;
-            }
+        switch (name.toLowerCase()) {
+            case Random.NAME:
+                return new Random(new Board());
+            case AlphaBeta.NAME:
+            	return new AlphaBeta(new Board(), cfg.getSelectedLevel());
+            default:
+                return new Random(new Board());
+
         }
-        
-        return singletonObject;
         
     }
     

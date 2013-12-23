@@ -10,6 +10,7 @@ import othello.common.*;
  * @author Hien Hoang
  */
 public abstract class AbstractEngine {
+	
     protected int depth = 1;
     protected Board board;
     

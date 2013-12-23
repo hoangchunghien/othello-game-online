@@ -24,7 +24,7 @@
 		<Type name="offline" selected="true" />
 	</Playing>
 	<Online>
-		<Connection key = "" />
+		<Connection ticket = "" />
 		<Login remember = "true" username = "" password = "" />		
 	</Online>
 	<Board width="8" height="8" />
@@ -33,7 +33,7 @@
 		<Engine name = "AlphaBeta" />
 	</Engines>
 	<Levels>
-		<Level name="Easy" depth="3" engine = "Random" selected="false" />
+		<Level name="Easy" depth="3" engine = "AlphaBeta" selected="false" />
 		<Level name="Normal" depth="5" engine = "AlphaBeta" selected="false" />
 		<Level name="Hard" depth="6" engine = "AlphaBeta" selected="true" />
 		<Level name="Expert" depth="7" engine = "AlphaBeta" selected="false" />

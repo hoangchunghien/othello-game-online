@@ -130,9 +130,9 @@ public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdE
             nb.subscribe(onlinePlayer, NotificationBoard.NF_GAMESTATE_CHANGED);
             
             // Send ticket to server
-            Map<String, String> env = System.getenv();
-            String playerTicket = env.get("playticket");
-            writer.println(playerTicket);
+//            Map<String, String> env = System.getenv();
+//            String playerTicket = env.get("playticket");
+            writer.println(cfg.online.connection.ticket);
             
         } catch(UnknownHostException ue) {
             // Notify can't connect to server

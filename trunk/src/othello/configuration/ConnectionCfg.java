@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "Connection")
 public class ConnectionCfg {
 	
-    @XmlAttribute(name = "key")
-    public int key;
+    @XmlAttribute(name = "ticket")
+    public String ticket;
     
 }

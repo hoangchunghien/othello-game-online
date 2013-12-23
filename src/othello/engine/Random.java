@@ -13,7 +13,8 @@ import othello.common.Position;
  * @version Nov 8, 2013
  */
 public class Random extends AbstractEngine {
-
+	public static final String NAME = "random";
+	
     public Random(Board board) {
         super(board);
     }

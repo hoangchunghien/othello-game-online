@@ -63,7 +63,7 @@ public class HumanPlayer extends AbstractPlayer implements IMoveNtfExec{
     @Override
     public void makePassing() {
         // Notify Passing here
-        System.out.println("You have no move, passed!!");
+    	JOptionPane.showMessageDialog(null, "You have no move, passed!!");
     }
 
     @Override

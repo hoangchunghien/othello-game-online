@@ -8,7 +8,7 @@ package othello.command.notify;
  *
  * @author Hien
  */
-public interface IPassNtfExec {
+public interface PassNtfExecutable {
     
     public void makePassing();
 }

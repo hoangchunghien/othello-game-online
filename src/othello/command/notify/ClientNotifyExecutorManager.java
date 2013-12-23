@@ -1,6 +1,8 @@
 package othello.command.notify;
 
+import othello.client.OnlineGameMonitor;
 import othello.configuration.Configuration;
+import othello.configuration.TypeCfg;
 import othello.configuration.UICfg;
 import othello.ui.control.graphic.ChatPanel;
 import othello.ui.control.graphic.LoginFrame;
@@ -30,5 +32,13 @@ public class ClientNotifyExecutorManager {
     public static IMoveNtfExec getMoveNotifyExecutor() {
         
         return null;
+    }
+    
+    public static PassNtfExecutable getPassNotifyExecutor() {
+    	
+    	if (cfg.getPlayingType().name.equalsIgnoreCase(TypeCfg.TYPE_ONLINE)) {
+    		return OnlineGameMonitor.getInstance();
+    	}
+    	return null;
     }
 }

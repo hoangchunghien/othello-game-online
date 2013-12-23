@@ -212,10 +212,10 @@ public class AlphaBetaAI {
 			this.stabilityWeight = 5;
 			break;
 		case LevelCfg.HARD: // Hard
-			this.forfeitWeight = 7;
-			this.frontierWeight = 2;
-			this.mobilityWeight = 1;
-			this.stabilityWeight = 10;
+			this.forfeitWeight = 35;
+			this.frontierWeight = 10;
+			this.mobilityWeight = 5;
+			this.stabilityWeight = 50;
 			break;
 		case LevelCfg.EXPERT: // Expert
 			this.forfeitWeight = 35;

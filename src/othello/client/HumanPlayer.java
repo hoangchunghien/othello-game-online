@@ -57,7 +57,7 @@ public class HumanPlayer extends AbstractPlayer implements IMoveNtfExec{
     @Override
     public void makeOverGame() {
         // Notify game over here
-        System.out.println("GAMEOVER");
+    	JOptionPane.showMessageDialog(null,"GAMEOVER");
     }
 
     @Override

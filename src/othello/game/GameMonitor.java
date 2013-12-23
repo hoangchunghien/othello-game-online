@@ -17,7 +17,7 @@ import othello.command.IRedoCmdExec;
 import othello.command.IUndoCmdExec;
 import othello.command.notify.GameOverNtf;
 import othello.command.notify.IGameOverNtfExec;
-import othello.command.notify.IPassNtfExec;
+import othello.command.notify.PassNtfExecutable;
 import othello.command.notify.PassNtf;
 import othello.command.response.AnswerRequestResExec;
 import othello.command.response.IMoveResExec;
@@ -236,7 +236,7 @@ public class GameMonitor implements Notifiable, IMoveCmdExec, IUndoCmdExec, IRed
                 if (state.getBoard().hasAnyValidMove(state.getCurrentPlayer().getPiece())) {
 
                     // Notify to the player that pass the current turn
-                    PassNtf passNotify = new PassNtf((IPassNtfExec)state.getPlayers()[1-turn]);
+                    PassNtf passNotify = new PassNtf((PassNtfExecutable)state.getPlayers()[1-turn]);
                     passNotify.execute();
 
                     // Tell the current player to make move

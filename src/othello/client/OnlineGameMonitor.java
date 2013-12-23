@@ -37,7 +37,7 @@ import othello.command.MoveCmd;
 import othello.command.notify.GameStateNtfExec;
 import othello.command.notify.IGameOverNtfExec;
 import othello.command.notify.INotification;
-import othello.command.notify.IPassNtfExec;
+import othello.command.notify.PassNtfExecutable;
 import othello.command.notify.MoveTurnNtfExec;
 import othello.command.notify.NotifyFactory;
 import othello.command.response.AnswerRequestResExec;
@@ -64,7 +64,7 @@ import othello.ui.UIFactory;
 public class OnlineGameMonitor implements IMoveCmdExec, ILoginCmdExec, IUndoCmdExec, IRedoCmdExec,
         IResignCmdExec, IQuitCmdExec, IJoinCmdExec, IChatCmdExec,
         IMoveResExec, MoveTurnNtfExec,
-        GameStateNtfExec, IPassNtfExec, IGameOverNtfExec, AnswerRequestResExec {
+        GameStateNtfExec, PassNtfExecutable, IGameOverNtfExec, AnswerRequestResExec {
     
     private String serverAddress;
     private int serverPort;

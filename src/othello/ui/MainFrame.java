@@ -148,7 +148,7 @@ public class MainFrame extends JFrame implements Notifiable {
 					File dir = file.getParentFile();
 					Runtime runTime = Runtime.getRuntime();
 					try {
-						String env[] = new String[] {"classpath=%classpath%;.;"};
+						String env[] = new String[] {"classpath=%classpath%;.;", "DISPLAY=:0.0"};
 						Process process = runTime.exec("java othello.OthelloPlay", env, dir);
 						InputStream inputStream = process.getInputStream();
 						InputStreamReader isr = new InputStreamReader(inputStream);

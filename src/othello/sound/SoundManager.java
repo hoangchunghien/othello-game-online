@@ -25,7 +25,7 @@ public class SoundManager extends JFrame {
 			System.out.println(url);
 			AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
 			// Get a sound clip resource.
-			Clip clip = AudioSystem.getClip();
+			Clip clip = (Clip) AudioSystem.getLine(new DataLine.Info(Clip.class, audioIn.getFormat()));
          	// Open audio clip and load samples from the audio input stream.
          	clip.open(audioIn);
          	clip.start();

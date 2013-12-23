@@ -43,6 +43,9 @@ public class Configuration {
     @XmlElement(name = "UserInterfaces", required = true)
     public UserInterfacesCfg userInterfaces;
     
+    @XmlElement(name = "Sounds", required = true)
+    public SoundsCfg sounds;
+    
     @XmlElement(name = "Online", required = true)
     public OnlineCfg online;
     

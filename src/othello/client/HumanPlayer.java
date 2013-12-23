@@ -10,8 +10,10 @@ import othello.command.notify.IMoveNtfExec;
 import othello.common.AbstractPlayer;
 import othello.common.Piece;
 import othello.common.Position;
+import othello.configuration.Configuration;
 import othello.game.GameState;
 import othello.game.NotificationBoard;
+import othello.sound.SoundManager;
 import othello.ui.UIFactory;
 
 /**
@@ -27,6 +29,7 @@ public class HumanPlayer extends AbstractPlayer implements IMoveNtfExec{
     public static final String TYPE = "human";
     
     NotificationBoard nb = NotificationBoard.getInstance();
+    Configuration cfg = Configuration.getInstance();
 
     public HumanPlayer(Piece piece) {
         super(piece);
@@ -57,18 +60,26 @@ public class HumanPlayer extends AbstractPlayer implements IMoveNtfExec{
     @Override
     public void makeOverGame() {
         // Notify game over here
+    	if (cfg.sounds.playSound && cfg.sounds.getGameOverSound()!= null) {
+    		SoundManager.getInstance().playSound(cfg.sounds.getGameOverSound().file);
+    	}
     	JOptionPane.showMessageDialog(null,"GAMEOVER");
     }
 
     @Override
     public void makePassing() {
         // Notify Passing here
+    	if (cfg.sounds.playSound && cfg.sounds.getPassSound()!= null) {
+    		SoundManager.getInstance().playSound(cfg.sounds.getPassSound().file);
+    	}
     	JOptionPane.showMessageDialog(null, "You have no move, passed!!");
     }
 
     @Override
     public void processMoveAccepted(Position position) {
-        System.out.println("Human move accepted.");
+    	if (cfg.sounds.playSound && cfg.sounds.getMoveSound()!= null) {
+    		SoundManager.getInstance().playSound(cfg.sounds.getMoveSound().file);
+    	}
     }
 
     @Override

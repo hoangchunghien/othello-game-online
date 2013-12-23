@@ -23,6 +23,7 @@ import othello.common.Position;
 import othello.configuration.Configuration;
 import othello.game.Notifiable;
 import othello.game.NotificationBoard;
+import othello.sound.SoundManager;
 
 /**
  *

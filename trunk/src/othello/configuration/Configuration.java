@@ -49,14 +49,6 @@ public class Configuration {
     @XmlElement(name = "Servers", required = true)
     public ServersCfg servers;
     
-    public EngineCfg getSelectedEngine() {
-        for (EngineCfg e : engines.engines) {
-            if (e.selected) {
-                return e;
-            }
-        }
-        return null;
-    }
     
     public LevelCfg getSelectedLevel() {
         for (LevelCfg e : levels.items) {

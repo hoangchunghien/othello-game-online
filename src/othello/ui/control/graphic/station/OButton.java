@@ -25,9 +25,17 @@ public class OButton extends JLabel implements MouseListener {
     protected NotificationBoard nb = NotificationBoard.getInstance();
     protected String letter;
     protected Integer notifyCategory = NotificationBoard.NF_UI_NEXT;
+    protected boolean isDisabled = false;
     
     public void setLetter(String letter) {
-    	this.letter = letter;
+    	if (letter == null) {
+    		isDisabled = true;
+    		this.setForeground(Color.GRAY);
+    	}
+    	else {
+    		this.letter = letter;
+    		this.setForeground(Color.BLACK);
+    	}
     }
     
     public String getLetter() {
@@ -59,27 +67,35 @@ public class OButton extends JLabel implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        this.setBackground(Color.GRAY);
-        this.setOpaque(true);
-        this.setForeground(Color.WHITE);
+    	if (!isDisabled) {
+	        this.setBackground(Color.GRAY);
+	        this.setOpaque(true);
+	        this.setForeground(Color.WHITE);
+    	}
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        this.setBackground(Color.WHITE);
-        this.setOpaque(false);
-        this.setForeground(Color.BLACK);
+    	if (!isDisabled) {
+	        this.setBackground(Color.WHITE);
+	        this.setOpaque(false);
+	        this.setForeground(Color.BLACK);
+    	}
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        Border border = new LineBorder(Color.BLACK, 1, false);
-        this.setBorder(border);
+    	if (!isDisabled) {
+	        Border border = new LineBorder(Color.BLACK, 1, false);
+	        this.setBorder(border);
+    	}
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        this.setBorder(defaultBorder);
+    	if (!isDisabled) {
+    		this.setBorder(defaultBorder);
+    	}
     }
     
     

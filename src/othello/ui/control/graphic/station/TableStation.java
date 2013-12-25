@@ -93,6 +93,8 @@ public class TableStation extends JPanel implements Notifiable {
                 .addComponent(btnBackNext)
 
          );
+        
+        setNextLetter(null);
 	}
 	
     public void loadBoards(List<Board> boards) {

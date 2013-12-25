@@ -22,7 +22,7 @@ public class OnOffButton extends JPanel implements MouseListener {
 	protected String imgLocation;
     protected ImageIcon image;
     protected int imgWidth = 60;
-    protected int imgHeight = 28;
+    protected int imgHeight = 24;
     protected String imgType;
     private boolean on = false;
     protected boolean isDisabled = false;

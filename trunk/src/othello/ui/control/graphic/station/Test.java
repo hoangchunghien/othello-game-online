@@ -10,11 +10,65 @@ import othello.common.Piece;
 import othello.models.Board;
 import othello.models.Location;
 import othello.models.Player;
+import othello.ui.control.graphic.station.setting.GraphicStation;
+import othello.ui.control.graphic.station.setting.SettingStation;
+import othello.ui.control.graphic.station.setting.SoundStation;
 
 /**
  *
  * @author Hien Hoang
  */
+class TestOnOffButton {
+    public static void main(String[] args) {
+        JFrame testFrame = new JFrame();
+        testFrame.setSize(300, 500);
+        testFrame.setLayout(new BorderLayout());
+        
+        testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        OnOffButton ofb = new OnOffButton();
+        testFrame.add(ofb);
+        testFrame.setVisible(true);
+    }
+}
+
+class TestSoundStation {
+    public static void main(String[] args) {
+        JFrame testFrame = new JFrame();
+        testFrame.setSize(300, 500);
+        testFrame.setLayout(new BorderLayout());
+        
+        testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        SoundStation soundStation = new SoundStation();
+        testFrame.add(soundStation);
+        testFrame.setVisible(true);
+    }
+}
+
+class TestSettingStation {
+    public static void main(String[] args) {
+        JFrame testFrame = new JFrame();
+        testFrame.setSize(300, 500);
+        testFrame.setLayout(new BorderLayout());
+        
+        testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        SettingStation settingStation = new SettingStation();
+        testFrame.add(settingStation);
+        testFrame.setVisible(true);
+    }
+}
+
+class TestGraphicStation {
+    public static void main(String[] args) {
+        JFrame testFrame = new JFrame();
+        testFrame.setSize(300, 500);
+        testFrame.setLayout(new BorderLayout());
+        
+        testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        GraphicStation graphicStation = new GraphicStation();
+        testFrame.add(graphicStation);
+        testFrame.setVisible(true);
+    }
+}
 
 class TestTableStation {
     public static void main(String[] args) {

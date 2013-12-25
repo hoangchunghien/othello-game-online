@@ -28,6 +28,9 @@ import othello.ui.control.graphic.station.PlayWithStation;
 import othello.ui.control.graphic.station.RoomStation;
 import othello.ui.control.graphic.station.StationUIManager;
 import othello.ui.control.graphic.station.TableStation;
+import othello.ui.control.graphic.station.setting.GraphicStation;
+import othello.ui.control.graphic.station.setting.SettingStation;
+import othello.ui.control.graphic.station.setting.SoundStation;
 
 /**
  *
@@ -49,6 +52,9 @@ public class MainFrame extends JFrame implements Notifiable {
     LoginStation loginStation;
     RoomStation roomStation;
     TableStation tableStation;
+    SettingStation settingStation;
+    GraphicStation graphicStation;
+    SoundStation soundStation;
     
     HashMap<String, JPanel> UI;
     HashMap<JPanel, String> letters;
@@ -73,6 +79,9 @@ public class MainFrame extends JFrame implements Notifiable {
         loginStation = new LoginStation();
         roomStation = new RoomStation();
         tableStation = new TableStation();
+        settingStation = new SettingStation();
+        soundStation = new SoundStation();
+        graphicStation = new GraphicStation();
         
         UI.put(StationUIManager.STATION_MAIN, mainStation);
         UI.put(StationUIManager.STATION_PLAY_WITH, playWithStation );
@@ -82,6 +91,9 @@ public class MainFrame extends JFrame implements Notifiable {
         UI.put(StationUIManager.STATION_LOGIN, loginStation);
         UI.put(StationUIManager.STATION_ROOM, roomStation);
         UI.put(StationUIManager.STATION_TABLE, tableStation);
+        UI.put(StationUIManager.STATION_SETTINGS, settingStation);
+        UI.put(StationUIManager.STATION_SETTINGS_SOUNDS, soundStation);
+        UI.put(StationUIManager.STATION_SETTINGS_GRAPHIC, graphicStation);
         
         letters.put(mainStation, StationUIManager.STATION_MAIN);
         letters.put(playWithStation, StationUIManager.STATION_PLAY_WITH);
@@ -91,6 +103,9 @@ public class MainFrame extends JFrame implements Notifiable {
         letters.put(loginStation, StationUIManager.STATION_LOGIN);
         letters.put(roomStation, StationUIManager.STATION_ROOM);
         letters.put(tableStation, StationUIManager.STATION_TABLE);
+        letters.put(settingStation, StationUIManager.STATION_SETTINGS);
+        letters.put(soundStation, StationUIManager.STATION_SETTINGS_SOUNDS);
+        letters.put(graphicStation, StationUIManager.STATION_SETTINGS_GRAPHIC);
         
         currentPanel = UI.get(StationUIManager.STATION_MAIN);
         this.setSize(300, 600);
@@ -198,45 +213,29 @@ public class MainFrame extends JFrame implements Notifiable {
 					currentPanel = tableStation;
 					changedUI(currentPanel);
 					break;
+				case StationUIManager.STATION_SETTINGS:
+					settingStation.setBackLetter(letters.get(currentPanel));
+					currentPanel = settingStation;
+					changedUI(currentPanel);
+					break;
+				case StationUIManager.STATION_SETTINGS_SOUNDS:
+					soundStation.setBackLetter(letters.get(currentPanel));
+					currentPanel = soundStation;
+					changedUI(currentPanel);
+					break;
+				case StationUIManager.STATION_SETTINGS_GRAPHIC:
+					graphicStation.setBackLetter(letters.get(currentPanel));
+					currentPanel = graphicStation;
+					changedUI(currentPanel);
+					break;
 			}
 		}
 		if (category == NotificationBoard.NF_UI_BACK) {
 			String letter = (String)detail;
 			System.out.println("Received BACK LETTER: " + letter);
-			switch(letter) {
-				case StationUIManager.STATION_MAIN:
-					currentPanel = mainStation;
-					changedUI(currentPanel);
-					break;
-				case StationUIManager.STATION_PLAY_WITH:
-					currentPanel = playWithStation;
-					changedUI(currentPanel);
-					break;
-				case StationUIManager.STATION_LEVEL:
-					currentPanel = levelStation;
-					changedUI(currentPanel);
-					break;
-				case StationUIManager.STATION_PLAY_FIRST:
-					currentPanel = playFirstStation;
-					changedUI(currentPanel);
-					break;
-				case StationUIManager.STATION_CONFIG:
-					currentPanel = configStation;
-					changedUI(currentPanel);
-					break;
-				case StationUIManager.STATION_LOGIN:
-					currentPanel = loginStation;
-					changedUI(currentPanel);
-					break;
-				case StationUIManager.STATION_ROOM:
-					currentPanel = roomStation;
-					changedUI(currentPanel);
-					break;
-				case StationUIManager.STATION_TABLE:
-					currentPanel = tableStation;
-					changedUI(currentPanel);
-					break;
-			}
+			currentPanel = UI.get(letter);
+			changedUI(currentPanel);
+
 		}
 		
 		if (category == NotificationBoard.NF_GAME_EXITED) {

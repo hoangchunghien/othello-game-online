@@ -46,11 +46,14 @@ public class MainStation extends JPanel {
         onlineButton.setText("ONLINE");
         onlineButton.setLetter(StationUIManager.STATION_LOGIN);
         
-        settingButton.setText("SETTING");
+        settingButton.setText("SETTINGS");
+        settingButton.setLetter(StationUIManager.STATION_SETTINGS);
         
         helpButton.setText("HELP");
+        helpButton.setLetter(null);
         
         aboutButton.setText("ABOUT");
+        aboutButton.setLetter(null);
         
 
         GroupLayout layout = new GroupLayout(this);

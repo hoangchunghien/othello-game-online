@@ -18,4 +18,7 @@ public class SoundCfg {
     @XmlAttribute(name = "file")
     public String file;
 
+    @XmlAttribute(name = "play")
+    public boolean isPlay;
+
 }

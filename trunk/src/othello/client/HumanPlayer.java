@@ -60,7 +60,7 @@ public class HumanPlayer extends AbstractPlayer implements IMoveNtfExec{
     @Override
     public void makeOverGame() {
         // Notify game over here
-    	if (cfg.sounds.playSound && cfg.sounds.getGameOverSound()!= null) {
+    	if (cfg.sounds.playSound && cfg.sounds.getGameOverSound()!= null && cfg.sounds.getGameOverSound().isPlay) {
     		SoundManager.getInstance().playSound(cfg.sounds.getGameOverSound().file);
     	}
     	JOptionPane.showMessageDialog(null,"GAMEOVER");
@@ -69,7 +69,7 @@ public class HumanPlayer extends AbstractPlayer implements IMoveNtfExec{
     @Override
     public void makePassing() {
         // Notify Passing here
-    	if (cfg.sounds.playSound && cfg.sounds.getPassSound()!= null) {
+    	if (cfg.sounds.playSound && cfg.sounds.getPassSound()!= null && cfg.sounds.getPassSound().isPlay) {
     		SoundManager.getInstance().playSound(cfg.sounds.getPassSound().file);
     	}
     	JOptionPane.showMessageDialog(null, "You have no move, passed!!");
@@ -77,7 +77,7 @@ public class HumanPlayer extends AbstractPlayer implements IMoveNtfExec{
 
     @Override
     public void processMoveAccepted(Position position) {
-    	if (cfg.sounds.playSound && cfg.sounds.getMoveSound()!= null) {
+    	if (cfg.sounds.playSound && cfg.sounds.getMoveSound()!= null && cfg.sounds.getMoveSound().isPlay) {
     		SoundManager.getInstance().playSound(cfg.sounds.getMoveSound().file);
     	}
     }

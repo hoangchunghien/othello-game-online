@@ -18,6 +18,7 @@ import othello.engine.AlphaBeta;
 import othello.engine.EngineFactory;
 import othello.game.GameState;
 import othello.game.NotificationBoard;
+import othello.ui.UIFactory;
 
 
 /**
@@ -112,6 +113,7 @@ public class ComputerPlayer extends AbstractPlayer implements IGetMoveCmdExec {
                 thinking.interrupt();
             }
             GameState newState = (GameState)detail;
+            UIFactory.getControlUI().fireStateChanged(newState);
             this.currentBoardClone = newState.getBoard();
             this.engine.setBoard(currentBoardClone);    
         }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Othello>
-	<Players playFirstId="1" playOnlineId="1" autoViewer="true">
+	<Players playFirstId="1" playOnlineId="2" autoViewer="true">
 		<Player id="1" name="Human" color="White" type="human" />
 		<Player id="2" name="Computer" color="Black" type="computer" />
 	</Players>

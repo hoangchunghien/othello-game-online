@@ -55,24 +55,26 @@ public class Board {
     }
     
     public JSONObject serializeJson() {
-        String result = "{'board':[";
+    	
+        JSONArray jarr = new JSONArray();
+        
         for (int i = 0; i < pieces.length; i++) {
-            if (i > 0)
-                result += ",";
-            result += "[";
+        	JSONArray iArr = new JSONArray();
             for (int j = 0; j < pieces[i].length; j++) {
-                if (j > 0)
-                    result += ",";
-                result += pieces[i][j].toString();
+            	iArr.put(pieces[i][j]);
             }
-            result += "]";
+            jarr.put(iArr);
         }
-        result += "]}";
-        JSONObject jObj = new JSONObject(result);
+
+        
+        JSONObject jObj = new JSONObject();
+        jObj.put("board", jarr);
+        
         return jObj;
     }
     
     public void deserializeJson(JSONObject jObj) {
+    	
         JSONArray jArr = (JSONArray)jObj.get("board");
         //for (int i = 0 ; i < jArr.length(); i ++)
         this.width = jArr.getJSONArray(0).length();
@@ -85,8 +87,12 @@ public class Board {
         }
         
         for (int i = 0; i < jArr.length(); i++) {
-            for (int j = 0; j < jArr.getJSONArray(i).length(); j++) {
-                pieces[i][j] = Piece.toPiece(jArr.getJSONArray(i).getString(j));
+        	JSONArray iArr = jArr.getJSONArray(i);
+            for (int j = 0; j < iArr.length(); j++) {
+            	Piece p = Piece.toPiece(iArr.getString(j));
+            	if (p == Piece.WHITE || p == Piece.BLACK) {
+            		pieces[i][j] = p;
+            	}
             }
         }
     }
